@@ -1,0 +1,4 @@
+name = MidtLink Statistic
+description = Statistic functionality for MidtLink
+package = MidtLink
+core=7.x

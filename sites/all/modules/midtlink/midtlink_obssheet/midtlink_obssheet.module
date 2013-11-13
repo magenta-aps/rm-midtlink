@@ -1,0 +1,1261 @@
+<?php
+
+function midtlink_obssheet_flag($action, $flag, $content_id, $account) { 
+	if($action == 'flag' && $flag->name == 'obssheet_global') {
+		$sql = "SELECT c.cid FROM
+			comment c
+			INNER JOIN flag_content fc ON fc.content_id = c.cid AND fc.content_type = 'comment' AND fc.fid = 7
+			WHERE c.nid = :nid";
+		$res = db_query($sql,array(':nid'=>$content_id));
+		foreach($res as $r) {
+			flag('unflag','approve_answer',$r->cid,user_load(1));
+		}
+	}
+	elseif($action == 'flag' && $flag->name == 'approve_answer') {
+		$comment = comment_load($content_id);
+		$ul = flag_get_content_flags('node',$comment->nid,'subscribe');
+		foreach($ul as $u) {
+			if($u->uid != $comment->uid) {
+				midtlink_notification_send($u->uid,'answer_accepted',null,$comment->nid);
+			}
+		}
+	}
+}
+
+function midtlink_obssheet_permission() {
+	return array(
+    'create observation' => array(
+      'title' => t('Create observations'), 
+      'description' => t('Create observation that are directly added to observationsheets'),
+    ),
+    'view extra obssheet fields' => array(
+      'title' => t('View extra obssheet fields'), 
+      'description' => t('Show extra fields (like SD number) on the observation node form'),
+    ),
+  );
+}
+
+function midtlink_obssheet_menu() {
+  $items['create_observation'] = array(
+    'title' => 'Create observation', 
+    'page callback' => 'midtlink_obssheet_create_observation', 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+   $items['obssheet'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_redirect_to_sheet',
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/global/%'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_get_sheet',
+    'page arguments' => array(1,2), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/global/%/pdf'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_download_sheet',
+    'page arguments' => array(1,2), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/allunits/%'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_get_sheet',
+    'page arguments' => array(1,2), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/allunits/%/pdf'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_download_sheet',
+    'page arguments' => array(1,2), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/observed_by_me'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_get_sheet',
+    'page arguments' => array(1), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/observed_by_me/pdf'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_download_sheet',
+    'page arguments' => array(1), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/responsible'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_get_sheet',
+    'page arguments' => array(1), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/responsible/pdf'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_download_sheet',
+    'page arguments' => array(1), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/unit/%'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_get_sheet',
+    'page arguments' => array(1,2), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  $items['obssheet/unit/%/pdf'] = array(
+    'title' => 'Observation Sheet', 
+    'page callback' => 'midtlink_obssheet_download_sheet',
+    'page arguments' => array(1,2), 
+    'access arguments' => array('create observation'), 
+    'type' => MENU_CALLBACK,
+  );
+  
+  return $items;
+}
+
+function midtlink_obssheet_redirect_to_sheet() {
+	global $user;
+	$u = user_load($user->uid);
+	if(isset($u->field_unit['und'][0]['tid']) && 
+		(int)$u->field_unit['und'][0]['tid'] > 0 && 
+		(int)$u->field_unit['und'][0]['tid'] != 284) {
+		$goto = 'obssheet/unit/'.(int)$u->field_unit['und'][0]['tid'];
+	}
+	elseif(isset($u->field_unit['und'][0]['tid']) && 
+			(int)$u->field_unit['und'][0]['tid'] > 0 &&
+			(
+				(int)$u->field_unit['und'][0]['tid'] == 284
+			)
+		) {
+			$goto = 'obssheet/global/300';
+	}
+	else {
+		$goto = 'obssheet/responsible';
+	}
+	drupal_goto($goto);
+}
+
+
+function midtlink_obssheet_get_title($type,$unit_id=null) {
+	if($type == 'global') {
+		$term = taxonomy_term_load($unit_id);
+		return 'Generel oversigt for '.$term->name;
+	}
+	elseif($type == 'allunits') {
+		$term = taxonomy_term_load($unit_id);
+		return 'Oversigt for hele '.$term->name;
+	}
+	elseif($type == 'observed_by_me') {
+		return 'Mine indlæg';
+	}
+	elseif($type == 'responsible') {
+		return 'Indlæg jeg er ansvarlig for';
+	}
+	else {
+		$term = taxonomy_term_load($unit_id);
+		$termParent = current(taxonomy_get_parents($unit_id));
+		return 'Indlæg for '.$term->name.' - '.$termParent->name;
+	}
+}
+
+function midtlink_obssheet_download_sheet($type,$unit_id=null) {
+	$o = '';
+	
+	$query = array('type'=>'global');
+	if($type == 'unit') { $query = array('type'=>'unit','unit_id'=>$unit_id); }
+	
+	$filter = array('status'=>'','category'=>'','responsible'=>'');
+	if(!empty($_GET['filter_status'])) { 
+		$filter['status'] = $_GET['filter_status'];
+	}
+	if(!empty($_GET['filter_category'])) { 
+		$filter['category'] = $_GET['filter_category'];
+	}
+	if(!empty($_GET['filter_name'])) { 
+		$filter['responsible'] = $_GET['filter_name'];
+	}
+	
+	$headers = array('ID','Status','SD #','Opdateret','Svar','Problem','Løsning (kun svar markeret som løsning)','Ansvarlig','Emne','Indberettet af');
+	$data = array();
+	
+	$sort = 'answer_desc';
+	if(isset($_GET['sort'])) { $sort = $_GET['sort']; }
+	
+	$observations = array();
+	if($type == 'global') {
+		$observations = midtlink_obssheet_get_list_global($filter,$sort,$unit_id);
+	}
+	elseif($type == 'allunits') {
+		$observations = midtlink_obssheet_get_list_allunits($filter,$sort,$unit_id);
+	}
+	elseif($type == 'observed_by_me') {
+		$observations = midtlink_obssheet_get_list_observed_by_me($filter,$sort);
+	}
+	elseif($type == 'responsible') {
+		$observations = midtlink_obssheet_get_list_responsible($filter,$sort);
+	}
+	else {
+		$observations = midtlink_obssheet_get_list_unit($unit_id,$filter,$sort);
+	}
+	
+	if(sizeof($observations)>0) {
+		$i = 0;
+		foreach($observations as $obs) {
+			$lastAnswer = 'Ingen svar';
+			if(!empty($obs['last_answer'])) {
+				$lastAnswer = format_date($obs['last_answer'],'short');
+			}
+			
+			$status = ($obs['approved']) ? 'LØST' : 'EJ LØST';
+			if($obs['raised_issue']) {
+					$status .= '<br><b>OPHØJET</b>';
+			}
+			$data[$i][] = sprintf('%05s',$obs['nid']); //ID
+			$data[$i][] = $status; //Status
+			$data[$i][] = $obs['sdno']; //Status
+			$data[$i][] = format_date($obs['last_update'],'short'); //Oprettet
+			$data[$i][] = $obs['comment_no']; //Seneste svar
+			$data[$i][] = $obs['problem']; //Problem
+			//$data[$i][] = $obs['solution']; //Løsning
+			//$data[$i][] = $obs['responsible']; //Ansvarlige
+			$data[$i][] = implode(', ',$obs['categories']); //Emne
+			$data[$i][] = $obs['observed_by']; //Observeret af
+			
+			$data[$i][] = $obs['approved'];
+			$i++;
+		}
+	}
+	
+	$html = '<table border="1" cellpadding="2">';
+	$html.= '<tr style="background-color:#97BBE2;font-weight:bold;">';
+		$html.= '<th width="40">'.$headers[0].'</th>';
+		$html.= '<th width="65">'.$headers[1].'</th>';
+		$html.= '<th width="50">'.$headers[2].'</th>';
+		$html.= '<th width="70">'.$headers[3].'</th>';
+		$html.= '<th width="70">'.$headers[4].'</th>';
+		$html.= '<th width="205">'.$headers[5].'</th>';
+		//$html.= '<th width="205">'.$headers[6].'</th>';
+		//$html.= '<th width="95">'.$headers[7].'</th>';
+		$html.= '<th width="85">'.$headers[8].'</th>';
+		$html.= '<th width="95">'.$headers[9].'</th>';
+	$html.= '</tr>';
+	foreach($data as $d) {
+		$s = '';
+		if($d[10]) { $s = 'background-color:#E3FDD9;'; }
+		
+		$html.='<tr style="'.$s.'">';
+			$html.= '<td>'.$d[0].'</td>';
+			$html.= '<td>'.$d[1].'</td>';
+			$html.= '<td>'.$d[2].'</td>';
+			$html.= '<td>'.$d[3].'</td>';
+			$html.= '<td>'.$d[4].'</td>';
+			$html.= '<td>'.$d[5].'</td>';
+			//$html.= '<td>'.$d[6].'</td>';
+			//$html.= '<td>'.$d[7].'</td>';
+			$html.= '<td>'.$d[8].'</td>';
+			$html.= '<td>'.$d[9].'</td>';
+		$html.='</tr>';
+	}
+	$html.='</table>';
+	
+	
+	require_once('tcpdf/config/lang/dan.php');
+	require_once('tcpdf/tcpdf.php');
+	$pdf = new TCPDF('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+	$pdf->SetTitle('Oversigt');
+	$pdf->SetHeaderData('', 0, 'Oversigt', 'Genereret '.format_date(time(),'long'));
+
+	$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+	$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+	$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+	$pdf->SetMargins(10, PDF_MARGIN_TOP, 10);
+	$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+	$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+	$pdf->setLanguageArray($l);
+	$pdf->SetFont('helvetica', '', 10);
+	$pdf->AddPage();
+	$pdf->writeHTML($html, true, false, false, false, '');
+	$pdf->Output('Oversigt.pdf', 'I');
+}
+
+function midtlink_obssheet_get_sheet($type,$unit_id=null) {
+	$o = '';
+	
+	$query = array('type'=>'global');
+	if($type == 'unit') { $query = array('type'=>'unit','unit_id'=>$unit_id); }
+	
+	$filter = array('status'=>'','category'=>'','responsible'=>'');
+	if(!empty($_GET['filter_status'])) { 
+		$filter['status'] = $_GET['filter_status'];
+	}
+	if(!empty($_GET['filter_category'])) { 
+		$filter['category'] = $_GET['filter_category'];
+	}
+	if(!empty($_GET['filter_name'])) { 
+		$filter['responsible'] = $_GET['filter_name'];
+	}
+	
+	
+	$sort = 'answer_desc';
+	if(isset($_GET['sort'])) {
+		if(in_array($_GET['sort'],array('created_asc','created_desc','answer_asc','answer_desc'))) {
+			$sort = $_GET['sort'];
+		}
+	}
+	list($sortColumn,$sortDir) = explode('_',$sort);
+	$sortC = array('created'=>'','answer'=>'');
+	$sortC[$sortColumn] = ' class="'.$sortDir.'"';
+	
+	parse_str($_SERVER['QUERY_STRING'],$currentParams);
+	unset($currentParams['sort']);
+	
+	$sortU = array();
+	$tmpP = $currentParams;
+	$tmpP['sort'] = ($sort=='created_asc') ? 'created_desc' : 'created_asc';
+	$sortU['created'] = url($_GET['q'],array('query'=>$tmpP));
+	
+	$tmpP = $currentParams;
+	$tmpP['sort'] = ($sort=='answer_asc') ? 'answer_desc' : 'answer_asc';
+	$sortU['answer'] = url($_GET['q'],array('query'=>$tmpP));
+	
+	
+	
+	$o.= '<div class="obsark actions">';
+	$o.= '<div class="grid-6 alpha">';
+	$o.= '<a class="download" href="'.url($_GET['q'].'/pdf').'?'.$_SERVER['QUERY_STRING'].'" target="_blank">Download (pdf)</a> ';
+	$o.= '<a class="new-node" href="'.url('create_observation',array('query'=>$query)).'">Opret indlæg</a></div>';
+	$o.= '<div class="grid-6 omega"><form action="#" method="get"><div class="sort">';   
+	$o.= '<label for="select-choice">Vis oversigt</label>';
+	$o.= '<select class="form-select" name="select-choice" id="select-choice" onchange="location.href=this.options[this.selectedIndex].value">';
+  $o.= '<option value="'.url('obssheet/observed_by_me').'"'.(arg(1) == 'observed_by_me' ? ' selected="selected"' : '').'>Mine indlæg</option>';
+//	$o.= '<option value="'.url('obssheet/responsible').'"'.(arg(1) == 'responsible' ? ' selected="selected"' : '').'>Observationer jeg er ansvarlig for</option>';
+	
+	$units = midtlink_get_unit_tree();
+	foreach($units as $mtid=>$mainUnit) {
+		$o.= '<optgroup label="'.$mainUnit['name'].'">';
+		if($mtid == 301) {
+			$o.= '<option value="'.url('obssheet/global/'.$mtid).'"'.(arg(1) == 'global' && arg(2) == $mtid ? ' selected="selected"' : '').'>Generel oversigt - HEH</option>';
+			$o.= '<option value="'.url('obssheet/allunits/'.$mtid).'"'.(arg(1) == 'allunits' && arg(2) == $mtid ? ' selected="selected"' : '').'>Alle afdelings oversigter samlet - HEH</option>';
+		}
+		else {
+			$o.= '<option value="'.url('obssheet/global/'.$mtid).'"'.(arg(1) == 'global' && arg(2) == $mtid ? ' selected="selected"' : '').'>Generel oversigt</option>';
+		}
+		foreach($mainUnit['units'] as $tid=>$u) {
+			$o.= '<option value="'.url('obssheet/unit/'.$tid).'"';
+			if($unit_id == $tid) { $o.= ' selected="selected"'; }
+			$o.= '>'.$u.'</option>';
+		}
+	}
+	/*
+	$units = taxonomy_get_tree(4);
+	foreach($units as $unit) {
+		if($unit->depth == 0) {
+			$o.= '<optgroup label="'.$unit->name.'">';
+			if($unit->tid == 301) {
+				$o.= '<option value="'.url('obssheet/global/'.$unit->tid).'"'.(arg(1) == 'global' && arg(2) == $unit->tid ? ' selected="selected"' : '').'>Generel oversigt - HEH</option>';
+				$o.= '<option value="'.url('obssheet/allunits/'.$unit->tid).'"'.(arg(1) == 'allunits' && arg(2) == $unit->tid ? ' selected="selected"' : '').'>Alle afdelings oversigter samlet - HEH</option>';
+			}
+			else {
+				$o.= '<option value="'.url('obssheet/global/'.$unit->tid).'"'.(arg(1) == 'global' && arg(2) == $unit->tid ? ' selected="selected"' : '').'>Generel oversigt</option>';
+			}
+		}
+		else {
+			$o.= '<option value="'.url('obssheet/unit/'.$unit->tid).'"';
+			if($unit_id == $unit->tid) { $o.= ' selected="selected"'; }
+			$o.= '>'.$unit->name.'</option>';
+		}
+	}
+	*/
+
+	$o.= '</select></div></form></div></div>';
+	
+	$o.= '<h2>'.midtlink_obssheet_get_title($type,$unit_id).'</h2>';
+	
+	$o.= '<div class="box-light filters-wrapper clearfix">';
+		$o.= '<form action="'.url($_GET['q']).'" method="get">';
+		/*$o.= '<div class="grid-3">';
+		$o.= '<div class="form-item"><label for="filter_status">Status</label> ';
+		$o.= '<select name="filter_status" id="filter_status" class="form-select">';
+			$o.= '<option value="">Alle</option>';
+			$o.= '<option value="unsolved"'.($filter['status'] == 'unsolved' ? ' selected="selected"':'').'>Uløste indlæg</option>';
+			$o.= '<option value="solved"'.($filter['status'] == 'solved' ? ' selected="selected"':'').'>Løste indlæg</option>';
+		$o.= '</select></div>';
+		$o.= '</div>';
+		*/
+		
+		$o.= '<div class="grid-3">';
+		$o.= '<div class="form-item"><label for="filter_category">Emne</label> ';
+		$o.= '<select name="filter_category" id="filter_category" class="form-select">';
+			$o.= '<option value="">Alle</option>';
+			$categories = taxonomy_get_tree(3);
+			foreach($categories as $i) {
+				$o .= '<option value="'.$i->tid.'"'.($i->tid == $filter['category'] ? ' selected="selected"' : '').'>'.$i->name.'</option>'."\n";
+			}
+		$o.= '</select></div>';
+		$o.= '</div>';
+		
+		/* TEMPORARY */
+		$o.= '<div class="grid-6">&nbsp;</div>';
+		
+		//$o.= '<div class="grid-3">';
+		//$o.= '<div class="form-item"><label for="filter_name">Ansvarlig</label> ';
+		//$o.= '<input type="text" id="filter_name" name="filter_name" value="'.$filter['responsible'].'" class="form-text" />';
+		//$o.= '<div class="description">Indtast RegionsID for at filtere.</div>';
+		//$o.= '</select></div>';
+		//$o.= '</div>';
+		
+		$o.= '<div class="grid-2 omega">';
+		$o.= '<label for="">&nbsp;</label>';
+		$o.= '<input type="submit" value="Vis indlæg" class="form-submit" style="margin-bottom:2px;" />';
+		$o.= ' <a href="'.url($_GET['q']).'">Nulstil valg</a>';
+		$o.= '</div>';
+		$o.= '</form>';
+	$o.= '</div>';
+	
+	
+	$o.= '<table id="obsark"><thead><tr>';
+	$o.= '<th><a href="">ID</a></th>';
+	$o.= '<th>Ophøjet</th>';
+	$o.= '<th>SD #</th>';
+	$o.= '<th'.$sortC['created'].'><a href="'.$sortU['created'].'">Opdateret</a></th>';
+	$o.= '<th>Svar</a></th>';
+	$o.= '<th style="width:300px;">Problem</th>';
+	//$o.= '<th style="width:210px;">L&oslash;sning (kun svar markeret som løsning)</th>';
+	//$o.= '<th>Ansvarlig</th>';
+	$o.= '<th>Emne</th>';
+	$o.= '<th><nobr>Indberettet af</nobr></th>';
+	$o.= '</tr></thead>';
+	
+	$o.= '<tbody>';
+	$observations = array();
+	if($type == 'global') {
+		$observations = midtlink_obssheet_get_list_global($filter,$sort,$unit_id);
+	}
+	elseif($type == 'allunits') {
+		$observations = midtlink_obssheet_get_list_allunits($filter,$sort,$unit_id);
+	}
+	elseif($type == 'observed_by_me') {
+		$observations = midtlink_obssheet_get_list_observed_by_me($filter,$sort);
+	}
+	elseif($type == 'responsible') {
+		$observations = midtlink_obssheet_get_list_responsible($filter,$sort);
+	}
+	else {
+		$observations = midtlink_obssheet_get_list_unit($unit_id,$filter,$sort);
+	}
+	if(sizeof($observations)>0) {
+		foreach($observations as $obs) {
+			$c = ($obs['approved']) ? 'solved' : 'unsolved';
+			$o.= '<tr class="'.$c.'" onclick="location.href=\''.url('node/'.$obs['nid']).'\'" style="cursor:pointer;">';
+				$o.= '<td>'.l(sprintf('%05s',$obs['nid']),'node/'.$obs['nid']).'</td>';
+				$o.= '<td class="status">&nbsp;';
+					if($obs['raised_issue']) {
+						$o.= '<span class="general-obsark image-replacement tooltip" original-title="Ophøjet fra Afdelingens til Generel Oversigt"></span>';
+					}
+				$o.= '</td>';
+				$o.= '<td>'.$obs['sdno'].'</td>';
+				$o.= '<td>'.format_date($obs['last_update'],'short').'</td>';
+				$o.= '<td>'.$obs['comment_no'].'</td>';
+				$o.= '<td>';
+				/*if(strlen($obs['problem'])>300) {
+					$o.= drupal_substr($obs['problem'],0,250).'<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().next(\'.restOfEntry\').show()">Læs mere</a></span>';
+					$o.= '<span class="restOfEntry">'.drupal_substr($obs['problem'],250).'</span>';
+				}
+				else {*/
+					$o.= $obs['problem'];
+				/*}*/
+				$o.= '</td>';
+				//$o.= '<td>';
+				/*if(strlen($obs['solution'])>300) {
+					$o.= drupal_substr($obs['solution'],0,250).'<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().next(\'.restOfEntry\').show()">Læs mere</a></span>';
+					$o.= '<span class="restOfEntry">'.drupal_substr($obs['solution'],250).'</span>';
+				}
+				else {
+					$o.= $obs['solution'];
+				}*/
+				//$o.= '</td>';
+				//$o.= '<td>'.$obs['responsible'].'</td>';
+				$o.= '<td>'.implode(', ',$obs['categories']).'</td>';
+				$o.= '<td>'.$obs['observed_by'].'</td>';
+			$o.= '</tr>';
+		}
+	}
+	
+	$o.= '</tbody>';
+	
+	$o.= '</table>';
+	return $o;
+}
+
+function midtlink_obssheet_get_list_global($filters=array(),$sort='created_asc',$parent_unit_id=null) {
+	$observations = array();
+	
+	$tids = array();
+	$terms = taxonomy_get_children($parent_unit_id);
+	foreach($terms as $tid=>$term) {
+		$tids[] = $tid;
+	}
+	
+	$sql = "SELECT n.nid, n.created, n.uid, 
+			n.title, fd.field_description_value as problem,
+			fsd.field_sdnumber_value as sdnumber,
+			ff.field_fullname_value as fullname,
+			td.name as unit,
+			u.name as username, ncs.last_comment_timestamp, ncs.comment_count
+			FROM
+				node n
+		LEFT JOIN node_comment_statistics ncs ON ncs.nid = n.nid
+		LEFT JOIN field_data_field_sdnumber fsd 
+			ON fsd.entity_id = n.nid AND fsd.entity_type = 'node'
+		LEFT JOIN field_data_field_description fd 
+			ON fd.entity_id = n.nid AND fd.entity_type = 'node'
+		INNER JOIN flag_content f 
+			ON f.fid = 3 AND f.content_type = 'node' AND f.content_id = n.nid
+		INNER JOIN field_data_field_unit fu 
+			ON fu.entity_type = 'node' AND fu.entity_id = n.nid AND fu.field_unit_tid IN (".implode(",",$tids).")
+		LEFT JOIN field_data_field_fullname ff 
+			ON ff.entity_id = n.uid AND ff.entity_type = 'user'
+		LEFT JOIN field_data_field_unit fu2 
+			ON fu2.entity_type = 'user' AND fu2.entity_id = n.uid
+		LEFT JOIN taxonomy_term_data td 
+			ON td.tid = fu2.field_unit_tid
+		LEFT JOIN users u
+			ON u.uid = n.uid WHERE n.status = 1";
+	
+	$sql .= " ORDER BY ncs.last_comment_timestamp DESC";
+	$res = db_query($sql);
+	
+	
+	foreach($res as $r) {
+		/* Created obsered by string */
+		$observedBy = '';
+		$observedBy = ($r->fullname != '') ? $r->fullname : $r->username;
+		if(!empty($r->unit)) { $observedBy .= ' ('.$r->unit.')'; }
+		
+		/* Lets check if the observation is solved or unsolved */
+		//$approved = midtlink_utils_post_approved_answer($r->nid);
+		if($filters['status'] == 'solved' && $approved === false) { continue; }
+		if($filters['status'] == 'unsolved' && $approved !== false) { continue; }
+		
+		/* Get categories */
+		$categories = midtlink_utils_get_categories_by_nid($r->nid);
+		if(!empty($filters['category'])) {
+			if(empty($categories[trim($filters['category'])])) { continue; }
+		}
+		
+		/* Get responsible */
+		$respStr = array();
+		$resp = midtlink_utils_get_responsible_by_nid($r->nid);
+		if(!empty($filters['responsible'])) {
+			if(empty($resp[drupal_strtolower($filters['responsible'])])) { continue; }
+		}
+		foreach($resp as $rsp) {
+			$tmpR = '';
+			$tmpR = ($rsp['fullname'] != '') ? $rsp['fullname'] : $rsp['username'];
+			if(!empty($rsp['unit'])) { $tmpR .= ' ('.$rsp['unit'].')'; }
+		
+			$respStr[] = $tmpR;
+		}
+		$respStr = implode(', ',$respStr);
+		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
+		
+		/* Construct problem string */
+		$problem = strip_tags($r->problem);
+		if(!empty($r->title)) {
+			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+		}
+		
+		$raised = false;
+		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 2 AND content_id = :nid";
+		$raisedFlags = db_query($sql,array(':nid'=>$r->nid))->fetchColumn();
+		if($raisedFlags>0) { $raised = true; }
+		
+		$observations[] = array(
+				'nid'=>$r->nid,
+				'approved'=>$approved,
+				'created'=>$r->created,
+				'created_by'=>$r->uid,
+				'observed_by'=>$observedBy,
+				'problem'=>$problem,
+				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
+				'responsible'=>$respStr,
+				'sdno'=>$r->sdnumber,
+				'categories' => $categories,
+				'raised_issue' => $raised,
+				'comment_no'=>$r->comment_count,
+				'last_update'=>$r->last_comment_timestamp,
+			);
+	}
+	//var_dump($observations);
+	return $observations;
+}
+
+
+function midtlink_obssheet_get_list_allunits($filters=array(),$sort='created_asc',$parent_unit_id=null) {
+	$observations = array();
+	
+	$tids = array();
+	$terms = taxonomy_get_children($parent_unit_id);
+	foreach($terms as $tid=>$term) {
+		$tids[] = $tid;
+	}
+	
+	$sql = "SELECT n.nid, n.created, n.uid, 
+			n.title, fd.field_description_value as problem,
+			fsd.field_sdnumber_value as sdnumber,
+			ff.field_fullname_value as fullname,
+			td.name as unit,
+			u.name as username, ncs.last_comment_timestamp, ncs.comment_count
+			FROM
+				node n
+		LEFT JOIN node_comment_statistics ncs ON ncs.nid = n.nid
+		LEFT JOIN field_data_field_sdnumber fsd 
+			ON fsd.entity_id = n.nid AND fsd.entity_type = 'node'
+		LEFT JOIN field_data_field_description fd 
+			ON fd.entity_id = n.nid AND fd.entity_type = 'node'
+		INNER JOIN flag_content f 
+			ON f.fid = 2 AND f.content_type = 'node' AND f.content_id = n.nid
+		INNER JOIN field_data_field_unit fu 
+			ON fu.entity_type = 'node' AND fu.entity_id = n.nid AND fu.field_unit_tid IN (".implode(",",$tids).")
+		LEFT JOIN field_data_field_fullname ff 
+			ON ff.entity_id = n.uid AND ff.entity_type = 'user'
+		LEFT JOIN field_data_field_unit fu2 
+			ON fu2.entity_type = 'user' AND fu2.entity_id = n.uid
+		LEFT JOIN taxonomy_term_data td 
+			ON td.tid = fu2.field_unit_tid
+		LEFT JOIN users u
+			ON u.uid = n.uid WHERE n.status = 1";
+	
+	$sql .= " ORDER BY ncs.last_comment_timestamp DESC";
+	$res = db_query($sql);
+	
+	foreach($res as $r) {
+		/* Created obsered by string */
+		$observedBy = '';
+		$observedBy = ($r->fullname != '') ? $r->fullname : $r->username;
+		if(!empty($r->unit)) { $observedBy .= ' ('.$r->unit.')'; }
+		
+		/* Lets check if the observation is solved or unsolved */
+		//$approved = midtlink_utils_post_approved_answer($r->nid);
+		if($filters['status'] == 'solved' && $approved === false) { continue; }
+		if($filters['status'] == 'unsolved' && $approved !== false) { continue; }
+		
+		/* Get categories */
+		$categories = midtlink_utils_get_categories_by_nid($r->nid);
+		if(!empty($filters['category'])) {
+			if(empty($categories[trim($filters['category'])])) { continue; }
+		}
+		
+		/* Get responsible */
+		$respStr = array();
+		$resp = midtlink_utils_get_responsible_by_nid($r->nid);
+		if(!empty($filters['responsible'])) {
+			if(empty($resp[drupal_strtolower($filters['responsible'])])) { continue; }
+		}
+		foreach($resp as $rsp) {
+			$tmpR = '';
+			$tmpR = ($rsp['fullname'] != '') ? $rsp['fullname'] : $rsp['username'];
+			if(!empty($rsp['unit'])) { $tmpR .= ' ('.$rsp['unit'].')'; }
+		
+			$respStr[] = $tmpR;
+		}
+		$respStr = implode(', ',$respStr);
+		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
+		
+		/* Construct problem string */
+		$problem = strip_tags($r->problem);
+		if(!empty($r->title)) {
+			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+		}
+		
+		$raised = false;
+		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 3 AND content_id = :nid";
+		$raisedFlags = db_query($sql,array(':nid'=>$r->nid))->fetchColumn();
+		if($raisedFlags>0) { $raised = true; }
+		
+		$observations[] = array(
+				'nid'=>$r->nid,
+				'approved'=>$approved,
+				'created'=>$r->created,
+				'created_by'=>$r->uid,
+				'observed_by'=>$observedBy,
+				'problem'=>$problem,
+				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
+				'responsible'=>$respStr,
+				'sdno'=>$r->sdnumber,
+				'categories' => $categories,
+				'raised_issue' => $raised,
+				'comment_no'=>$r->comment_count,
+				'last_update'=>$r->last_comment_timestamp,
+			);
+	}
+	
+	return $observations;
+}
+
+
+function midtlink_obssheet_get_list_unit($unitid,$filters=array(),$sort='created_asc') {
+	$observations = array();
+	
+	$sql = "SELECT n.nid, n.created, n.uid, 
+			n.title,fd.field_description_value as problem,
+			fsd.field_sdnumber_value as sdnumber,
+			ff.field_fullname_value as fullname,
+			td.name as unit,
+			u.name as username, ncs.last_comment_timestamp, ncs.comment_count
+			FROM
+				node n
+		LEFT JOIN node_comment_statistics ncs ON ncs.nid = n.nid
+		LEFT JOIN field_data_field_sdnumber fsd 
+			ON fsd.entity_id = n.nid AND fsd.entity_type = 'node'
+		LEFT JOIN field_data_field_description fd 
+			ON fd.entity_id = n.nid AND fd.entity_type = 'node'
+		INNER JOIN flag_content f 
+			ON (f.fid = 2) AND f.content_type = 'node' AND f.content_id = n.nid
+		INNER JOIN field_data_field_unit fu 
+			ON fu.entity_type = 'node' AND fu.entity_id = n.nid AND fu.field_unit_tid = :tid
+		LEFT JOIN field_data_field_fullname ff 
+			ON ff.entity_id = n.uid AND ff.entity_type = 'user'
+		LEFT JOIN field_data_field_unit fu2 
+			ON fu2.entity_type = 'user' AND fu2.entity_id = n.uid
+		LEFT JOIN taxonomy_term_data td 
+			ON td.tid = fu2.field_unit_tid
+		LEFT JOIN users u
+			ON u.uid = n.uid WHERE n.status = 1";
+			
+	
+	$sql .= " ORDER BY ncs.last_comment_timestamp DESC";
+	$res = db_query($sql,array(':tid'=>$unitid));
+	
+	foreach($res as $r) {
+		/* Created obsered by string */
+		$observedBy = '';
+		$observedBy = ($r->fullname != '') ? $r->fullname : $r->username;
+		if(!empty($r->unit)) { $observedBy .= ' ('.$r->unit.')'; }
+		
+		/* Lets check if the observation is solved or unsolved */
+		//$approved = midtlink_utils_post_approved_answer($r->nid);
+		if($filters['status'] == 'solved' && $approved === false) { continue; }
+		if($filters['status'] == 'unsolved' && $approved !== false) { continue; }
+		
+		/* Get categories */
+		$categories = midtlink_utils_get_categories_by_nid($r->nid);
+		if(!empty($filters['category'])) {
+			if(empty($categories[trim($filters['category'])])) { continue; }
+		}
+		
+		/* Get responsible */
+		$respStr = array();
+		$resp = midtlink_utils_get_responsible_by_nid($r->nid);
+		if(!empty($filters['responsible'])) {
+			if(empty($resp[$filters['responsible']])) { continue; }
+		}
+		foreach($resp as $rsp) {
+			$tmpR = '';
+			$tmpR = ($rsp['fullname'] != '') ? $rsp['fullname'] : $rsp['username'];
+			if(!empty($rsp['unit'])) { $tmpR .= ' ('.$rsp['unit'].')'; }
+		
+			$respStr[] = $tmpR;
+		}
+		$respStr = implode(', ',$respStr);
+		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
+		
+		/* Construct problem string */
+		$problem = strip_tags($r->problem);
+		if(!empty($r->title)) {
+			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+		}
+		
+		
+		$raised = false;
+		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 3 AND content_id = :nid";
+		$raisedFlags = db_query($sql,array(':nid'=>$r->nid))->fetchColumn();
+		if($raisedFlags>0) { $raised = true; }
+		
+		$observations[] = array(
+				'nid'=>$r->nid,
+				'approved'=>$approved,
+				'created'=>$r->created,
+				'created_by'=>$r->uid,
+				'observed_by'=>$observedBy,
+				'problem'=>$problem,
+				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
+				'responsible'=>$respStr,
+				'sdno'=>$r->sdnumber,
+				'categories' => $categories,
+				'raised_issue' => $raised,
+				'comment_no'=>$r->comment_count,
+				'last_update'=>$r->last_comment_timestamp,
+			);
+	}
+	return $observations;
+}
+
+function midtlink_obssheet_get_list_observed_by_me($filters=array(),$sort='created_asc') {
+	$observations = array();
+	
+	$sql = "SELECT n.nid, n.created, n.uid, 
+			n.title,fd.field_description_value as problem,
+			fsd.field_sdnumber_value as sdnumber,
+			ff.field_fullname_value as fullname,
+			td.name as unit,
+			u.name as username, ncs.last_comment_timestamp, ncs.comment_count
+			FROM
+				node n
+		LEFT JOIN node_comment_statistics ncs ON ncs.nid = n.nid
+		LEFT JOIN field_data_field_sdnumber fsd 
+			ON fsd.entity_id = n.nid AND fsd.entity_type = 'node'
+		LEFT JOIN field_data_field_description fd 
+			ON fd.entity_id = n.nid AND fd.entity_type = 'node'
+		INNER JOIN flag_content f 
+			ON (f.fid = 2 OR f.fid = 3) AND f.content_type = 'node' AND f.content_id = n.nid
+		INNER JOIN field_data_field_unit fu 
+			ON fu.entity_type = 'node' AND fu.entity_id = n.nid
+		LEFT JOIN field_data_field_fullname ff 
+			ON ff.entity_id = n.uid AND ff.entity_type = 'user'
+		LEFT JOIN field_data_field_unit fu2 
+			ON fu2.entity_type = 'user' AND fu2.entity_id = n.uid
+		LEFT JOIN taxonomy_term_data td 
+			ON td.tid = fu2.field_unit_tid
+		LEFT JOIN users u
+			ON u.uid = n.uid
+			WHERE u.uid = :uid AND n.status = 1";
+			
+	
+	$sql .= " ORDER BY ncs.last_comment_timestamp DESC";
+	
+	global $user;
+	$res = db_query($sql,array(':uid'=>$user->uid));
+	
+	foreach($res as $r) {
+		/* Created obsered by string */
+		$observedBy = '';
+		$observedBy = ($r->fullname != '') ? $r->fullname : $r->username;
+		if(!empty($r->unit)) { $observedBy .= ' ('.$r->unit.')'; }
+		
+		/* Lets check if the observation is solved or unsolved */
+		//$approved = midtlink_utils_post_approved_answer($r->nid);
+		if($filters['status'] == 'solved' && $approved === false) { continue; }
+		if($filters['status'] == 'unsolved' && $approved !== false) { continue; }
+		
+		/* Get categories */
+		$categories = midtlink_utils_get_categories_by_nid($r->nid);
+		if(!empty($filters['category'])) {
+			if(empty($categories[trim($filters['category'])])) { continue; }
+		}
+		
+		/* Get responsible */
+		$respStr = array();
+		$resp = midtlink_utils_get_responsible_by_nid($r->nid);
+		if(!empty($filters['responsible'])) {
+			if(empty($resp[$filters['responsible']])) { continue; }
+		}
+		foreach($resp as $rsp) {
+			$tmpR = '';
+			$tmpR = ($rsp['fullname'] != '') ? $rsp['fullname'] : $rsp['username'];
+			if(!empty($rsp['unit'])) { $tmpR .= ' ('.$rsp['unit'].')'; }
+		
+			$respStr[] = $tmpR;
+		}
+		$respStr = implode(', ',$respStr);
+		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
+		
+		/* Construct problem string */
+		$problem = strip_tags($r->problem);
+		if(!empty($r->title)) {
+			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+		}
+		
+		$raised = false;
+		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 3 AND content_id = :nid";
+		$raisedFlags = db_query($sql,array(':nid'=>$r->nid))->fetchColumn();
+		if($raisedFlags>0) { $raised = true; }
+		
+		$observations[] = array(
+				'nid'=>$r->nid,
+				'approved'=>$approved,
+				'created'=>$r->created,
+				'created_by'=>$r->uid,
+				'observed_by'=>$observedBy,
+				'problem'=>$problem,
+				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
+				'responsible'=>$respStr,
+				'sdno'=>$r->sdnumber,
+				'categories' => $categories,
+				'raised_issue' => $raised,
+				'comment_no'=>$r->comment_count,
+				'last_update'=>$r->last_comment_timestamp,
+			);
+	}
+	return $observations;
+}
+
+
+function midtlink_obssheet_get_list_responsible($filters=array(),$sort='created_asc') {
+	$observations = array();
+	
+	$sql = "SELECT DISTINCT n.nid, n.created, n.uid, 
+			n.title,fd.field_description_value as problem,
+			fsd.field_sdnumber_value as sdnumber,
+			ff.field_fullname_value as fullname,
+			td.name as unit,
+			u.name as username, ncs.last_comment_timestamp, ncs.comment_count
+			FROM
+				node n
+		LEFT JOIN node_comment_statistics ncs ON ncs.nid = n.nid
+		LEFT JOIN field_data_field_sdnumber fsd 
+			ON fsd.entity_id = n.nid AND fsd.entity_type = 'node'
+		LEFT JOIN field_data_field_description fd 
+			ON fd.entity_id = n.nid AND fd.entity_type = 'node'
+		INNER JOIN flag_content f 
+			ON (f.fid = 2 OR f.fid = 3) AND f.content_type = 'node' AND f.content_id = n.nid
+		INNER JOIN field_data_field_unit fu 
+			ON fu.entity_type = 'node' AND fu.entity_id = n.nid
+		LEFT JOIN field_data_field_fullname ff 
+			ON ff.entity_id = n.uid AND ff.entity_type = 'user'
+		LEFT JOIN field_data_field_unit fu2 
+			ON fu2.entity_type = 'user' AND fu2.entity_id = n.uid
+		LEFT JOIN taxonomy_term_data td 
+			ON td.tid = fu2.field_unit_tid
+		LEFT JOIN users u
+			ON u.uid = n.uid
+		INNER JOIN field_data_field_responsible fres
+			ON  fres.entity_id =  n.nid  AND fres.entity_type = 'node' AND fres.field_responsible_target_id = :uid
+			
+			WHERE n.status = 1 ";
+	
+	$sql .= " ORDER BY ncs.last_comment_timestamp DESC";
+	global $user;
+	$res = db_query($sql,array(':uid'=>$user->uid));
+	
+	foreach($res as $r) {
+		/* Created obsered by string */
+		$observedBy = '';
+		$observedBy = ($r->fullname != '') ? $r->fullname : $r->username;
+		if(!empty($r->unit)) { $observedBy .= ' ('.$r->unit.')'; }
+		
+		/* Lets check if the observation is solved or unsolved */
+		//$approved = midtlink_utils_post_approved_answer($r->nid);
+		if($filters['status'] == 'solved' && $approved === false) { continue; }
+		if($filters['status'] == 'unsolved' && $approved !== false) { continue; }
+		
+		/* Get categories */
+		$categories = midtlink_utils_get_categories_by_nid($r->nid);
+		if(!empty($filters['category'])) {
+			if(empty($categories[trim($filters['category'])])) { continue; }
+		}
+		
+		/* Get responsible */
+		$respStr = array();
+		$resp = midtlink_utils_get_responsible_by_nid($r->nid);
+		if(!empty($filters['responsible'])) {
+			if(empty($resp[$filters['responsible']])) { continue; }
+		}
+		foreach($resp as $rsp) {
+			$tmpR = '';
+			$tmpR = ($rsp['fullname'] != '') ? $rsp['fullname'] : $rsp['username'];
+			if(!empty($rsp['unit'])) { $tmpR .= ' ('.$rsp['unit'].')'; }
+		
+			$respStr[] = $tmpR;
+		}
+		$respStr = implode(', ',$respStr);
+		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
+		
+		/* Construct problem string */
+		$problem = strip_tags($r->problem);
+		if(!empty($r->title)) {
+			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+		}
+		
+		$raised = false;
+		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 3 AND content_id = :nid";
+		$raisedFlags = db_query($sql,array(':nid'=>$r->nid))->fetchColumn();
+		if($raisedFlags>0) { $raised = true; }
+		
+		$observations[] = array(
+				'nid'=>$r->nid,
+				'approved'=>$approved,
+				'created'=>$r->created,
+				'created_by'=>$r->uid,
+				'observed_by'=>$observedBy,
+				'problem'=>$problem,
+				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
+				'responsible'=>$respStr,
+				'sdno'=>$r->sdnumber,
+				'categories' => $categories,
+				'raised_issue' => $raised,
+				'comment_no'=>$r->comment_count,
+				'last_update'=>$r->last_comment_timestamp,
+			);
+	}
+	return $observations;
+}
+
+
+
+
+function midtlink_obssheet_create_observation() {
+	if(!function_exists("node_add")) {
+		include_once(drupal_get_path('module', 'node') . '/node.pages.inc');
+	}
+	$form = node_add('post');
+	$o = '<h1>Opret indlæg</h1>';
+	$o .= drupal_render($form);
+	return $o;
+}
+
+function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form_id) {
+	
+	$unitDeps = array();
+	$unitList = array();
+	$units = taxonomy_get_tree(4);
+	
+	$unitList['_none'] = '- Vælg venligst -';
+	foreach($units as $u) {
+		if($u->depth == 0) {
+			$unitList[$u->name] = array();
+			$unitDeps[$u->tid] = $u->name;
+		}
+		else {
+			$unitList[$unitDeps[$u->parents[0]]][$u->tid] = $u->name; 
+		}
+	}
+	$form['field_unit']['und']['#options'] = $unitList;
+	
+	
+	if(arg(0) == 'create_observation') {
+		if($_GET['text'] != '') {
+			$form['title']['#value'] = $_GET['text'];
+		}
+		
+		$form['#tree'] = FALSE;
+		
+		$form['revision_information']['#access'] = false;
+		$form['options']['#access'] = false;
+		$form['author']['#access'] = false;
+		$form['menu']['#access'] = false;
+		$form['comment_settings']['#access'] = false;
+		
+		$form['termlink']['#markup'] = 'Når du gemmer indlægget accepterer du samtidig <a href="'.url('betingelser').'" target="_blank">brugerbetingelserne for midtlink</a>';
+ 		$form['termlink']['#weight'] = 190;
+ 		
+		$form['actions']['#weight'] = 200;
+		$form['actions']['submit']['#value'] = 'Gem indlæg';
+		$form['actions']['submit']['#submit'][] = 'midtlink_obssheet_observation_submit';
+		
+		$form['general'] = array('#type'=>'fieldset','#title'=>'Generelle informationer','#weight'=>20);
+		$form['general']['title'] = $form['title'];
+		unset($form['title']);
+		$form['general']['field_category'] = $form['field_category'];
+		unset($form['field_category']);
+		$form['general']['field_keywords'] = $form['field_keywords'];
+		//$form['general']['field_keywords']['#access'] = false;
+		
+		unset($form['field_keywords']);
+		
+		$form['obs'] = array('#type'=>'fieldset','#title'=>'Information om indlæg','#weight'=>75);
+		
+		$form['obs']['name'] = $form['author']['name'];
+		unset($form['author']['name']);
+		$form['obs']['name']['#title'] = 'Indberettet af';
+		$form['obs']['name']['#weight'] = 4;
+		
+		$form['obs']['field_unit'] = $form['field_unit'];
+		unset($form['field_unit']);
+		$form['obs']['field_unit']['#weight'] = 2;
+		$form['obs']['field_unit']['und']['#title'] = 'Observeret i afdelingen';
+		
+		$form['obs']['field_description'] = $form['field_description'];
+		unset($form['field_description']);
+		$form['obs']['field_description']['#weight'] = 20;
+		$form['obs']['field_description']['und'][0]['#rows'] = 3;
+		$form['obs']['field_description']['und'][0]['#title'] = 'Beskrivelse af problemet';
+		
+		/* Add solution field */
+		$form['obs']['obs_solution'] = array();
+		$form['obs']['obs_solution']['#type'] = 'textarea';
+		$form['obs']['obs_solution']['#title'] = 'Eventuel svar';
+		$form['obs']['obs_solution']['#description'] = 'Indtast kun en tekst i dette felt, hvis der allerede findes et svar på indlægget.';
+		$form['obs']['obs_solution']['#rows'] = 3;
+		$form['obs']['obs_solution']['#weight'] = 30;
+		$form['obs']['obs_solution_approve'] = array('#type'=>'checkbox','#title'=>'Marker som løsning','#weight'=>35);
+		
+		$form['obs']['obs_solution']['#access'] = false;
+		$form['obs']['obs_solution_approve']['#access'] = false;
+		
+		
+		
+		$form['obsinfo'] = array('#type'=>'fieldset','#title'=>'Oversigtsark specifikke felter','#weight'=>80);
+		
+		$form['obsinfo']['field_responsible'] = $form['field_responsible'];
+		unset($form['field_responsible']);
+		
+		$form['obsinfo']['field_askdirect'] = $form['field_askdirect'];
+		$form['obsinfo']['field_askdirect']['#access'] = false;
+		unset($form['field_askdirect']);
+		
+		
+		$form['obsinfo']['field_sdnumber'] = $form['field_sdnumber'];
+		unset($form['field_sdnumber']);
+		
+		$form['obsinfo']['obs_addtoobs_unit'] = array('#type'=>'checkbox','#title'=>'Tilføj til den afdelingsspecifikke oversigt','#default_value'=>1,'#weight'=>80); 
+		$form['obsinfo']['obs_addtoobs_global'] = array('#type'=>'checkbox','#title'=>'Tilføj til den generelle oversigt','#weight'=>81);
+		
+		if(!user_access('view extra obssheet fields')) {
+			$form['obsinfo']['field_sdnumber']['#access'] = false;
+			$form['obsinfo']['obs_addtoobs_unit']['#access'] = false;
+			$form['obsinfo']['obs_addtoobs_global']['#access'] = false;
+			$form['obs']['name']['#access'] = false;
+		}
+		
+		
+		/* We need to set languages */
+		$form['field_keywords']['#language'] = 'und';
+		
+		$form['field_category']['#language'] = 'und';
+		$form['field_sdnumber']['#language'] = 'und';
+		$form['field_description']['#language'] = 'und';
+		$form['field_responsible']['#language'] = 'und';
+		$form['field_unit']['#language'] = 'und';
+		$form['field_askdirect']['#language'] = 'und';
+		
+		
+		if(isset($_GET['type']) && $_GET['type'] == 'unit') {
+			$form['obs']['field_unit']['und']['#default_value'][0] = (int)$_GET['unit_id'];
+		}
+		elseif(isset($_GET['type']) && $_GET['type'] == 'global') {
+			$form['obsinfo']['obs_addtoobs_unit']['#default_value'] = 0; 
+			$form['obsinfo']['obs_addtoobs_global']['#default_value'] = 1;
+		}
+		elseif(!isset($_GET['type'])) {
+			global $user;
+			$u = user_load($user->uid);
+			if(isset($u->field_unit['und'][0]['tid'])) {
+				$form['obs']['field_unit']['und']['#default_value'][0] = (int)$u->field_unit['und'][0]['tid'];
+			}
+		}
+	}
+}
+
+
+function midtlink_obssheet_observation_submit($form, &$form_state) {
+	if(!empty($form_state['values']['obs_addtoobs_unit'])) {
+			flag('flag','obssheet_unit',$form_state['values']['nid'],user_load(1));
+	}
+	if(!empty($form_state['values']['obs_addtoobs_global'])) {
+			flag('flag','obssheet_global',$form_state['values']['nid'],user_load(1));
+	}
+	
+	if(trim($form_state['values']['obs_solution']) != '') {
+		$solution = trim($form_state['values']['obs_solution']);
+		
+		global $user;
+		$comment = array();
+		$comment['is_anonymous'] = false;
+		$comment['pid'] = 0;
+		$comment['language'] = 'und';
+		$comment['cid'] = 0;
+		$comment['nid'] = $form_state['values']['nid'];
+		$comment['node_type'] = 'comment_node_post';
+		$comment['name'] = $user->name;
+		$comment['uid'] = $user->uid;
+		$comment['mail'] = '';
+		$comment['homepage'] = '';
+		$comment['comment_body']['und'][0]['value'] = $solution;
+		$comment['comment_body']['und'][0]['format'] = 'plain_text';
+		$comment['comment'] = $solution;
+		$comment = comment_submit($comment);
+		comment_save($comment);
+		if(!empty($form_state['values']['obs_solution_approve'])) {
+			flag('flag','approve_answer',$comment->cid,user_load(1));
+		}
+	}
+}
+
+function midtlink_obssheet_comment_insert($comment) {
+	flag('flag','subscribe',$comment->nid,user_load($comment->uid));
+	
+	$ul = flag_get_content_flags('node',$comment->nid,'subscribe');
+	foreach($ul as $u) {
+		if($u->uid != $comment->uid) {
+			midtlink_notification_send($u->uid,'new_answer',$comment->uid,$comment->nid);
+		}
+	}
+}
+
+
+function midtlink_obssheet_node_update($node) {
+	global $user;
+	$currentlyResponsible = array();
+	if(isset($node->original->field_responsible['und'])) {
+		foreach($node->original->field_responsible['und'] as $resp) {
+			$currentlyResponsible[$resp['target_id']] = $resp['target_id'];
+		}
+	}
+	
+	if(isset($node->field_responsible['und'])) {
+		foreach($node->field_responsible['und'] as $resp) {
+			if(empty($currentlyResponsible[$resp['target_id']])) {
+				flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
+				if($user->uid != $resp['target_id']) {
+					midtlink_notification_send($resp['target_id'],'assign_responsible',null,$node->nid);
+				}
+			}
+		}
+	}
+	
+	$currentlyAskDirect = array();
+	if(isset($node->original->field_askdirect['und'])) {
+		foreach($node->original->field_askdirect['und'] as $resp) {
+			$currentlyAskDirect[$resp['target_id']] = $resp['target_id'];
+		}
+	}
+	
+	if(isset($node->field_askdirect['und'])) {
+		foreach($node->field_askdirect['und'] as $resp) {
+			if(empty($currentlyAskDirect[$resp['target_id']])) {
+				//flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
+				if($user->uid != $resp['target_id']) {
+					midtlink_notification_send($resp['target_id'],'askdirect',null,$node->nid);
+				}
+			}
+		}
+	}
+	
+}
+
+function midtlink_obssheet_node_insert($node) {
+	global $user;
+	flag('flag','subscribe',$node->nid,user_load($node->uid));
+	if($user->uid != $node->uid) {
+		midtlink_notification_send($node->uid,'assign_observed_by',$user->uid,$node->nid);
+	}
+	if(isset($node->field_responsible['und'])) {
+		foreach($node->field_responsible['und'] as $resp) {
+			flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
+			if($user->uid != $resp['target_id']) {
+				midtlink_notification_send($resp['target_id'],'assign_responsible',null,$node->nid);
+			}
+		}
+	}
+	
+	if(isset($node->field_askdirect['und'])) {
+		foreach($node->field_askdirect['und'] as $resp) {
+			//flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
+			if($user->uid != $resp['target_id']) {
+				midtlink_notification_send($resp['target_id'],'askdirect',null,$node->nid);
+			}
+		}
+	}
+}

@@ -1,0 +1,387 @@
+<?php
+
+function midtlink_login_menu() {
+	$items['loginpage'] = array(
+		'title' => 'Log venligst ind', 
+    'page callback' => 'midtlink_login_page', 
+    'access callback' => true,
+    'type' => MENU_CALLBACK,
+	);
+	
+	$items['start'] = array(
+		'title' => 'Tak fordi du kigger forbi MidtLink', 
+    'page callback' => 'midtlink_start_page', 
+    'access callback' => true,
+    'type' => MENU_CALLBACK,
+	);
+	$items['signupcode'] = array(
+		'title' => 'Aktiver med kode',
+		'page callback' => 'midtlink_login_signupcode',
+		'access callback' => 'user_is_anonymous',
+		'type' => MENU_CALLBACK,
+	);
+	$items['signupcode/%'] = array(
+		'title' => 'Aktiver med kode',
+		'page callback' => 'midtlink_login_signupcode_activate',
+		'page arguments' => array(1),
+		'access callback' => 'user_is_anonymous',
+		'type' => MENU_CALLBACK,
+	);
+	$items['signup'] = array(
+		'title' => 'Aktiver konto',
+		'page callback' => 'midtlink_login_signup',
+		'access callback' => 'user_is_anonymous',
+		'type' => MENU_CALLBACK,
+	);
+	return $items;
+}
+
+function midtlink_login_bsk_user_exists($regid,$institutionCodes=array()) {
+	$sql = "SELECT COUNT(user_id) FROM {bsk_user_data} WHERE user_id = :userid";
+	if(sizeof($institutionCodes)>0) {
+		$sql.= " AND (institutionCode = '".implode("' OR institutionCode = '",$institutionCodes)."')";
+	}
+	
+	$r = db_query($sql,array(':userid'=>$regid))->fetchColumn(0);
+	if($r > 0) { return true; }
+	return false;
+}
+
+function midtlink_login_create_user_from_bsk($regid,$status=0) {
+	$sql = "SELECT user_id, email, position, display_name 
+		FROM {bsk_user_data} WHERE user_id = :regid";
+	$res = db_query($sql,array(':regid'=>$regid));
+	if($res->rowCount() <= 0) { return false; }
+	$r = $res->fetchObject();
+	
+	$new_user = array(
+      'name' => $r->user_id,
+      'pass' => user_password(),
+      'mail' => $r->email,
+      'init' => $r->email,
+      'field_fullname' => array(LANGUAGE_NONE => array(array('value' => $r->display_name))),
+      'field_position' => array(LANGUAGE_NONE => array(array('value' => $r->position))),
+      'status' => $status,
+      'access' => REQUEST_TIME,
+      'roles' => array(DRUPAL_AUTHENTICATED_RID => TRUE),
+		);
+	$account = user_save(null, $new_user);
+	return $account;
+}
+
+function midtlink_login_check_ldap($regid,$pwd) {
+	if(trim($pwd) == '') { return false; }
+	return true;
+
+
+	$regid = drupal_strtoupper(trim($regid));
+	$ds = ldap_connect('ldaps://LDAPSERVER/',636); // single connection
+	$ldapBind = ldap_bind($ds,'cn='.$regid.',ou=OU,o=O',$pwd);
+	if($ldapBind == false) {
+		return false;
+	}
+	return true;
+}
+
+function midtlink_login_signup() {
+		return '<div class="grid-6">
+      <h1>Vil du også være en del af MidtLink?</h1>
+			<p class="large">
+				Vi kan altid bruge flere at MidtLink\'e med 
+				på MidtLink. Indtast dit RegionsID, kodeord samt
+				en lille besked - så får du også adgang.
+			</p>
+			'.render(drupal_get_form('midtlink_signup_msg_form')).'
+    </div>';	
+}
+
+
+function midtlink_signup_msg_form() {
+	$form['regionsid'] = array('#type'=>'textfield','#title'=>'RegionsID','#description'=>'Indtast dit RegionsID - f.eks. ABCDEFH');
+	$form['password'] = array('#type'=>'password','#title'=>'Regionskodeord','#description'=>'Indtast dit kodeord');
+	$form['message'] = array('#type'=>'textarea','#title'=>'Fortæl os, hvor du hørte om MidtLink','#description'=>'Fortæl kort om hvor du har hørt om MidtLink','#rows'=>3,'#cols'=>30);
+	$form['submit'] = array('#type'=>'submit','#value'=>'Log ind og bliv en del af MidtLink'); 
+	$form['termlink']['#markup'] = '<div class="signupterms"><small>Når du bliver en del af MidtLink accepterer du samtidig <a href="'.url('betingelser').'" target="_blank">brugerbetingelserne for midtlink</a></small></div>';		
+	return $form;
+}
+
+function midtlink_signup_msg_form_validate($form, &$form_state) {
+	$sql = "SELECT uid, status FROM {users} WHERE name = :name";
+  $c = db_query($sql,array(':name'=>$form_state['values']['regionsid']));
+  if($c->rowCount() <= 0) {
+		if(midtlink_login_bsk_user_exists($form_state['values']['regionsid'])) {
+			midtlink_login_create_user_from_bsk($form_state['values']['regionsid']);
+		}
+		else {
+			form_set_error('regionsid', t('Det indtastede RegionsID eksisterer ikke!'));
+		}
+  }
+  else {
+		$r = $c->fetchObject();
+		if($r->status == 1) {
+			form_set_error('regionsid', t('Brugeren er allerede aktiveret. '.l('Log ind her.','')));
+		}
+	}
+	if(!midtlink_login_check_ldap($form_state['values']['regionsid'],$form_state['values']['password'])) {
+		form_set_error('password', t('Det indtastede kodeord ser ikke ud til at være gyldigt. <strong>Bemærk</strong> Region Midtjyllands passwordpolitik tillader ikke brug af specialtegn, da det kan påvirke funktionalitet i Digital Signature. Hvis du har et eller flere specialtegn (fx æ, ø, å, ?, /), skal du skift dit password på Min Profil. Vi glæder os til at se dig igen.'));
+	}
+}
+
+function midtlink_signup_msg_form_submit($form, &$form_state) {
+	$sql = "SELECT uid FROM {users} WHERE name = :name";
+  $c = db_query($sql,array(':name'=>$form_state['values']['regionsid']));
+  $uid = $c->fetchColumn(0);
+  
+  $sql = "UPDATE {users} SET status = 1 WHERE uid = :uid";
+  db_query($sql,array(':uid'=>$uid));
+  
+  $sql = "INSERT INTO {signupmsg} (uid,message,signup) VALUES (:uid,:msg,:time)";
+  db_query($sql,array(':uid'=>$uid,':msg'=>$form_state['values']['message'],':time'=>time()));
+  
+  $fs['uid'] = $uid;
+ 
+  user_login_submit(array(), $fs);
+  drupal_set_message('Dit login på MidtLink er nu aktiveret. Du kan fremover logge ind med dit RegionsID og kodeord.');
+
+  $form_state['redirect'] = 'node';
+
+}
+
+function midtlink_login_signupcode_activate($code) {
+	if(!midtlink_is_valid_signup($code)) {
+		return '<p>Koden er ugyldig eller allerede benyttet</p>';	
+	}
+	return '<div class="grid-6">
+      <h1>Så er du snart klar til at MidtLink\'e</h1>
+			<p class="large">
+				Før vi kan færdiggøre din registering skal du 
+				indtaste dit RegionsID og kodeord herunder.
+			</p>
+			'.render(drupal_get_form('midtlink_signup_finish_form')).'
+    </div>';	
+}
+
+function midtlink_login_signupcode() {
+		return '<div class="grid-6">
+      <h1>Du er på vej til at blive en del af MidtLink</h1>
+			<p class="large">
+				Du er en af de heldige der har modtaget en indgangskode til MidtLink fra
+				din kollega.
+			</p>
+			<p class="large">
+				For at du kan få endelig adgang skal du indtaste din indgangskode herunder.
+			</p>
+			'.render(drupal_get_form('midtlink_signup_form')).'
+			<p>
+				Har du ikke fået en invitationskode? <a href="'.url('signup').'">Tilmeld uden invitationskode</a>
+			</p>
+    </div>';	
+}
+
+function midtlink_signup_form() {
+	$form['accesscode'] = array('#type'=>'textfield','#title'=>'Invitationskode',
+		'#description'=>'Indtast koden der står på kortet du har fået af din kollega - f.eks. ABCDE.<br /><strong>Husk at der kan være forskel på 1, I og L - prøv dig frem hvis koden ikke er gyldig.</strong>');
+	$form['submit'] = array('#type'=>'submit','#value'=>'Lav mig blive en del af MidtLink'); 
+	return $form;
+}
+
+function midtlink_signup_form_validate($form, &$form_state) {
+	if(!midtlink_is_valid_signup($form_state['values']['accesscode'])) {
+		form_set_error('accesscode', t('Den indtastede invitationskode er ikke gyldig'));
+	}
+}
+
+function midtlink_signup_form_submit($form, &$form_state) {
+	$form_state['redirect'] = 'signupcode/'.drupal_strtoupper($form_state['values']['accesscode']);
+}
+
+function midtlink_signup_finish_form() {
+	$form['accesscode'] = array('#type'=>'hidden','#value'=>arg(1));
+	$form['regionsid'] = array('#type'=>'textfield','#title'=>'RegionsID','#description'=>'Indtast dit RegionsID - f.eks. ABCDEFH');
+	$form['password'] = array('#type'=>'password','#title'=>'Regionskodeord','#description'=>'Indtast dit kodeord');
+	$form['submit'] = array('#type'=>'submit','#value'=>'Log ind og bliv en del af MidtLink'); 
+	$form['termlink']['#markup'] = '<div class="signupterms"><small>Når du bliver en del af MidtLink accepterer du samtidig <a href="'.url('betingelser').'" target="_blank">brugerbetingelserne for midtlink</a></small></div>';		
+	return $form;
+}
+
+function midtlink_signup_finish_form_validate($form, &$form_state) {
+	if(!midtlink_is_valid_signup($form_state['values']['accesscode'])) {
+		form_set_error('accesscode', t('Den indtastede indgangskode er ikke gyldig'));
+	}
+	
+	$sql = "SELECT uid, status FROM {users} WHERE name = :name";
+  $c = db_query($sql,array(':name'=>$form_state['values']['regionsid']));
+  if($c->rowCount() <= 0) {
+		if(midtlink_login_bsk_user_exists($form_state['values']['regionsid'])) {
+			midtlink_login_create_user_from_bsk($form_state['values']['regionsid']);
+		}
+		else {
+			form_set_error('regionsid', t('Det indtastede RegionsID eksisterer ikke!'));
+		}
+  }
+  else {		
+		$r = $c->fetchObject();
+		if($r->status == 1) {
+			form_set_error('regionsid', t('Brugeren er allerede aktiveret. '.l('Log ind her.','')));
+		}
+	}
+	
+	if(!midtlink_login_check_ldap($form_state['values']['regionsid'],$form_state['values']['password'])) {
+		form_set_error('password', t('Det indtastede kodeord ser ikke ud til at være gyldigt. <strong>Bemærk</strong> Region Midtjyllands passwordpolitik tillader ikke brug af specialtegn, da det kan påvirke funktionalitet i Digital Signature. Hvis du har et eller flere specialtegn (fx æ, ø, å, ?, /), skal du skift dit password på Min Profil. Vi glæder os til at se dig igen.'));
+	}
+}
+
+function midtlink_signup_finish_form_submit($form, &$form_state) {
+	$sql = "SELECT uid FROM {users} WHERE name = :name";
+  $c = db_query($sql,array(':name'=>$form_state['values']['regionsid']));
+  $uid = $c->fetchColumn(0);
+  
+  $sql = "UPDATE {users} SET status = 1 WHERE uid = :uid";
+  db_query($sql,array(':uid'=>$uid));
+  
+  $sql = "UPDATE {accesscodes} SET used = 1, used_by = :uid, used_time = :time WHERE code = :code";
+  db_query($sql,array(':uid'=>$uid,':time'=>time(),':code'=>$form_state['values']['accesscode']));
+  
+  $fs['uid'] = $uid;
+  
+  user_login_submit(array(), $fs);
+  drupal_set_message('Dit login på MidtLink er nu aktiveret. Du kan fremover logge ind med dit RegionsID og kodeord.');
+  
+  $form_state['redirect'] = 'node';
+  
+}
+
+
+function midtlink_is_valid_signup($code) {
+	/* check if user already is logged in */
+	if(!user_is_anonymous()) { return false; }
+	
+	$sql = "SELECT used FROM {accesscodes} WHERE code = :code";
+	$res = db_query($sql,array(':code'=>$code));
+	if($res->rowCount() <= 0) {
+		/* signupcode do not exist */
+		return false;
+	}
+	if($res->fetchColumn(0) != 0) {
+		/* signupcode is already used */
+		return false;
+	}
+	return true;
+}
+
+function midtlink_start_page() {
+		drupal_goto('signupcode');
+		return '<div class="grid-6">
+      <h1>Tak fordi du kigger forbi MidtLink.</h1>
+      <p class="large">
+				MidtLink åbner for alle brugere <strong>mandag d. 4. juni 2012.</strong>
+			</p>
+			<p class="large">
+				Hvis du har spørgsmål, er du velkommen hos Lina Gotfredsen i Sundheds-It
+			</p>
+			<p class="large">
+				Vi glæder os til at MidtLink’e med dig. 
+			</p>
+			<p class="large">
+				Se videoen om MidtLink her: <a href="http://vimeo.com/37723218">http://vimeo.com/37723218</a>
+				<br />
+				Læs mere på MidtLink bloggen: <a href="http://blog.midtlink.dk">http://blog.midtlink.dk</a>
+      </p>
+    </div>';
+}
+
+function midtlink_login_page() {
+	return '<div class="grid-6">
+      <h1>Sammen bli\'r vi bedre</h1>
+      <p class="large">MidtLink er din genvej til hurtige svar p&aring; dine EPJ-sp&oslash;rgsm&aring;l. F&aring; hj&aelig;lp og sparring fra dine kollegaer her og nu, og giv tilbage af din egen viden n&aring;r du kan.</p>
+      '.render(drupal_get_form('midtlink_login_form')).'
+      <p>Alle ansatte på AUH og HEH er automatisk oprettede i MidtLink. Hvis du har problemer med at logge ind, er du velkommen til at kontakte <a href="mailto:AUHKAS@rm.dk">auhkas@rm.dk</a>.</p>
+			<p class="large"><br />Læs om MidtLink og se en video på <a href="http://blog.midtlink.dk" target="_blank">blog.midtlink.dk</a></p>
+      
+    </div>';
+}
+
+function midtlink_login_form() {
+	$form['regionsid'] = array('#type'=>'textfield','#title'=>'RegionsID','#description'=>'Indtast dit RegionsID - f.eks. ABCDEFH');
+	$form['password'] = array('#type'=>'password','#title'=>'Regionskodeord','#description'=>'Indtast dit kodeord');
+	$form['submit'] = array('#type'=>'submit','#value'=>'Log ind'); 
+	return $form;
+}
+
+function midtlink_login_form_validate($form, &$form_state) {
+  $sql = "SELECT uid FROM {users} WHERE name = :name AND status = 1";
+  $c = db_query($sql,array(':name'=>$form_state['values']['regionsid']));
+  if($c->rowCount() <= 0) {
+		if(midtlink_login_bsk_user_exists($form_state['values']['regionsid'],array('sgh6006','sghAAUH'))) {
+			midtlink_login_create_user_from_bsk($form_state['values']['regionsid']);
+		}
+		else {
+			form_set_error('regionsid', t('Det indtastede RegionsID eksisterer ikke!'));
+		}
+  }
+	
+	if(trim($form_state['values']['password']) == '') {
+		form_set_error('password',t('Du skal indtaste dit regions kodeord'));	
+	}
+	
+	$regionsID = $form_state['values']['regionsid'];
+	if(!midtlink_login_check_ldap($regionsID,$form_state['values']['password'])) {
+		form_set_error('password',t('Det indtastede kodeord ser ikke ud til at være gyldigt. <strong>Bemærk</strong> Region Midtjyllands passwordpolitik tillader ikke brug af specialtegn, da det kan påvirke funktionalitet i Digital Signature. Hvis du har et eller flere specialtegn (fx æ, ø, å, ?, /), skal du skift dit password på Min Profil. Vi glæder os til at se dig igen.'));
+	}
+	
+}
+
+function midtlink_login_form_submit($form,&$fs) {
+	$sql = "SELECT uid FROM {users} WHERE name = :name AND status = 1 LIMIT 1";
+  $uid = db_query($sql,array(':name'=>$fs['values']['regionsid']))->fetchColumn();
+  $form_state['uid'] = $uid;
+  
+  user_login_submit(array(), $form_state);
+}
+
+function midtlink_login_choose_unit_form() {
+	$form['unit'] = array('#type'=>'select','#title'=>'');
+	$units = taxonomy_get_tree(4);
+	
+	$unitList[''] = '- Vælg venligst -';
+	foreach($units as $u) {
+		if($u->depth == 0) {
+			$unitList[$u->name] = array();
+			$unitDeps[$u->tid] = $u->name;
+		}
+		else {
+			$unitList[$unitDeps[$u->parents[0]]][$u->tid] = $u->name; 
+		}
+	}
+	$form['unit']['#options'] = $unitList;
+	
+	$form['submit'] = array('#type'=>'submit','#value'=>'Gem afdeling');
+	return $form;
+}
+
+function midtlink_login_choose_unit_form_submit($form_id,&$form_state) {
+	global $user;
+	$u = user_load($user->uid);
+	$u->field_unit['und'][0]['tid'] = $form_state['values']['unit'];
+	user_save($u);
+}
+
+
+function midtlink_login_choose_unit() {
+	global $user;
+	if($user->uid <= 0) { return ''; }
+	$o = '';
+	if($user->mainUnitTID == '' || $user->mainUnitTID == 0 || $user->unitTID == '' || $user->unitTID == 0) {
+		
+		$o.= '<div class="modal-window" id="modal">';
+		$o.= '<h1>Vælg din afdeling</h1>';
+		$o.= '<p class="large">For at kunne give dig rigtige oversigter bliver vi nødt ';
+		$o.= 'til at vide hvilken afdeling du er tilknyttet.</p>';
+		$o.= '<p class="large">Vælg din afdeling i herunder og tryk "Gem afdeling"</p>';
+		$o.= render(drupal_get_form('midtlink_login_choose_unit_form'));
+		$o.= '</div>';
+	}
+	
+	
+	return $o;
+}

@@ -1,0 +1,306 @@
+.region-content #search-form label {
+	display:none;
+}
+.region-content #search-form input.form-text {
+	width:485px;
+}
+
+
+.node-post-form .form-actions {
+	padding-top:0;
+}
+
+.termlink {
+	color: #B1B1B1;
+	font-size: 11px;
+	margin-top: 5px;
+	display: block;
+}
+.termlink a { color: #B1B1B1; }
+
+.miniteaser h2 {
+	margin: 0;
+	font-size: 14px;
+}
+
+
+
+#edit-mimemail { display:none; }
+
+#liveresult { display:none; }
+#liveresult a {
+	font-size:14px;
+	font-weight:bold;
+}
+#liveresult small {
+	display:block;
+	line-height:14px;
+	color:#888;
+}
+#liveresult small strong { color:#888; }
+
+
+.row .row { min-width: 0; }
+
+.column, .columns { margin-left: 4.4%; float: left; min-height: 1px; position: relative; }
+.column:first-child, .columns:first-child { margin-left: 0; }
+
+.row .one.columns 		{ width: 4.3%; }
+.row .two.columns 		{ width: 13%; }
+.row .three.columns 	{ width: 21.68%; }
+.row .four.columns 		{ width: 30.37%; }
+.row .five.columns 		{ width: 39.1%; }
+.row .six.columns 		{ width: 47.8%; }
+.row .seven.columns 	{ width: 56.5%; }
+.row .eight.columns 	{ width: 65.2%; }
+.row .nine.columns 		{ width: 73.9%; }
+.row .ten.columns 		{ width: 82.6%; }
+.row .eleven.columns 	{ width: 91.3%; }
+.row .twelve.columns 	{ width: 100%; }
+
+.row .offset-by-one 	{ margin-left: 13.1%;  }
+.row .offset-by-two 	{ margin-left: 21.8%;  }
+.row .offset-by-three 	{ margin-left: 30.5%;  }
+.row .offset-by-four 	{ margin-left: 39.2%;  }
+.row .offset-by-five 	{ margin-left: 47.9%;  }
+.row .offset-by-six 	{ margin-left: 56.6%;  }
+.row .offset-by-seven 	{ margin-left: 65.3%;  }
+.row .offset-by-eight 	{ margin-left: 74.0%;  }
+.row .offset-by-nine 	{ margin-left: 82.7%;  }
+.row .offset-by-ten 	{ margin-left: 91.4%;  }
+
+.row .centered { float: none; margin: 0 auto; }
+
+.row .offset-by-one:first-child 	{ margin-left: 8.7%;  }
+.row .offset-by-two:first-child 	{ margin-left: 17.4%;  }
+.row .offset-by-three:first-child 	{ margin-left: 26.1%;  }
+.row .offset-by-four:first-child 	{ margin-left: 34.8%;  }
+.row .offset-by-five:first-child 	{ margin-left: 43.5%;  }
+.row .offset-by-six:first-child 	{ margin-left: 52.2%;  }
+.row .offset-by-seven:first-child 	{ margin-left: 60.9%;  }
+.row .offset-by-eight:first-child 	{ margin-left: 69.6%;  }
+.row .offset-by-nine:first-child 	{ margin-left: 78.3%;  }
+.row .offset-by-ten:first-child 	{ margin-left: 87%;  }
+.row .offset-by-eleven:first-child 	{ margin-left: 95.7%;  }
+
+/* Source Ordering */
+.push-two 		{ left: 17.4% }
+.push-three 	{ left: 26.1%; }
+.push-four 		{ left: 34.8%; }
+.push-five 		{ left: 43.5%; }
+.push-six 		{ left: 52.2%; }
+.push-seven 	{ left: 60.9%; }
+.push-eight 	{ left: 69.6%; }
+.push-nine 		{ left: 78.3%; }
+.push-ten 		{ left: 87%; }
+
+.pull-two 		{ right: 17.4% }
+.pull-three 	{ right: 26.1%; }
+.pull-four 		{ right: 34.8%; }
+.pull-five 		{ right: 43.5%; }
+.pull-six 		{ right: 52.2%; }
+.pull-seven 	{ right: 60.9%; }
+.pull-eight 	{ right: 69.6%; }
+.pull-nine 		{ right: 78.3%; }
+.pull-ten 		{ right: 87%; }
+
+img, object, embed { max-width: 100%; height: auto; }
+img { -ms-interpolation-mode: bicubic; }
+
+.row:before, .row:after{ content:""; display:table; }
+.row:after{ clear: both; }
+.row{ zoom: 1; }
+
+/*	--------------------------------------------------
+:: Block grids
+
+These are 2-up, 3-up, 4-up and 5-up ULs, suited
+for repeating blocks of content. Add 'mobile' to
+them to switch them just like the layout grid
+(one item per line) on phones
+
+For IE7/8 compatibility block-grid items need to be
+the same height. You can optionally uncomment the
+lines below to support arbitrary height, but know
+that IE7/8 do not support :nth-child.
+-------------------------------------------------- */
+
+.block-grid { display: block; overflow: hidden; }
+.block-grid>li { display: block; height: auto; float: left; }
+
+.block-grid.two-up { margin-left: -4% }
+.block-grid.two-up>li { margin-left: 4%; width: 46%; }
+/* 	.block-grid.two-up>li:nth-child(2n+1) {clear: left;} */
+
+.block-grid.three-up { margin-left: -2% }
+.block-grid.three-up>li { margin-left: 2%; width: 31.3%; }
+/* 	.block-grid.three-up>li:nth-child(3n+1) {clear: left;} */
+
+.block-grid.four-up { margin-left: -2% }
+.block-grid.four-up>li { margin-left: 2%; width: 23%; }
+/* 	.block-grid.four-up>li:nth-child(4n+1) {clear: left;} */
+
+.block-grid.five-up { margin-left: -1.5% }
+.block-grid.five-up>li { margin-left: 1.5%; width: 18.5%; }
+/* 	.block-grid.five-up>li:nth-child(5n+1) {clear: left;} */
+
+
+#add-post, #search-form {
+  background:#f8f8f8;
+  border:1px solid #eee;
+  padding:20px 26px 10px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+
+#add-post .description {
+  font-size:16px;
+  line-height:23px;
+}
+
+#add-post form {
+  margin-top:20px;
+}
+#search-form form { 
+	padding-top:20px;
+}
+
+#add-post input[type="text"], #search-form input[type="text"]{
+  width:400px;
+  font-size:17px;
+  background:#fff;
+}
+
+#add-post input[type="submit"], #search-form input[type="submit"] {
+  font-size:17px;
+}
+
+#introduction {
+  background:url(images/auh_process.png) 0 20px no-repeat;
+  padding-top:220px;
+}
+
+#introduction h2 {display:none}
+
+#introduction .step {
+  text-align:center;
+}
+
+.list-item .picture-container, #comments .picture-container {
+	width:40px;
+	float:left;
+}
+.list-item .picture-container .user-picture, #comments .picture-container .user-picture  {
+	float:none;
+}
+
+
+.node-post .picture-container {
+	width:80px;
+	float:left;
+}
+.node-post .picture-container .user-picture {
+	float:none;
+}
+.picture-container .unitinfo {
+	text-align:center;
+	margin-top:5px;
+}
+.picture-container .unitinfo big {
+	display: block;
+	font-size: 28px;
+	font-weight: bold;
+	background-color: #D5E4F4;
+	text-align: center;
+	padding: 3px 0;
+}
+.list-item .picture-container .unitinfo big, #comments .picture-container .unitinfo big {
+	font-size:15px;
+}
+
+.meta.small strong {
+	background-color:#4D7DAC;
+	color:#fff;
+	padding:0 3px;
+}
+
+.comment-delete, .comment-reply { display:none !important; }
+
+.flag-archive-comment a {
+	margin-right:10px;
+}
+
+.approvedanswer {
+	background-color:#e3fdd9;
+}
+.approvedanswer h3 {
+	padding:0;
+	margin:0;
+	padding:5px 0;
+}
+
+.comment .comment-wrapper.solved {
+	background-color:#E3FDD9;
+}
+.comment .comment-wrapper.archived .field-name-comment-body {
+	color:#ccc;
+}
+
+#obsark .unsolved td.status {
+ /* background-image:url(images/obs_status_unsolved.png);*/
+}
+
+#midtlink-login-form .form-text { width:400px; }
+
+.box-light.filters-wrapper { padding-bottom:0 !important; }
+
+.restOfEntry { display:none; }
+
+.filter-wrapper { display:none; }
+
+.form-item-field-category-und:after, .form-item-field-category-und:before {
+  content: '\0020';
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+.form-item-field-category-und:after {
+	clear: both;
+}	
+
+	.form-item-field-category-und .form-type-checkbox {
+		width:180px;
+		float:left;
+	}
+
+
+a.flag {
+  background:url(images/icons.png) no-repeat 0 -362px;
+  padding-left:16px;
+}
+
+a.flag.unflag-action {
+  background-position:0 -403px;
+  color:#3270CC;
+}
+
+.flag-same-question a.flag,
+.flag-answer-helped a.flag {
+  background:url(images/icons.png) no-repeat 0 -540px;
+  padding-left:20px;
+}
+
+.flag-same-question a.flag.unflag-action, 
+.flag-answer-helped a.flag.unflag-action {
+  background-position:0 -595px;
+  color:#25B94A;
+}
+
+.comment .flag {
+	float:right;
+} 
+
+.flag-approve-answer a { margin-right:10px; }

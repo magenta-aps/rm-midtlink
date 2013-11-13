@@ -1,0 +1,75 @@
+/**
+ * Filename: helpers.css
+ *
+ * Generic helper classes.
+ */
+
+/*----------------------------------------------------------------------
+  Image replacement
+----------------------------------------------------------------------*/
+.image-replacement {
+  display: block;
+  border: 0;
+  text-indent: -999em;
+  overflow: hidden;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  text-align: left;
+  direction: ltr; 
+  *line-height: 0; }
+
+.image-replacement br { display: none; }
+
+/*----------------------------------------------------------------------
+  Clearfix and clear - Layout helpers
+----------------------------------------------------------------------*/
+.clearfix:before,
+.clearfix:after {
+  content: '\0020';
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.clearfix {
+  zoom: 1;
+}
+
+.clear {
+  clear: both;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+}
+
+
+/*----------------------------------------------------------------------
+  Misc
+----------------------------------------------------------------------*/
+
+/* Resets lists */
+ul.reset,
+ol.reset,
+ul.reset li,
+ol.reset li{
+  padding:0;
+  margin:0;
+  list-style-type:none;
+}
+
+/* Large text */
+.large {
+  font-size:17px;
+  line-height:23px;
+  color:#666;
+}
+
+/* EOF */

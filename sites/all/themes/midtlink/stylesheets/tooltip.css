@@ -1,0 +1,61 @@
+/**
+ * Filename: tooltip.css
+ *
+ * Styling of tooltips.
+ * Based on the Tipsy jQuery plugin.
+ * http://onehackoranother.com/projects/jquery/tipsy/
+ */
+
+.tipsy,
+.tooltip-super > span { font-size: 11px; line-height:1.35; position: absolute; padding: 5px; z-index: 100000; font-family:arial, sans-serif;}
+
+.tipsy-inner,
+.tooltip-super > span { background-color: #000; color: #FFF; max-width: 160px; padding: 10px 14px 12px; text-align: center; }
+
+/* Rounded corners */
+.tipsy-inner,
+.tooltip-super > span { border-radius: 2px; -moz-border-radius: 2px; -webkit-border-radius: 2px; }
+  
+/* Uncomment for shadow */
+/*.tipsy-inner { box-shadow: 0 0 5px #000000; -webkit-box-shadow: 0 0 5px #000000; -moz-box-shadow: 0 0 5px #000000; }*/
+  
+.tipsy-arrow { position: absolute; width: 0; height: 0; line-height: 0; border: 5px dashed #000; }
+  
+/* Rules to colour arrows */
+.tipsy-arrow-n { border-bottom-color: #000; }
+.tipsy-arrow-s { border-top-color: #000; }
+.tipsy-arrow-e { border-left-color: #000; }
+.tipsy-arrow-w { border-right-color: #000; }
+
+.tipsy-n .tipsy-arrow { top: 0px; left: 50%; margin-left: -5px; border-bottom-style: solid; border-top: none; border-left-color: transparent; border-right-color: transparent; }
+.tipsy-nw .tipsy-arrow { top: 0; left: 10px; border-bottom-style: solid; border-top: none; border-left-color: transparent; border-right-color: transparent;}
+.tipsy-ne .tipsy-arrow { top: 0; right: 10px; border-bottom-style: solid; border-top: none;  border-left-color: transparent; border-right-color: transparent;}
+.tipsy-s .tipsy-arrow { bottom: 0; left: 50%; margin-left: -5px; border-top-style: solid; border-bottom: none;  border-left-color: transparent; border-right-color: transparent; }
+.tipsy-sw .tipsy-arrow { bottom: 0; left: 10px; border-top-style: solid; border-bottom: none;  border-left-color: transparent; border-right-color: transparent; }
+.tipsy-se .tipsy-arrow { bottom: 0; right: 10px; border-top-style: solid; border-bottom: none; border-left-color: transparent; border-right-color: transparent; }
+.tipsy-e .tipsy-arrow { right: 0; top: 50%; margin-top: -5px; border-left-style: solid; border-right: none; border-top-color: transparent; border-bottom-color: transparent; }
+.tipsy-w .tipsy-arrow { left: 0; top: 50%; margin-top: -5px; border-right-style: solid; border-left: none; border-top-color: transparent; border-bottom-color: transparent; }
+
+
+/* Super Tooltip.
+ * CSS based tooltip with the same styling as tipsy.
+ * Allows for html content in the tooltip.
+ */
+.tooltip-super { position:relative;}
+.tooltip-super > span { position:absolute; top:-87px; left:0; z-index:8000; min-width:130px; max-width:130px; display:none; background:rgba(0, 0, 0, .8); }
+.tooltip-super:hover { padding-top:10px; margin-top:-10px;}
+.tooltip-super:hover > span { display:block; min-height:67px;}
+.tooltip-super input.form-submit { margin:6px 0 0; }
+
+/* Arrow */
+.tooltip-super > span:after {
+  content:"\25BE";
+  color:rgba(0, 0, 0, .8);
+  font-size:24px;
+  line-height:24px;
+  position:absolute;
+  bottom:-14px;
+  left:4px;
+}
+
+/* EOF */

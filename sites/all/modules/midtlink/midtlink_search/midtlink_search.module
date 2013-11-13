@@ -1,0 +1,40 @@
+<?php
+
+function midtlink_search_init() {
+	drupal_add_js(drupal_get_path('module', 'midtlink_search') .'/midtlink_search.js');
+}
+
+
+function midtlink_search_menu() {
+	$items['midtlink_suggest_entries'] = array(
+    'page callback' => 'midtlink_search_suggest_entries',
+    'access callback' => 'user_access',
+    'access arguments' => array('search content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+function midtlink_search_suggest_entries() {
+	$res = array('num'=>0,'results'=>array());
+	
+	if(trim($_GET['keys']) == '' || strlen(trim($_GET['keys'])) < 3) { 
+		$res['error'] = 'Key too short or no key';
+		drupal_json_output($res); exit;
+	} 
+	
+	$searchConditions = apachesolr_search_conditions();
+	$results = apachesolr_search_search_results($_GET['keys'],$searchConditions);
+
+	if(sizeof($results) > 0) {
+		$c = 0;
+		foreach($results as $r) {
+			$res['results'][] = array('link'=>$r['link'],'title'=>$r['title'],'snippet'=>trim($r['snippet']));
+			$c++;
+			if($c>=5) { break; }
+		}
+		$res['num'] = $c;
+	}
+	drupal_json_output($res);
+	exit; 
+}

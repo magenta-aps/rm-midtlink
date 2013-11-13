@@ -1,0 +1,4 @@
+name = MidtLink Utils
+description = Helper functions for MidtLink
+package = MidtLink
+core=7.x

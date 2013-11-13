@@ -1,0 +1,146 @@
+/**
+ * Filename: grid.css
+ *
+ * 12 column grid system inspired by 960.gs - http://960.gs
+ * Gutters are 30px.
+ * Columns are 53px.
+ * Total page width is 996px;
+ */
+  
+
+/*----------------------------------------------------------------------
+  Containers
+----------------------------------------------------------------------*/
+.container{
+  margin-left:auto;
+  margin-right:auto;
+  width:996px;
+  position:relative;
+  z-index:1000;
+}
+
+
+/*----------------------------------------------------------------------
+  Grid
+----------------------------------------------------------------------*/
+.grid-1, 
+.grid-2, 
+.grid-3, 
+.grid-4, 
+.grid-5, 
+.grid-6, 
+.grid-7, 
+.grid-8, 
+.grid-9, 
+.grid-10, 
+.grid-11, 
+.grid-12{
+  display:inline;
+  float:left;
+  position:relative;
+  margin-left:15px;
+  margin-right:15px;
+}
+
+.push-1, .pull-1, 
+.push-2, .pull-2, 
+.push-3, .pull-3, 
+.push-4, .pull-4, 
+.push-5, .pull-5, 
+.push-6, .pull-6, 
+.push-7, .pull-7, 
+.push-8, .pull-8, 
+.push-9, .pull-9, 
+.push-10, .pull-10, 
+.push-11, .pull-11, 
+.push-12, .pull-12{position:relative}
+
+
+/*----------------------------------------------------------------------
+  Children (Alpha = First, Omega = Last)
+----------------------------------------------------------------------*/
+.alpha{margin-left:0}
+.omega{margin-right:0}
+
+
+/*----------------------------------------------------------------------
+  Columns
+----------------------------------------------------------------------*/
+.container .grid-1{width:53px}
+.container .grid-2{width:136px}
+.container .grid-3{width:219px}
+.container .grid-4{width:302px}
+.container .grid-5{width:385px}
+.container .grid-6{width:468px}
+.container .grid-7{width:551px}
+.container .grid-8{width:634px}
+.container .grid-9{width:717px}
+.container .grid-10{width:800px}
+.container .grid-11{width:883px}
+.container .grid-12{width:966px}
+
+
+/*----------------------------------------------------------------------
+  Prefix extra space
+----------------------------------------------------------------------*/
+.container .prefix-1{padding-left:83px}
+.container .prefix-2{padding-left:166px}
+.container .prefix-3{padding-left:249px}
+.container .prefix-4{padding-left:332px}
+.container .prefix-5{padding-left:415px}
+.container .prefix-6{padding-left:498px}
+.container .prefix-7{padding-left:581px}
+.container .prefix-8{padding-left:664px}
+.container .prefix-9{padding-left:747px}
+.container .prefix-10{padding-left:830px}
+.container .prefix-11{padding-left:913px}
+
+
+/*----------------------------------------------------------------------
+  Suffix extra space
+----------------------------------------------------------------------*/
+.container .suffix-1{padding-right:83px}
+.container .suffix-2{padding-right:166px}
+.container .suffix-3{padding-right:249px}
+.container .suffix-4{padding-right:332px}
+.container .suffix-5{padding-right:415px}
+.container .suffix-6{padding-right:498px}
+.container .suffix-7{padding-right:581px}
+.container .suffix-8{padding-right:664px}
+.container .suffix-9{padding-right:747px}
+.container .suffix-10{padding-right:830px}
+.container .suffix-11{padding-right:913px}
+
+
+/*----------------------------------------------------------------------
+  Push space
+----------------------------------------------------------------------*/
+.container .push-1{left:83px}
+.container .push-2{left:166px}
+.container .push-3{left:249px}
+.container .push-4{left:332px}
+.container .push-5{left:415px}
+.container .push-6{left:498px}
+.container .push-7{left:581px}
+.container .push-8{left:664px}
+.container .push-9{left:747px}
+.container .push-10{left:830px}
+.container .push-11{left:913px}
+
+
+/*----------------------------------------------------------------------
+  Pull space
+----------------------------------------------------------------------*/
+.container .pull-1{left:-83px}
+.container .pull-2{left:-166px}
+.container .pull-3{left:-249px}
+.container .pull-4{left:-332px}
+.container .pull-5{left:-415px}
+.container .pull-6{left:-498px}
+.container .pull-7{left:-581px}
+.container .pull-8{left:-664px}
+.container .pull-9{left:-747px}
+.container .pull-10{left:-830px}
+.container .pull-11{left:-913px}
+
+/* EOF */

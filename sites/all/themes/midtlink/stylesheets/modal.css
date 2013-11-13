@@ -1,0 +1,92 @@
+/**
+ * Filename: modal.css
+ *
+ * Styling of modal overlays.
+ * Based on the jqModal jQuery plugin.
+ * http://dev.iceburg.net/jquery/jqModal/
+ */
+
+.modal-window {
+  font-family:arial, sans-serif;
+  font-size:13px;
+  display:none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 5050;
+  width: 560px;
+  margin: -250px 0 0 -280px;
+  overflow: auto;
+  background-color: #fff;
+  padding:16px 20px 20px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box;
+}
+
+/* Close */
+.modal-window a.jqmClose {
+  text-decoration:none;
+  color:#777;
+  font-weight:bold;
+  font-size:22px;
+  cursor:pointer;
+  position:absolute;
+  top:7px;
+  right:7px;
+  padding:0 5px;
+  line-height:22px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background:#EBF2FA;
+  color:#5895D1;
+  text-shadow:0 1px 0 rgba(255, 255, 255, .7);
+-moz-box-shadow:0 1px 0 #C9DDF1;
+  -webkit-box-shadow:0 1px 0 #C9DDF1;
+  box-shadow:0 1px 0 #C9DDF1;
+}
+
+.modal-window a.jqmClose:hover{
+  -moz-box-shadow:0 1px 0 #B7D1EC;
+  -webkit-box-shadow:0 1px 0 #B7D1EC;
+  box-shadow:0 1px 1px #9CC0E4;
+  color:#3377B9;
+}
+
+/* Header */
+.modal-window .header {
+  border-bottom:1px solid #D6E4F3;
+  margin:-6px -20px 14px;
+  padding:0 20px 9px;
+}
+
+.modal-window .header h3{
+  margin:0;
+  color:#666;
+}
+
+.jqmOverlay { background-color: #000; }
+
+/* Background iframe styling for IE6. Prevents ActiveX bleed-through (<select> form elements, etc.) */
+* iframe.jqm {position:absolute;top:0;left:0;z-index:-1;
+  width: expression(this.parentNode.offsetWidth+'px');
+  height: expression(this.parentNode.offsetHeight+'px');
+}
+
+/* Fixed posistioning emulation for IE6
+     Star selector used to hide definition from browsers other than IE6
+     For valid CSS, use a conditional include instead */
+* html .jqmWindow {
+     position: absolute;
+     top: expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(17 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');
+}
+
+
+/* EOF */

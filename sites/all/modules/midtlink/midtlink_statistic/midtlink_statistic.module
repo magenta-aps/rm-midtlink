@@ -1,0 +1,116 @@
+<?php
+
+function midtlink_statistic_init() {
+	global $user;
+	
+	if(!empty($user->uid)) {
+		$sql = "SELECT COUNT(uid) FROM midtlink_stat_logins WHERE uid = :uid AND login_date = :date";
+		$res = db_query($sql,array(':uid'=>$user->uid,':date'=>date('Y-m-d')));
+		if($res->fetchColumn(0) == 0) {
+			$sql = "INSERT INTO midtlink_stat_logins (uid,login_date) VALUES (:uid,:date)";
+			db_query($sql,array(':uid'=>$user->uid,':date'=>date('Y-m-d')));
+		}
+	}
+	
+}
+
+
+function midtlink_statistic_cron() {
+	$r = variable_get('midtlink_statistic_last_cron', '1970-01-01');
+	if($r != date('Y-m-d')) {
+		$sql = "SELECT COUNT(uid) FROM {users} WHERE status = 1";
+		$noUsers = db_query($sql)->fetchColumn(0);
+		$sql = "INSERT INTO {midtlink_stat_user_count} (date_count,user_count) VALUES (:date,:users)";
+		db_query($sql,array(':date'=>date('Y-m-d'),':users'=>$noUsers));
+		variable_set('midtlink_statistic_last_cron',date('Y-m-d'));
+	}
+}
+
+function midtlink_statistic_permission() {
+  return array(
+    'access statistic' => array(
+      'title' => t('Access statistic'), 
+    ),
+  );
+}
+
+function midtlink_statistic_menu() {
+	$items['admin/reports/midtlink_stat'] = array(
+		'title' => 'MidtLink Statistic', 
+    'page callback' => 'midtlink_statistic_page', 
+    'access arguments' => array('access statistic'), 
+    'type' => MENU_NORMAL_ITEM,
+	);
+		$items['admin/reports/midtlink_stat_download'] = array(
+		'title' => 'MidtLink Statistic Download', 
+    'page callback' => 'midtlink_statistic_download', 
+    'access arguments' => array('access statistic'), 
+    'type' => MENU_CALLBACK,
+	);
+	return $items;
+}
+
+function midtlink_statistic_page() {
+	$o = '<p>Statistikken hentes i øjeblikket ned som CSV fil. Vælg periode herunder og download statistikken.</p>';
+	$o.= render(drupal_get_form('midtlink_statistic_download_form'));
+	return $o;
+}
+
+function midtlink_statistic_download_form() {
+	$form = array();
+	$form['from_date'] = array('#type'=>'textfield','#title'=>'Fra dato','#description'=>'Dato format <b>skal</b> være YYYY-MM-DD','#default_value'=>'2012-01-01');
+	$form['to_date'] = array('#type'=>'textfield','#title'=>'Til dato','#description'=>'Dato format <b>skal</b> være YYYY-MM-DD','#default_value'=>date('Y-m-d',time()-86400));
+	$form['submit'] = array('#type'=>'submit','#value'=>'Download statistik');
+	return $form;
+}
+
+function midtlink_statistic_download_form_submit($form,&$form_state) {
+	$form_state['redirect'] = array('admin/reports/midtlink_stat_download',array('query'=>array('from_date'=>$form_state['values']['from_date'],'to_date'=>$form_state['values']['to_date'])));
+}
+
+function midtlink_statistic_download() {
+	$fromTime = strtotime($_GET['from_date']);
+	$toTime = strtotime($_GET['to_date']);
+	
+	drupal_add_http_header('Content-Type', 'text/csv');
+	drupal_add_http_header('Content-Disposition', 'attachment;filename='.date('Y-m-d_H:i:s').'-MidtLinkStat.csv');
+	$fp = fopen('php://output', 'w');
+	
+	$line = array('Dato','Antal indlæg','Antal indlæg med svar','Antal indlæg med spørg direkte','Antal signups (AUH)');
+	echo '"'.implode('","',$line).'"'."\n";
+	
+	
+	for($i=$fromTime;$i<=$toTime;$i = $i+86400) {
+		
+		$f = mktime(0,0,0,date('m',$i),date('d',$i),date('Y',$i));
+		$t = mktime(23,59,59,date('m',$i),date('d',$i),date('Y',$i)); 
+		
+		$sql = "SELECT COUNT(nid) FROM {node} WHERE type = 'post' AND status = 1 AND created >= :f AND created <= :t";
+		$numEntries = db_query($sql,array(':f'=>$f,':t'=>$t))->fetchColumn(0);
+		
+		$sql = "SELECT COUNT(n.nid) FROM {node} n, {node_comment_statistics} ncs
+						WHERE ncs.nid = n.nid AND ncs.comment_count > 0 AND n.type = 'post' 
+						AND n.status = 1 AND n.created >= :f AND n.created <= :t";
+		$numEntriesWithComments = db_query($sql,array(':f'=>$f,':t'=>$t))->fetchColumn(0);
+		
+		$sql = "SELECT COUNT(DISTINCT f.entity_id) FROM {node} n, {field_data_field_responsible} f
+						WHERE f.entity_id = n.nid AND f.entity_type = 'node' AND f.bundle = 'post'
+						AND n.type = 'post'
+						AND n.status = 1 AND n.created >= :f AND n.created <= :t";
+		$numEntriesWithResponsible = db_query($sql,array(':f'=>$f,':t'=>$t))->fetchColumn(0);
+		
+		
+		$sql = "SELECT COUNT(id) FROM {accesscodes} WHERE used = 1 AND used_time >= :f AND used_time <= :t";
+		$numSignupsVoucher = db_query($sql,array(':f'=>$f,':t'=>$t))->fetchColumn(0);
+		
+		$sql = "SELECT COUNT(id) FROM {signupmsg} WHERE signup >= :f AND signup <= :t";
+		$numSignupsMsg = db_query($sql,array(':f'=>$f,':t'=>$t))->fetchColumn(0);
+		
+		$numSignups = $numSignupsVoucher+$numSignupsMsg;
+		
+		$line = array(date('Y-m-d',$f),$numEntries,$numEntriesWithComments,$numEntriesWithResponsible,$numSignups);
+		echo '"'.implode('","',$line).'"'."\n";
+	}
+	drupal_exit();
+}
+

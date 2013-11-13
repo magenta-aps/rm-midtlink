@@ -1,0 +1,251 @@
+/**
+ * Filename: forms.css
+ * Form elements except for buttons which you will find in buttons.css
+ */
+
+
+/*----------------------------------------------------------------------
+  Fieldsets
+----------------------------------------------------------------------*/
+fieldset {
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  margin-top: 10px;
+  margin-bottom: 32px;
+  padding: 0 0 10px;
+  position: relative;
+  top: 12px; /* Offsets the negative margin of legends */
+  -khtml-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+.fieldset-wrapper {
+  margin-top: 25px;
+}
+.node-form .vertical-tabs .fieldset-wrapper {
+  margin-top: 0;
+}
+.filter-wrapper {
+  top: 0;
+  padding: 1em 0 0.2em;
+  -khtml-border-radius-topright: 0;
+  -khtml-border-radius-topleft: 0;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-topleft: 0;
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.filter-help a {
+  font-size: 0.857em;
+  padding: 2px 20px 0;
+}
+.filter-wrapper .form-item label {
+  margin-right: 10px;
+}
+.filter-wrapper .form-item {
+  padding: 0 0 0.5em 0.5em;
+}
+.filter-guidelines {
+  padding: 0 1.5em 0 0.5em;
+}
+fieldset.collapsed {
+  background: transparent;
+  -khtml-border-radius: 0;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+}
+fieldset legend {
+  background: #dbdbdb;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  color: #3b3b3b;
+  display: block;
+  height: 2em;
+  left: -1px; /* LTR */
+  font-family: Arial, "Helvetica Neue", "HelveticaNeue", Helvetica, sans-serif;
+  line-height: 2;
+  padding: 0;
+  position: absolute;
+  text-indent: 10px;
+  text-shadow: 0 1px 0 #fff;
+  top: -12px;
+  width: 100%;
+  -khtml-border-radius-topleft: 4px;
+  -moz-border-radius-topleft: 4px;
+  -webkit-border-top-left-radius: 4px;
+  border-top-left-radius: 4px;
+  -khtml-border-radius-topright: 4px;
+  -moz-border-radius-topright: 4px;
+  -webkit-border-top-right-radius: 4px;
+  border-top-right-radius: 4px;
+}
+fieldset.collapsed legend {
+  -khtml-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+fieldset legend a {
+  color: #3b3b3b;
+}
+fieldset legend a:hover,
+fieldset legend a:focus,
+fieldset legend a:active {
+  color: #000;
+}
+fieldset .fieldset-wrapper {
+  padding: 0 10px;
+}
+fieldset .fieldset-description {
+  margin-top: 5px;
+  margin-bottom: 1em;
+  line-height: 1.4;
+  color: #3c3c3c;
+  font-style: italic;
+}
+
+
+/*----------------------------------------------------------------------
+  Fields
+----------------------------------------------------------------------*/
+input {
+  margin: 2px 0;
+  padding: 5px;
+}
+
+input,
+textarea {
+  font-family: Arial, "Helvetica Neue", "HelveticaNeue", Helvetica, sans-serif;
+  font-size: 13px;
+  -khtml-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+
+textarea {
+  line-height: 1.5;
+}
+
+textarea.form-textarea,
+select.form-select {
+  padding: 5px;
+}
+
+input.form-text,
+textarea.form-textarea,
+select.form-select {
+  border: 1px solid #C8D0DB;
+}
+
+input.form-text{
+  background: #fff url(../images/sprite_v2.png) repeat-x 0 -347px;
+}
+
+
+textarea.form-textarea {
+  background: #F6F7F7;
+}
+
+input.form-submit:hover,
+input.form-submit:focus {
+  background: #dedede;
+}
+
+input.form-text:focus{
+  background: #fff url(../images/sprite_v2.png) repeat-x 0 -387px;
+}
+
+textarea.form-textarea:focus {
+  background: #fff;
+}
+
+.password-suggestions ul li {
+  margin-left: 1.2em;
+}
+
+.form-item {
+  margin-bottom: 1em;
+  margin-top: 2px;
+}
+
+.form-item label {
+  font-size: 13px;
+  color:#222;
+  font-weight:bold;
+}
+
+.form-item label.option {
+  font-weight:normal;
+}
+
+.form-type-radio label,
+.form-type-checkbox label {
+  margin-left: 4px;
+}
+
+.form-type-radio .description,
+.form-type-checkbox .description {
+  margin-left: 2px;
+}
+
+.form-actions {
+  padding-top: 10px;
+}
+
+/* Autocomplete */
+html.js input.form-autocomplete {
+background-image: url(../images/throbber.gif);
+background-position: 99% 7px;
+background-repeat: no-repeat;
+background-color:#F6F7F7;
+}
+
+html.js input.throbbing {
+background-position: 99% -13px;
+}
+
+/*----------------------------------------------------------------------
+  Buttons and "links that looks like buttons"-buttons
+----------------------------------------------------------------------*/
+input.form-submit,
+a.button {
+  background: #fff url(../images/buttons.png) 0 0 repeat-x;
+  border: 1px solid #23578B;
+  border-bottom: 1px solid #1C456F;
+  color: #fff !important;
+  text-shadow:0 -1px 0 #224F7B;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+  margin-right: 0.6em;
+  padding: 4px 17px;
+  outline:0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+input.form-submit:hover,
+input.form-submit:focus,
+a.button:hover,
+a.button:focus {
+  background: #fff url(../images/buttons.png) 0 -30px repeat-x;
+}
+
+a.button:link,
+a.button:visited,
+a.button:hover,
+a.button:focus,
+a.button:active {
+  text-decoration: none;
+  color: #5a5a5a;
+}
+
+/* EOF */

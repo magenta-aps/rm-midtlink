@@ -1,0 +1,193 @@
+/**
+ * Filename: blocks.css
+ */
+
+
+/*----------------------------------------------------------------------
+  Global
+----------------------------------------------------------------------*/
+.block{
+  margin:0 0 20;
+  position:relative;
+}
+
+.block h2 {
+  margin:0 0 14px;
+  font-size:17px;
+}
+
+#footer .block h2 {
+  text-align:center;
+}
+
+/*----------------------------------------------------------------------
+  Footer blocks
+----------------------------------------------------------------------*/
+/* Headers */
+/*
+#footer #categories h2,
+#footer #documentation h2,
+#footer #hotline h2 {
+  background:transparent url(../images/sprite_v2.png) no-repeat -272px -5px;
+  width:60px;
+  height:20px;
+  margin:0 auto 20px;
+  text-indent:-999em;
+}
+
+#footer #documentation h2 {
+  background-position:-272px -74px;
+  width:140px;
+}
+
+#footer #hotline h2 {
+  background-position:-272px -40px;
+  width:114px;
+}*/
+
+/* Background highlights */
+#footer .block {
+  background:transparent url(../images/highlight.png) no-repeat 50% 50%;
+}
+
+/* Documentation */
+#footer #documentation,
+#footer #hotline {
+  text-align:center;
+}
+
+
+/*----------------------------------------------------------------------
+  Categories
+----------------------------------------------------------------------*/
+
+#categories.block ul li a{
+  background: transparent url(../images/sprite_v2.png) no-repeat 0 -230px;
+  display:block;
+  width:148px;
+  height:27px;
+  text-align:center;
+  line-height:26px;
+  color:#25598D;
+}
+
+#categories.block ul li a:hover{
+  background: transparent url(../images/sprite_v2.png) no-repeat 0 -259px;
+  text-decoration:none;
+  color:#fff;
+}
+
+#categories.block ul li{
+  margin-bottom:6px;
+}
+
+#categories.block ul li.odd{
+  float:left;
+  margin-right:6px;
+}
+
+#categories.block ul li.even{
+  float:right;
+}
+
+/* Categories in sidebar */
+#sidebar #categories.block ul li a{
+  background: transparent url(../images/sprite_v2.png) no-repeat 0 -288px;
+  color:#154F24;
+}
+
+#sidebar #categories.block ul li a:hover{
+  background: transparent url(../images/sprite_v2.png) no-repeat 0 -317px;
+}
+
+/*----------------------------------------------------------------------
+  Dokumentation
+----------------------------------------------------------------------*/
+#documentation.block{
+  padding-bottom:138px;
+  z-index:0;
+}
+
+#documentation.block .illustration{
+  background: transparent url(../images/sprite_v2.png) no-repeat -2px -432px;
+  display:block;
+  height:139px;
+  width:256px;
+  margin:12px auto 0;
+  text-indent:0;
+  position:relative;
+}
+
+#documentation.block a.button {
+  font-size:17px;
+  position:absolute;
+  top:54px;
+  left:66px;
+  display:inline-block;
+  height:30px;
+  padding:0 17px;
+  line-height:30px;
+}
+
+/*----------------------------------------------------------------------
+  Links (on the documentation page)
+----------------------------------------------------------------------*/
+#links.block ul {
+	margin-bottom:10px;
+}
+
+#links.block ul li a{
+	font-weight:bold;
+}
+
+#links ul li {
+  line-height:1.35;
+}
+
+/*----------------------------------------------------------------------
+  News (on the documentation page)
+----------------------------------------------------------------------*/
+#news.block.solid {
+	padding-bottom:8px;
+}
+
+#news.block h3 {
+	margin:0 0 2px;
+}
+
+#news.block .body p{
+	font-size:11px;
+	line-height:1.35;
+}
+
+#news.block ul li {
+	margin-bottom:18px;
+  border-top:1px solid #C4D9EE;
+  padding-top:10px;
+}
+
+a.more {
+  font-weight:bold;
+  display:inline-block;
+  margin-top:4px;
+}
+
+
+/*----------------------------------------------------------------------
+  EPJ Hotline
+----------------------------------------------------------------------*/
+#hotline .phone {
+  font-size:21px;
+    color:#333;
+    padding-bottom:10px;
+}
+
+#hotline .phone div{
+  background-image:url(../images/sprite_v2.png);
+  background-position: -421px -450px;
+  width:68px;
+  height:52px;
+  margin:0 auto 4px;
+}
+
+/* EOF */

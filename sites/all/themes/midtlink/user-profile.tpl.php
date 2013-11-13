@@ -1,0 +1,37 @@
+<?php
+$a = user_load(arg(1));
+?>
+<div class="profile"<?php print $attributes; ?>>
+  
+  <div class="main-info">
+    <div class="grid-2 alpha">
+      <?php print render($user_profile['user_picture']); ?>
+    </div>
+    
+    <div class="grid-6 omega">
+      <h1><?php echo check_plain($a->field_fullname['und'][0]['value']); ?></h1>
+      
+      <ul class="reset">
+				<?php
+				if(isset($a->field_position['und'][0]['value'])) {
+					?> 
+					<li><b>Titel:</b><?php echo check_plain($a->field_position['und'][0]['value']); ?></li>
+					<?php
+        }
+        if(isset($a->field_unit['und'][0]['taxonomy_term'])) {
+					?>
+					<li><b>Afdeling:</b><?php echo check_plain($a->field_unit['und'][0]['taxonomy_term']->name); ?></li>
+					<?php
+					$mainUnit = midtlink_get_main_unit($a->field_unit['und'][0]['taxonomy_term']->tid);
+					if($mainUnit->tid != $a->field_unit['und'][0]['taxonomy_term']->tid) {
+						?>
+						<li><b>Hospital:</b><?php echo check_plain($mainUnit->name); ?></li>
+						<?php
+					}
+        }
+        ?>
+      </ul>
+    </div>
+  </div>
+  
+</div>

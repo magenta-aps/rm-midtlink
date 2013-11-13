@@ -1,0 +1,95 @@
+/**
+ * Filename: pager.css
+ *
+ * Styling of the native Drupal pager.
+ * "First" and "Last" links are hidden for simplicity.
+ */
+
+.item-list .pager {
+  clear: both;
+  text-align: center;
+  font-family:arial, sans-serif;
+  font-size:17px;
+  line-height:17px;
+  -webkit-padding-start:0;
+  height:30px;
+  margin:0;
+  padding:30px 0 22px;
+}
+
+.item-list .pager li {
+  background-image: none;
+  display: inline;
+  list-style-type: none;
+  padding:0;
+  margin:0;
+}
+
+.item-list .pager li a {
+  text-decoration:none;
+  padding:5px 11px;
+  margin:0;
+  font-weight:bold;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background:#EBF2FA;
+  color:#5895D1;
+  text-shadow:0 1px 0 rgba(255, 255, 255, .7);
+-moz-box-shadow:0 1px 0 #C9DDF1;
+  -webkit-box-shadow:0 1px 0 #C9DDF1;
+  box-shadow:0 1px 0 #C9DDF1;
+}
+
+/* Hover */
+.item-list .pager li a:hover {
+  -moz-box-shadow:0 1px 0 #B7D1EC;
+  -webkit-box-shadow:0 1px 0 #B7D1EC;
+  box-shadow:0 1px 1px #9CC0E4;
+  color:#3377B9;
+}
+
+/* Current */
+.item-list li.pager-current {
+  font-weight: bold;
+  background:#3478BB;
+  padding:5px 11px;
+  color:#fff;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  text-shadow:0 -1px 0 rgba(0, 0, 0, .5);
+  -moz-box-shadow:0 1px 1px rgba(0, 0, 0, .2);
+  -webkit-box-shadow:0 1px 1px rgba(0, 0, 0, .2);
+  box-shadow:0 1px 1px rgba(0, 0, 0, .2);
+  background-image: linear-gradient(bottom, rgb(52,105,158) 0%, rgb(58,131,203) 61%);
+  background-image: -o-linear-gradient(bottom, rgb(52,105,158) 0%, rgb(58,131,203) 61%);
+  background-image: -moz-linear-gradient(bottom, rgb(52,105,158) 0%, rgb(58,131,203) 61%);
+  background-image: -webkit-linear-gradient(bottom, rgb(52,105,158) 0%, rgb(58,131,203) 61%);
+  background-image: -ms-linear-gradient(bottom, rgb(52,105,158) 0%, rgb(58,131,203) 61%);
+
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(52,105,158)),
+    color-stop(0.61, rgb(58,131,203))
+  );
+}
+
+/* "Previous" and "Next" */
+.item-list .pager li.pager-previous a,
+.item-list .pager li.pager-next a {
+  background:none;
+  -moz-box-shadow:none;
+  -webkit-box-shadow:none;
+  box-shadow:none;
+}
+
+/* "First" and "Last" hidden for simplicity */
+.item-list li.pager-first,
+.item-list li.pager-last {
+  display:none;
+}
+
+/* EOF */

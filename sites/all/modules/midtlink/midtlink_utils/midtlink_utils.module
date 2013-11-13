@@ -1,0 +1,370 @@
+<?php
+define('FLAG_ID_COMMENT_APPROVED',7);
+define('FLAG_ID_COMMENT_ARCHIVED',8);
+
+function midtlink_utils_menu() {
+	$items['betingelser'] = array(
+		'title' => 'Brugerbetingelser for MidtLink', 
+    'page callback' => 'midtlink_utils_terms', 
+    'access callback' => true,
+    'type' => MENU_CALLBACK,
+	);
+	return $items;
+}
+
+function midtlink_utils_terms() {
+	$o = '';
+	$o.= '<h1>Brugerbetingelser for MidtLink</h1>';
+	$o.= '<p>';
+	$o.= 'MidtLink er en intern social platform som potentielt er 
+				tilgængelig for alle ansatte ved Region Midtjyllands sygehuse.
+				Det betyder, at den viden du deler med dine kolleger på MidtLink
+				kun kan tilgås af ansatte ved regionens sygehuse.';
+	$o.= '</p><p>';
+	$o.= 'På MidtLink bidrager medarbejdere fra regionens sygehuse frit 
+				til en fælles dialog i et lukket socialt netværk ved at stille 
+				og besvare spørgsmål. MidtLink stiller desuden en stærk 
+				søgemaskine til rådighed som gør det muligt at fremsøge viden 
+				fra officielle vejledninger samt fra brugergenererede spørgsmål 
+				og svar. For disse aktiviteter gør følgende forhold sig gældende:';
+	$o.= '</p><ul><li>';
+	$o.= 'Al deling af data på MidtLink er omfattet af Sundhedslovens § 40, 
+				og personfølsomme oplysninger må derfor ikke deles på MidtLink, 
+				ligesom der ikke må linkes til sider eller screen dumps fra andre 
+				systemer som indeholder personfølsomme oplysninger. Det er dog, 
+				ifølge Patientombuddets praksis, tilladt for læger/sundhedspersoner 
+				at drøfte patienter med hinanden, når det drejer sig om et forhold 
+				som de enten er tvivl om eller finder principielt, men drøftelsen 
+				skal foregå uden at nævne navne, cpr. nr. eller andre oplysninger, 
+				som gør det muligt at identificere den eller de pågældende personer.';
+	$o.= '</li><li>';
+	$o.= 'Viden som udstilles på MidtLink er primært brugergenereret. 
+				Administrationen i Region Midtjylland og på regionens sygehuse 
+				kan derfor ikke stå til ansvar for kvaliteten af publiceret 
+				materiale. Det betyder, at vi i fællesskab må bidrage til at 
+				vedligeholde den høje faglige standard, og at det er nødvendigt 
+				at navigere i MidtLink med en almindelig kritisk sans.';
+	$o.= '</li></ul><p>';
+	$o.= 'MidtLink bakkes op af Hospitalsledelsen på din arbejdsplads som 
+				anerkender værdien i, at vi i fællesskab udvikler vores faglighed 
+				og kompetencer ved at dele vores viden på MidtLink. Derfor er der 
+				ledelsesopbakning til, at du anvender MidtLink når du udfører dit 
+				arbejde.';
+	$o.= '</p><p>';
+	$o.= 'Vi ønsker dig god fornøjelse med MidtLink!';
+	$o.= '</p><p>';
+	$o.= 'Med venlig hilsen';
+	$o.= '<br />';
+	$o.= 'MidtLink-teamet';
+	$o.= '<br />';
+	$o.= '<a href="mailto:auhskejby.midtlink@rm.dk">auhskejby.midtlink@rm.dk</a>';
+	$o.= '</p>';
+	return $o;
+}
+
+
+function midtlink_get_unit_tree() {
+	global $user;
+	$out = array();
+	
+	/* Get a sorted MainUnit list */
+	$units = taxonomy_get_tree(4,0,1);
+	if(!empty($user->mainUnitTID)) {
+		foreach($units as $k=>$u) {
+			if($u->tid == $user->mainUnitTID) {
+				$out[$u->tid] = array();
+				$out[$u->tid]['units'] = array();
+				$out[$u->tid]['name'] = $u->name;
+				unset($units[$k]);
+			}
+		}
+	}
+	foreach($units as $u) {
+		$out[$u->tid] = array();
+		$out[$u->tid]['units'] = array();
+		$out[$u->tid]['name'] = $u->name;
+	}
+	
+	foreach($out as $tid=>$u) {
+		$terms = taxonomy_get_children($tid,4);
+		foreach($terms as $t) {
+			$out[$tid]['units'][$t->tid] = $t->name;
+		}
+	}
+	
+	return $out;
+}
+
+
+function midtlink_get_approved_answer($nid) {
+	$sql = "SELECT c.cid
+			FROM {comment} c
+			INNER JOIN {node} n ON n.nid = c.nid
+			INNER JOIN {flag_content} fc ON fc.fid = :fid AND fc.content_type = 'comment' AND fc.content_id = c.cid
+			WHERE n.nid = :nid
+			ORDER BY c.created ASC LIMIT 1";
+		$result = db_query($sql,array(':fid'=>FLAG_ID_COMMENT_APPROVED,':nid'=>$nid));
+		if($result->rowCount() > 0) {
+			return $result->fetchColumn(0);
+		}
+		return false;
+}
+
+
+function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
+	if($form_id == 'forward_form') {
+		$form['message']['recipients']['#rows'] = 1;
+		$form['message']['message']['#rows'] = 4;
+	}
+	elseif($form_id == 'comment_node_post_form') {
+		$form['actions']['submit']['#value'] = 'Indsend svar';
+	}
+	elseif($form_id == 'user_profile_form') {
+		$form['account']['mail']['#disabled'] = true;
+		$form['account']['mail']['#description'] = t('E-mail-adressen hvortil der sendes notifikationer. <strong>Kan ikke ændres</strong>');
+		$form['account']['pass']['#access'] = false;
+		$form['account']['current_pass']['#access'] = false;
+		$form['picture']['#access'] = false;
+		$form['field_position']['#access'] = false; //Updated through the BSK integration
+	}
+}
+
+function midtlink_utils_comment_approved($cid) {
+	$sql = "SELECT timestamp FROM {flag_content}
+		WHERE fid = :fid AND content_type = 'comment' AND content_id = :cid";
+	$result = db_query($sql,array(':fid'=>FLAG_ID_COMMENT_APPROVED,':cid'=>$cid));
+	if($result->rowCount() > 0) {
+		return $result->fetchColumn(0);
+	}
+	return false;
+}
+
+function midtlink_utils_comment_archived($cid) {
+	$sql = "SELECT timestamp FROM {flag_content}
+		WHERE fid = :fid AND content_type = 'comment' AND content_id = :cid";
+	$result = db_query($sql,array(':fid'=>FLAG_ID_COMMENT_ARCHIVED,':cid'=>$cid));
+	if($result->rowCount() > 0) {
+		return $result->fetchColumn(0);
+	}
+	return false;
+}
+
+
+function midtlink_utils_post_approved_answer($nid) {
+	$sql ="SELECT c.cid
+		FROM comment c, flag_content f
+		WHERE c.cid = f.content_id
+		AND f.content_type = 'comment' 
+		AND f.fid = :fid 
+		AND c.nid = :nid
+		ORDER BY f.timestamp ASC LIMIT 1";
+	$result = db_query($sql,array(':fid'=>FLAG_ID_COMMENT_APPROVED,':nid'=>$nid));
+	if($result->rowCount() > 0) {
+		return $result->fetchColumn(0);
+	}
+	return false;
+}
+
+
+function midtlink_utils_get_approved_solution($nid) {
+		$sql ="SELECT fc.comment_body_value
+		FROM comment c, field_data_comment_body fc, flag_content f
+		WHERE c.cid = f.content_id AND fc.entity_id = c.cid
+		AND f.content_type = 'comment' 
+		AND f.fid = :fid 
+		AND c.nid = :nid
+		ORDER BY f.timestamp ASC LIMIT 1";
+	$result = db_query($sql,array(':fid'=>FLAG_ID_COMMENT_APPROVED,':nid'=>$nid));
+	if($result->rowCount() > 0) {
+		return $result->fetchColumn(0);
+	}
+	return false;
+}
+
+function midtlink_utils_get_responsible_by_nid($nid) {
+	$resp = array();
+	
+	$sql = "SELECT u.name, ff.field_fullname_value as fullname, td.name as unit, u.uid
+		FROM field_data_field_responsible  fr
+		LEFT JOIN users u ON u.uid = fr.field_responsible_target_id
+		LEFT JOIN field_data_field_fullname ff ON ff.entity_type = 'user' AND ff.entity_id = u.uid
+		LEFT JOIN field_data_field_unit fu ON fu.entity_type = 'user' AND fu.entity_id = u.uid
+		LEFT JOIN taxonomy_term_data td ON td.tid = fu.field_unit_tid 
+		WHERE fr.entity_id = :nid";
+	$res = db_query($sql,array(':nid'=>$nid));
+	if($res->rowCount() > 0) {
+		foreach($res as $r) {
+			$resp[drupal_strtolower($r->name)] = array('uid'=>$r->uid,'fullname'=>$r->fullname,'username'=>$r->name,'unit'=>$r->unit); 
+		}
+	}
+	return $resp;
+}
+
+function midtlink_utils_last_answer($nid) {
+	$sql = "SELECT comment_count, last_comment_timestamp as lc
+		FROM {node_comment_statistics} WHERE nid = ".$nid;
+	$result = db_query($sql,array(':nid'=>$nid));
+	
+	//var_dump($result->fetchColumn(1));
+	
+	if($result->rowCount() > 0) {
+		$r = $result->fetchObject();
+		if((int)$r->comment_count > 0) {
+			return $r->lc;
+		}
+	}
+	return false;
+}
+
+function midtlink_utils_get_categories_by_nid($nid) {
+	$categories = array();
+	$sql = "SELECT td.name, td.tid FROM
+		taxonomy_term_data td, taxonomy_index ti
+		WHERE td.tid = ti.tid AND ti.nid = :nid AND td.vid = 3";
+	$result = db_query($sql,array(':nid'=>$nid));
+	foreach($result as $r) { $categories[$r->tid] = $r->name; }
+	return $categories;
+}
+
+function midtlink_get_main_unit($tid) {
+	$mainUnit = $tid;
+	
+	$sql = "SELECT parent FROM {taxonomy_term_hierarchy}
+			WHERE tid = :tid";
+	$parent = db_query($sql,array(':tid'=>$tid))->fetchColumn(0);
+	if($parent > 0) { $mainUnit = $parent; }
+	
+	$sql = "SELECT td.name, td.tid, f.field_shortname_value as shortname
+		FROM taxonomy_term_data td 
+		LEFT JOIN field_data_field_shortname f ON f.entity_id = td.tid AND f.entity_type = 'taxonomy_term'
+		WHERE td.tid = :tid";
+	$r = db_query($sql,array(':tid'=>$mainUnit))->fetchObject();
+	return $r;
+}
+
+function midtlink_utils_get_author_info($uid) {
+	$o = array();
+  $sql = "SELECT fp.field_position_value as position, td.name as unit, td.tid
+			FROM users u
+				LEFT JOIN field_data_field_position fp ON fp.entity_type = 'user' AND fp.bundle = 'user' AND fp.entity_id = u.uid
+				LEFT JOIN field_data_field_unit fu ON fu.entity_type = 'user' AND fu.bundle = 'user' AND fu.entity_id = u.uid
+				LEFT JOIN taxonomy_term_data td ON td.tid = fu.field_unit_tid
+			WHERE uid = :uid LIMIT 1";
+	$r = db_query($sql,array(':uid'=>$uid))->fetchObject();
+	if(trim($r->position) != '') { $o[] = $r->position; }
+	if(trim($r->unit) != '') { $o[] = $r->unit; }
+	$mainUnit = midtlink_get_main_unit($r->tid);
+	$shortName = '';
+	if($r->tid != $mainUnit->tid) {
+		$o[] = $mainUnit->shortname;
+		$shortName = $mainUnit->shortname;
+	}
+	$o = implode(', ',$o);
+  if(trim($o) == '') { $o = 'Ukendt'; } 
+  
+  
+  return array('info'=>$o,'shortname'=>$shortName);
+}
+
+
+function midtlink_utils_node_view($node, $build_mode = 'full') {
+  $o = array();
+  if($node->type=='post' && $node->uid > 0) {
+		$sql = "SELECT fp.field_position_value as position, td.name as unit, td.tid
+			FROM users u
+				LEFT JOIN field_data_field_position fp ON fp.entity_type = 'user' AND fp.bundle = 'user' AND fp.entity_id = u.uid
+				LEFT JOIN field_data_field_unit fu ON fu.entity_type = 'user' AND fu.bundle = 'user' AND fu.entity_id = u.uid
+				LEFT JOIN taxonomy_term_data td ON td.tid = fu.field_unit_tid
+			WHERE uid = :uid LIMIT 1";
+		$r = db_query($sql,array(':uid'=>$node->uid))->fetchObject();
+    if(trim($r->position) != '') { $o[] = $r->position; }
+    if(trim($r->unit) != '') { $o[] = $r->unit; }
+		
+		$mainUnit = midtlink_get_main_unit($r->tid);
+		if($r->tid != $mainUnit->tid) {
+			$o[] = $mainUnit->shortname;
+		}
+		$node->authorunit['name'] = $mainUnit->name;
+		$node->authorunit['shortname'] = $mainUnit->shortname;
+		$node->authorunit['tid'] = $mainUnit->tid;
+  }
+  $o = implode(', ',$o);
+  if(trim($o) == '') { $o = 'Ukendt'; }  
+  $node->authorinfo = $o;
+}
+function midtlink_utils_comment_view($comment, $view_mode, $langcode) {
+	$o = array();
+  if($comment->uid > 0) {
+		$sql = "SELECT fp.field_position_value as position, td.name as unit, td.tid
+			FROM users u
+				LEFT JOIN field_data_field_position fp ON fp.entity_type = 'user' AND fp.bundle = 'user' AND fp.entity_id = u.uid
+				LEFT JOIN field_data_field_unit fu ON fu.entity_type = 'user' AND fu.bundle = 'user' AND fu.entity_id = u.uid
+				LEFT JOIN taxonomy_term_data td ON td.tid = fu.field_unit_tid
+			WHERE uid = :uid LIMIT 1";
+		$r = db_query($sql,array(':uid'=>$comment->uid))->fetchObject();
+    if(trim($r->position) != '') { $o[] = trim($r->position); }
+    if(trim($r->unit) != '') { $o[] = trim($r->unit); }
+    
+    $mainUnit = midtlink_get_main_unit($r->tid);
+		if($r->tid != $mainUnit->tid) {
+			$o[] = $mainUnit->shortname;
+		}
+		$comment->authorunit['name'] = $mainUnit->name;
+		$comment->authorunit['shortname'] = $mainUnit->shortname;
+		$comment->authorunit['tid'] = $mainUnit->tid;
+		
+  }
+  $o = implode(', ',$o);
+  if(trim($o) == '') { $o = 'Ukendt'; }  
+  $comment->authorinfo = $o;
+}
+
+
+function midtlink_utils_init() {
+	global $user;
+	$mainUnitTID = 0;
+	$mainUnitName = '';
+	$mainUnitShortname = '';
+	$unitName = '';
+	$unitTID = 0;
+	$sql = "SELECT td.name as unit, td.tid
+			FROM users u
+				LEFT JOIN field_data_field_unit fu ON fu.entity_type = 'user' AND fu.bundle = 'user' AND fu.entity_id = u.uid
+				LEFT JOIN taxonomy_term_data td ON td.tid = fu.field_unit_tid
+			WHERE uid = :uid LIMIT 1";
+	$res = db_query($sql,array(':uid'=>$user->uid));
+	if($res->rowCount() > 0) {
+		$r = $res->fetchObject();
+		$unitName = $r->unit;
+		$unitTID = $r->tid;
+		
+		$mainUnit = midtlink_get_main_unit($r->tid);
+		if($r->tid != $mainUnit->tid) {
+			$mainUnitTID = $mainUnit->tid;
+			$mainUnitName = $mainUnit->name;
+			$mainUnitShortname = $mainUnit->shortname;
+		}
+	}
+	$user->mainUnitTID = $mainUnitTID;
+	$user->mainUnitName = $mainUnitName;
+	$user->mainUnitShortname = $mainUnitShortname;
+	$user->unitName = $unitName;
+	$user->unitTID = $unitTID;
+	
+	if(arg(0) == 'dokumentation' && arg(1) == '') {
+		$goto = '300';
+		if($mainUnitTID != '' && $mainUnitTID != 0) {
+			$goto = $mainUnitTID;
+		}
+		drupal_goto('dokumentation/'.$goto);
+	}	
+	
+	if(arg(0) == 'forum' && empty($_GET['tid'])) {
+		$goto = '300';
+		if($mainUnitTID != '' && $mainUnitTID != 0) {
+			$goto = $mainUnitTID;
+		}
+		drupal_goto($_GET['q'],array('query'=>array('tid'=>$mainUnitTID)));
+	}
+		
+}

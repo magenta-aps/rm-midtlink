@@ -1,0 +1,217 @@
+/**
+ * Filename: content-types.css
+ * All content-type specific styles.
+ */
+
+
+/*----------------------------------------------------------------------
+  Indlæg (node--post.tpl.php)
+----------------------------------------------------------------------*/
+.node-post .content.post{
+  width:544px;
+  float:right;
+  position:relative;
+}
+
+.node-post .post-wrapper{
+  background:#F3F8FC;
+  border:1px solid #97BBE2;
+  -webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;  
+  padding:14px 16px 0;
+  margin-bottom:10px;
+}
+
+.node-post .user-picture{
+  width:80px;
+  float:left;
+}
+.node-post .user-picture img{
+  width:80px;
+}
+
+/* Meta */
+.submitted {
+  color:#3478B7;
+  line-height:1.6;
+}
+
+.submitted .name{
+  font-weight:bold;
+}
+
+.submitted .name span{
+  font-weight:normal;
+}
+
+.submitted .meta{
+  color:#4D7DAC;
+  font-weight:normal;
+}
+
+/* Title */
+.node-post h1 {
+  font-size:24px;
+  margin: 10px 0 20px;
+}
+
+/* Taxonomies */
+.node-post .taxonomies{
+  padding-bottom:12px;
+}
+
+.node-post .taxonomies ul li{
+  display:inline;
+  margin-right:2px;
+}
+
+/* Categories */
+.node-post .taxonomies .categories{
+  padding-bottom:12px;
+}
+
+.node-post .taxonomies .categories ul li a{
+  background: transparent url(../images/sprite_v2.png) no-repeat 0 -182px;
+  display:inline-block;
+  height:22px;
+  text-align:center;
+  line-height:22px;
+  color:#154F24;
+  padding:0 8px 0;
+  position:relative;
+  overflow:hidden;
+  font-size:12px;
+}
+
+.node-post .taxonomies .categories ul li a span{
+  background-image:url(../images/sprite_v2.png);
+  background-position:-221px -182px;
+  width:2px;
+  position:absolute;
+  top:0;
+  right:0;
+}
+
+.node-post .taxonomies .categories ul li a:hover{
+  background-position:0 -206px;
+  text-decoration:none;
+}
+
+.node-post .taxonomies .categories ul li a span:hover{
+  background-position:-221px -206px;
+}
+
+a.edit-node,
+.node-post .taxonomies .categories ul li a.edit-node {
+  background:transparent url(../images/icons.png) no-repeat 0 -660px;
+  overflow:hidden;
+  padding-left:16px;
+  color:#268CDF;
+}
+
+.node-post .taxonomies .categories ul li a.edit-node {
+  background-position:0 -658px;
+}
+
+.node-post .taxonomies .categories ul li a.edit-node:hover {
+  text-decoration:underline;
+  color:#60AEEE;
+}
+
+/* Tags */
+
+.node-post .taxonomies .tags h2,
+.node-post .taxonomies .tags ul{
+  display:inline;
+}
+
+.node-post .taxonomies .tags h2{
+  font-size:13px;
+  font-weight:normal;
+  margin-right:4px;
+}
+
+.node-post .taxonomies .tags ul li{
+  margin-right:7px;
+}
+
+/* Body */
+.node-post .content .post-body, 
+.node-post .content .file-upload {
+  border-top:1px solid #BCD3ED;
+  margin:0 -16px 0;
+  padding:12px 16px 4px;
+}
+
+/* Description */
+.node-post .content .description {
+  font-size:11px;
+  font-style:italic;
+  color:#4D7DAC;
+}
+
+/* "Subscribe" and "Like" buttons */
+.node-post .user-flags,
+.node-post .admin-flags {
+  margin-top:5px;
+}
+
+.node-post .user-flags a,
+.node-post .admin-flags a {
+  color:#999;
+  margin-left:20px;
+  float:right;
+}
+
+a.tickmark {
+  background:url(../images/icons.png) no-repeat 0 -362px;
+  padding-left:16px;
+}
+
+a.tickmark.on {
+  background-position:0 -403px;
+  color:#3270CC;
+}
+
+a.like {
+  background:url(../images/icons.png) no-repeat 0 -540px;
+  padding-left:20px;
+}
+
+a.like.on {
+  background-position:0 -595px;
+  color:#25B94A;
+}
+
+/* Post indicators */
+.post-indicator{
+  background-image:url(../images/sprite_v2.png);
+  background-position:-189px -302px;
+  width:26px;
+  height:37px;
+  position:absolute;
+  top:-3px;
+  right:10px;
+}
+
+.post-indicator.comments{
+  background-position:-158px -302px;
+  top:-3px;
+  right:10px;
+}
+
+.post-indicator.email{
+  background-position:-291px -312px;
+  width:24px;
+  height:16px;
+  top:7px;
+  right:44px;
+}
+
+.post-indicator.email:hover{
+  background-position:-322px -312px;
+}
+
+
+/* EOF */

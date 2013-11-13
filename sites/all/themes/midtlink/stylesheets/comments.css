@@ -1,0 +1,91 @@
+/**
+ * Filename: comments.css
+ * Comments on nodes.
+ */
+  
+
+/*----------------------------------------------------------------------
+  Global
+----------------------------------------------------------------------*/
+.indented {
+  margin-left:30px;
+}
+
+#comments {
+  clear:both;
+  padding-top:30px;
+}
+
+#comments h2.title,
+#comments .filter-wrapper.form-wrapper{
+  display:none;
+}
+
+#comments .comment{
+  position:relative;
+}
+
+#comments .user-pointer {
+  left:41px;
+}
+
+#comments .comment-wrapper{
+  border:1px solid #97BBE2;
+  padding:7px 12px 10px;
+  margin:0 0 12px 50px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+#comments .user-picture {
+  float:left;
+}
+
+#comments .user-picture img,
+#comments .user-picture{
+  width:40px;
+  /*height:40px;*/
+}
+
+.comment .submitted {
+  margin-bottom:10px; 
+}
+
+.comment .like {
+  float:right;
+}
+
+.comment ul.links{
+  float:left;
+  visibility:hidden;
+  margin:0;
+}
+
+.comment:hover ul.links{
+  visibility:visible;
+}
+
+.comment ul.links li{
+  padding:0;
+  margin-right:8px;
+  text-transform:capitalize;
+  font-size:11px;
+}
+
+.comment .approval {
+  color:#3378B7;
+}
+
+/* Comment states */
+.comment.featured .comment-wrapper{
+  background-color:#F3F8FC;
+}
+
+/* Comment form */
+
+.comment-form {
+  margin-top:30px;
+}
+
+/* EOF */
