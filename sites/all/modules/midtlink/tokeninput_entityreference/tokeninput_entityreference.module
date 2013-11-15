@@ -104,7 +104,7 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                                     '#maxlength' => 1024,
                                     '#prefix' => "<div id='tokeninput_entityreference_".$field['field_name']."'>",
 
-                                    '#suffix' => "</div><b>".$field["field_name"]."</b><script type='text/javascript'>makeFieldTokenInput('.field-name-" . $field["field_name"] . "');</script>",
+                                    '#suffix' => "</div><script type='text/javascript'>makeFieldTokenInput('.field-name-" . $field["field_name"] . "');</script>",
 
                                     '#attributes' => array(
                                                     'class' => array(
