@@ -157,9 +157,9 @@ function tokeninput_entityreference_field_widget_info_alter(&$info) {
 }
 
 function _tokeninput_entityreference_prepopulate_handler($entity_ids) {
-	$process_array = array();
+	$results = array();
 	
-	foreach($keys as $key) {
+	foreach($entity_ids as $id) {
             $user_object = user_load($id);
             $label = format_username($user_object);
             $results[] = array('id' => $id, 'name' => check_plain($label));
@@ -201,7 +201,7 @@ function tokeninput_buildEntityFieldQuery($match, $entity_type, $match_operator 
 
 
 /**
- * Custom taxonomy callback, which also accepts an empty string search.
+ * AJAX autocomplete callback, to provide JSON results for tokeninput field..
  */
 function tokeninput_entityreference_callback($field_name, $tags_typed = '') {
   $field = field_info_field($field_name);
@@ -253,9 +253,13 @@ function tokeninput_entityreference_validate($element, &$form_state, &$form) {
           'target_id' => intval($entity),
         );
     }
+//    $node_wrapper = entity_metadata_wrapper('node', $element['#entity']['nid']);
+//$var = $node_wrapper->field_number->value() + 1;
+//$node_wrapper->field_number->set($var);
+//$node_wrapper->save();
   }
   // Update the value of this element so the field can validate the product IDs.
-  form_set_value($element, $value, $form_state);
+//  form_set_value($element, $value, $form_state);
 //  $element['#entity'][$element['#field_name']]['und'] = $value;
 }
 
