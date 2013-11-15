@@ -1,0 +1,301 @@
+<?php
+// $Id$
+/**
+ * Implements hook_menu().
+ */
+function tokeninput_entityreference_menu() {
+  $items['tokeninput_entityreference/autocomplete'] = array(
+    'page callback' => 'tokeninput_entityreference_callback',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function tokeninput_entityreference_field_widget_info() {
+  return array(
+    'tokeninput_entityreference' => array(
+      'label' => t('Autocomplete token input'),
+      'field types' => array('entityreference'),
+      'settings' => array(
+        'autocomplete_match' => 'starts with',
+        'size' => 60,
+        'autocomplete_path' => 'tokeninput_entityreference/autocomplete',
+      ),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_CUSTOM,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_form().
+ */
+function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+	//dsm($field);
+	// dsm($element);
+	// dsm($instance);
+	
+    $entity_type = $instance['entity_type'];
+    $entity = isset($element['#entity']) ? $element['#entity'] : NULL;
+
+    // We let the Field API handles multiple values for us, only take
+    // care of the one matching our delta.
+    if (isset($items[$delta])) {
+      $items = array($items[$delta]);
+    }
+    else {
+      $items = array();
+    }
+
+    // Build an array of entities ID.
+    $entity_ids = array();
+    foreach ($items as $item) {
+      $entity_ids[] = $item['target_id'];
+    }
+    
+    ///
+    
+    $cardinality = $field['cardinality'];
+    $tokenLimit = '';
+    if ($cardinality > 0){
+            $tokenLimit = 'tokenLimit: ' . $cardinality . ',';
+    }
+
+
+    $widget = $element;
+    $widget['#delta'] = $delta;
+
+    $path = libraries_get_path('tokeninput');
+    if ($path) {
+                    drupal_add_js($path . '/src/jquery.tokeninput.js');
+                    drupal_add_css(drupal_get_path('module', 'tokeninput_entityreference') . '/tokeninput_entityreference_custom.css');
+                    drupal_add_css($path . '/styles/token-input-facebook.css');
+                    drupal_add_css($path . '/styles/token-input-mac.css');
+                    drupal_add_css($path . '/styles/token-input.css');
+    }
+
+    $remoteData = '"' . base_path() . 'tokeninput_entityreference/autocomplete/' . $element['#field_name'] .'"';
+
+
+
+    $default_value = implode(',', $entity_ids);
+    $prepopulate = !empty($entity_ids) ? _tokeninput_entityreference_prepopulate_handler($entity_ids) : '';
+
+    switch ($instance['widget']['type']) {
+
+            // DELIBERATE fall-through: From here on the field_example_text and
+            // field_example_colorpicker are exactly the same.
+            case 'tokeninput_entityreference':
+
+                    $deli = variable_get('trim_split_' . $field['field_name'],'');
+                    $ind = variable_get('trim_split_index_' . $field['field_name'],0);
+
+                    $widget += array(
+                                    '#type' => 'textfield',
+                                    '#default_value' => $default_value,
+                                    // Allow a slightly larger size that the field length to allow for some
+                                    // configurations where all characters won't fit in input field.
+                                    '#size' => 60,
+                                    '#maxlength' => 1024,
+                                    '#prefix' => "<div id='tokeninput_entityreference_".$field['field_name']."'>",
+
+                                    '#suffix' => "</div><b>".$field["field_name"]."</b><script type='text/javascript'>makeFieldTokenInput('.field-name-" . $field["field_name"] . "');</script>",
+
+                                    '#attributes' => array(
+                                                    'class' => array(
+                                                                    'field-name-' . $field['field_name'],
+                                                    ),
+                                    ),
+                                    '#element_validate' => array('tokeninput_entityreference_validate'),
+                                    '#ajax' => array(
+//                                        'event' => 'click',
+//                                        'method' => 'replace',
+//                                        'path' => 'ajax_submit_callback',
+//                                        'wrapper' => 'tokeninput_entityreference_'.$field['field_name'],
+                                    ),
+                    );
+                    
+                    $widget['#attached']['js'] = array("
+                                                    function makeFieldTokenInput(fieldSelector){
+                                                                    jQuery(fieldSelector).tokenInput(
+                                                                                    " . $remoteData . ", 
+                                                                                    {
+                                                                                                    preventDuplicates: true,
+                                                                                                    queryParam: 'query',
+                                                                                                    tokenFormatter: function(item) { 
+                                                                                                            if ('".$deli."'){
+                                                                                                                    return '<li><p>' + item[this.propertyToSearch].split('".$deli."')[".$ind."] + '</p></li>'; 
+                                                                                                            }
+                                                                                                            return '<li><p>' + item[this.propertyToSearch] + '</p></li>';
+                                                                                                    },
+                                                                                                    " . $tokenLimit . "
+                                                                                                    theme: 'facebook',
+                                                                                                    ". $prepopulate ."
+                                                                                    });
+                                                                    }" =>  array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
+                    break;
+    }
+    //$form_state['tokeninput_entityreference']['terms'] = TRUE;
+    $element['tokeninput_entityreference'] = $widget;
+    return $element;
+}
+
+
+/**
+ * Implements hook_field_widget_info_alter().
+ */
+function tokeninput_entityreference_field_widget_info_alter(&$info) {
+  if (module_exists('options')) {
+    $info['options_select']['field types'][] = 'entityreference';
+    $info['options_buttons']['field types'][] = 'entityreference';
+  }
+}
+
+function _tokeninput_entityreference_prepopulate_handler($entity_ids) {
+	$process_array = array();
+	
+	foreach($keys as $key) {
+            $user_object = user_load($id);
+            $label = format_username($user_object);
+            $results[] = array('id' => $id, 'name' => check_plain($label));
+	}
+
+	$prepopulate = 'prePopulate: ' . drupal_json_encode($results);
+	return($prepopulate);
+}
+
+function tokeninput_buildEntityFieldQuery($match, $entity_type, $match_operator = 'STARTS_WITH') {
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', $entity_type);
+//  if (!empty($this->field['settings']['handler_settings']['target_bundles'])) {
+//    $query->entityCondition('bundle', $this->field['settings']['handler_settings']['target_bundles'], 'IN');
+//  }
+  if (isset($match)) {
+      $query->propertyCondition('name', $match, $match_operator);
+  }
+
+  // Add a generic entity access tag to the query.
+  $query->addTag($entity_type. '_access');
+  // We don't want this, otherwise our query will get altered by entityreference_query_entityreference_alter
+//  $query->addTag('entityreference');
+  
+  // Add the sort option.
+//  if (!empty($this->field['settings']['handler_settings']['sort'])) {
+//    $sort_settings = $this->field['settings']['handler_settings']['sort'];
+//    if ($sort_settings['type'] == 'property') {
+//      $query->propertyOrderBy($sort_settings['property'], $sort_settings['direction']);
+//    }
+//    elseif ($sort_settings['type'] == 'field') {
+//      list($field, $column) = explode(':', $sort_settings['field'], 2);
+//      $query->fieldOrderBy($field, $column, $sort_settings['direction']);
+//    }
+//  }
+
+  return $query;
+}
+
+
+/**
+ * Custom taxonomy callback, which also accepts an empty string search.
+ */
+function tokeninput_entityreference_callback($field_name, $tags_typed = '') {
+  $field = field_info_field($field_name);
+  $entity_type = $field['settings']['target_type'];
+  
+  $tags_typed = isset($_GET['query']) ? $_GET['query'] : '';
+  
+  // The user enters a comma-separated list of tags. We only autocomplete the last tag.
+  $tags_typed = explode(',', $tags_typed);
+  $tag_last = drupal_strtolower(trim(array_pop($tags_typed)));
+
+  $matches = array();
+  
+  $query = tokeninput_buildEntityFieldQuery($tag_last, $entity_type);
+
+  $query->addMetaData('field', $field_name);
+
+  $limit = 10;
+  if ($limit > 0) {
+      $query->range(0, $limit);
+  }
+  $results = $query->execute();
+
+  $matches = array();
+  
+  
+    $entity_info = entity_get_info($entity_type);
+    $label_callback = $entity_info['label callback'];
+        
+    foreach ($results[$entity_type] as $id => $entity_object) {
+//        $label = entity_label($entity_type, $id);
+//        $label = $label_callback($id);
+        $user_object = user_load($id);
+        $label = format_username($user_object);
+        $matches[] = array('id' => $id, 'name' => check_plain($label));
+    }
+	
+  drupal_json_output($matches);
+}
+
+function tokeninput_entityreference_validate($element, &$form_state, &$form) {
+  $value = array();
+  // If a value was entered into the autocomplete...
+  if (!empty($element['#value'])) {
+    $entities = array_unique(explode(',', $element['#value']));
+    $value = array();
+    foreach ($entities as $entity) {
+        $value[] = array(
+          'target_id' => intval($entity),
+        );
+    }
+  }
+  // Update the value of this element so the field can validate the product IDs.
+  form_set_value($element, $value, $form_state);
+//  $element['#entity'][$element['#field_name']]['und'] = $value;
+}
+
+function tokeninput_entityreference_field_widget_settings_form($field, $instance) {
+  $settings = $field['settings'];
+  $form = array();
+  
+	$form['trim_split_' . $field['field_name']] = array(
+  '#type' => 'textfield', 
+  '#title' => t('Split string by'), 
+  '#description' => t('Split string by delimiter'),
+  '#default_value' => variable_get('trim_split_' . $field['field_name'],''), 
+  '#size' => 4, 
+  '#maxlength' => 4, 
+  '#required' => FALSE,
+	'#element_validate' => array('trim_split_validate'),
+  );
+
+  $form['trim_split_index_' . $field['field_name']] = array(
+  '#type' => 'textfield', 
+  '#title' => t('Split string index'), 
+  '#description' => t('Part of string after split'),
+  '#default_value' => variable_get('trim_split_index_' . $field['field_name'],0), 
+  '#size' => 4, 
+  '#maxlength' => 4, 
+  '#required' => FALSE,
+	'#element_validate' => array('trim_split_index_validate'),
+  );
+  return $form;
+}
+
+function trim_split_validate($element, &$form_state, &$form){
+	$field_name = str_replace('instance[widget][settings][','',$element['#name']);
+	$field_name = str_replace(']','',$field_name);	
+	variable_set($field_name,$element['#value']);
+}
+
+function trim_split_index_validate($element, &$form_state, &$form){
+	$field_name = str_replace('instance[widget][settings][','',$element['#name']);
+	$field_name = str_replace(']','',$field_name);	
+	variable_set($field_name,$element['#value']);
+}
+
