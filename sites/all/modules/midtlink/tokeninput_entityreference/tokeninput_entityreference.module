@@ -258,8 +258,17 @@ function tokeninput_entityreference_validate($element, &$form_state, &$form) {
 //$node_wrapper->field_number->set($var);
 //$node_wrapper->save();
   }
+//  
+  
+    // Test saving only one entity
+        $value = array(
+          'target_id' => array_pop($entities),
+        );
+        
+  
+//  dpm($element); dpm($form_state);
   // Update the value of this element so the field can validate the product IDs.
-//  form_set_value($element, $value, $form_state);
+  form_set_value($element, $value, $form_state);
 //  $element['#entity'][$element['#field_name']]['und'] = $value;
 }
 
