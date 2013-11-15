@@ -43,15 +43,6 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
     $entity_type = $instance['entity_type'];
     $entity = isset($element['#entity']) ? $element['#entity'] : NULL;
 
-    // We let the Field API handles multiple values for us, only take
-    // care of the one matching our delta.
-    if (isset($items[$delta])) {
-      $items = array($items[$delta]);
-    }
-    else {
-      $items = array();
-    }
-
     // Build an array of entities ID.
     $entity_ids = array();
     foreach ($items as $item) {
@@ -67,8 +58,7 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
     }
 
 
-    $widget = $element;
-    $widget['#delta'] = $delta;
+//    $element['#delta'] = $delta;
 
     $path = libraries_get_path('tokeninput');
     if ($path) {
@@ -87,15 +77,12 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
     $prepopulate = !empty($entity_ids) ? _tokeninput_entityreference_prepopulate_handler($entity_ids) : '';
 
     switch ($instance['widget']['type']) {
-
-            // DELIBERATE fall-through: From here on the field_example_text and
-            // field_example_colorpicker are exactly the same.
             case 'tokeninput_entityreference':
 
                     $deli = variable_get('trim_split_' . $field['field_name'],'');
                     $ind = variable_get('trim_split_index_' . $field['field_name'],0);
 
-                    $widget += array(
+                    $element += array(
                                     '#type' => 'textfield',
                                     '#default_value' => $default_value,
                                     // Allow a slightly larger size that the field length to allow for some
@@ -120,7 +107,7 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                                     ),
                     );
                     
-                    $widget['#attached']['js'] = array("
+                    $element['#attached']['js'] = array("
                                                     function makeFieldTokenInput(fieldSelector){
                                                                     jQuery(fieldSelector).tokenInput(
                                                                                     " . $remoteData . ", 
@@ -141,7 +128,6 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                     break;
     }
     //$form_state['tokeninput_entityreference']['terms'] = TRUE;
-    $element['tokeninput_entityreference'] = $widget;
     return $element;
 }
 
@@ -244,6 +230,10 @@ function tokeninput_entityreference_callback($field_name, $tags_typed = '') {
 
 function tokeninput_entityreference_validate($element, &$form_state, &$form) {
   $value = array();
+  
+  $field = field_info_field($element['#field_name']);
+  $entity_type = $field['settings']['target_type'];
+  
   // If a value was entered into the autocomplete...
   if (!empty($element['#value'])) {
     $entities = array_unique(explode(',', $element['#value']));
@@ -251,6 +241,7 @@ function tokeninput_entityreference_validate($element, &$form_state, &$form) {
     foreach ($entities as $entity) {
         $value[] = array(
           'target_id' => intval($entity),
+          'target_type' => $entity_type,
         );
     }
 //    $node_wrapper = entity_metadata_wrapper('node', $element['#entity']['nid']);
@@ -259,18 +250,24 @@ function tokeninput_entityreference_validate($element, &$form_state, &$form) {
 //$node_wrapper->save();
   }
 //  
-  
     // Test saving only one entity
-        $value = array(
-          'target_id' => array_pop($entities),
-        );
+//        $value = array(
+//          'target_id' => array_pop($entities),
+//          'target_type' => $entity_type,
+//        );
         
   
-//  dpm($element); dpm($form_state);
   // Update the value of this element so the field can validate the product IDs.
   form_set_value($element, $value, $form_state);
-//  $element['#entity'][$element['#field_name']]['und'] = $value;
 }
+
+/**
+ * Implements hook_field_widget_error().
+ */
+function tokeninput_entityreference_field_widget_error($element, $error) {
+  form_error($element, $error['message']);
+}
+
 
 function tokeninput_entityreference_field_widget_settings_form($field, $instance) {
   $settings = $field['settings'];
