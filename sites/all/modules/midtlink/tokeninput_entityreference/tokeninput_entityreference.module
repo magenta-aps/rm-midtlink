@@ -9,6 +9,7 @@ function tokeninput_entityreference_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
+
   return $items;
 }
 
@@ -50,13 +51,6 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
     }
     
     ///
-    
-    $cardinality = $field['cardinality'];
-    $tokenLimit = '';
-    if ($cardinality > 0){
-            $tokenLimit = 'tokenLimit: ' . $cardinality . ',';
-    }
-
 
 //    $element['#delta'] = $delta;
 
@@ -69,18 +63,14 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                     drupal_add_css($path . '/styles/token-input.css');
     }
 
-    $remoteData = '"' . base_path() . 'tokeninput_entityreference/autocomplete/' . $element['#field_name'] .'"';
-
-
-
     $default_value = implode(',', $entity_ids);
-    $prepopulate = !empty($entity_ids) ? _tokeninput_entityreference_prepopulate_handler($entity_ids) : '';
+    
+    $remoteData = base_path() . 'tokeninput_entityreference/autocomplete/' . $element['#field_name'];
+    $prePopulate = !empty($entity_ids) ? _tokeninput_entityreference_prepopulate_handler($entity_ids) : 'null';
+    $tokenLimit = $field['cardinality'] > 0 ? $field['cardinality'] : 'null';
 
     switch ($instance['widget']['type']) {
             case 'tokeninput_entityreference':
-
-                    $deli = variable_get('trim_split_' . $field['field_name'],'');
-                    $ind = variable_get('trim_split_index_' . $field['field_name'],0);
 
                     $element += array(
                                     '#type' => 'textfield',
@@ -89,14 +79,17 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                                     // configurations where all characters won't fit in input field.
                                     '#size' => 60,
                                     '#maxlength' => 1024,
-                                    '#prefix' => "<div id='tokeninput_entityreference_".$field['field_name']."'>",
+                                    '#prefix' => "<div class='tokeninput_entityreference'>",
 
-                                    '#suffix' => "</div><script type='text/javascript'>makeFieldTokenInput('.field-name-" . $field["field_name"] . "');</script>",
+                                    '#suffix' => "</div><script type='text/javascript'>jQuery('.tokeninput_entityreference input[type=text]').makeFieldTokenInput();</script>",
 
                                     '#attributes' => array(
                                                     'class' => array(
                                                                     'field-name-' . $field['field_name'],
                                                     ),
+                                                    'remoteData' => $remoteData,
+                                                    'tokenLimit' => $tokenLimit,
+                                                    'prePopulate' => $prePopulate,
                                     ),
                                     '#element_validate' => array('tokeninput_entityreference_validate'),
                                     '#ajax' => array(
@@ -107,30 +100,32 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                                     ),
                     );
                     
-                    $element['#attached']['js'] = array("
-                                                    function makeFieldTokenInput(fieldSelector){
-                                                                    jQuery(fieldSelector).tokenInput(
-                                                                                    " . $remoteData . ", 
-                                                                                    {
-                                                                                                    preventDuplicates: true,
-                                                                                                    queryParam: 'query',
-                                                                                                    tokenFormatter: function(item) { 
-                                                                                                            if ('".$deli."'){
-                                                                                                                    return '<li><p>' + item[this.propertyToSearch].split('".$deli."')[".$ind."] + '</p></li>'; 
-                                                                                                            }
-                                                                                                            return '<li><p>' + item[this.propertyToSearch] + '</p></li>';
-                                                                                                    },
-                                                                                                    " . $tokenLimit . "
-                                                                                                    theme: 'facebook',
-                                                                                                    ". $prepopulate ."
-                                                                                    });
-                                                                    }" =>  array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
+                    $element['#attached']['js'] = array("jQuery.fn.makeFieldTokenInput = function(){
+                            console.log('Make token input!');
+                            var jsonValues = JSON.parse(jQuery(this).attr('prePopulate'));
+                            console.log(JSON.parse(jQuery(this).attr('tokenLimit')));
+                            jQuery('.token-input-dropdown-facebook').hide();
+                            jQuery(this).tokenInput(
+                                jQuery(this).attr('remoteData'), 
+                                {
+                                    preventDuplicates: true,
+                                    queryParam: 'query',
+                                    tokenLimit: JSON.parse(jQuery(this).attr('tokenLimit')),
+                                    theme: 'facebook',
+                                    prePopulate: jsonValues,
+                                }
+                            );
+                        }" =>  array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
                     break;
     }
+    
     //$form_state['tokeninput_entityreference']['terms'] = TRUE;
     return $element;
 }
 
+function tokeninput_entityreference_ajax_render_alter(&$commands) {
+    $commands[] = ajax_command_invoke('.tokeninput_entityreference input[type=text]', 'makeFieldTokenInput');
+}
 
 /**
  * Implements hook_field_widget_info_alter().
@@ -151,8 +146,7 @@ function _tokeninput_entityreference_prepopulate_handler($entity_ids) {
             $results[] = array('id' => $id, 'name' => check_plain($label));
 	}
 
-	$prepopulate = 'prePopulate: ' . drupal_json_encode($results);
-	return($prepopulate);
+	return drupal_json_encode($results);
 }
 
 function tokeninput_buildEntityFieldQuery($match, $entity_type, $match_operator = 'STARTS_WITH') {
@@ -241,21 +235,10 @@ function tokeninput_entityreference_validate($element, &$form_state, &$form) {
     foreach ($entities as $entity) {
         $value[] = array(
           'target_id' => intval($entity),
-          'target_type' => $entity_type,
+          'target_type' => $entity_type, // Is this necessary?
         );
     }
-//    $node_wrapper = entity_metadata_wrapper('node', $element['#entity']['nid']);
-//$var = $node_wrapper->field_number->value() + 1;
-//$node_wrapper->field_number->set($var);
-//$node_wrapper->save();
   }
-//  
-    // Test saving only one entity
-//        $value = array(
-//          'target_id' => array_pop($entities),
-//          'target_type' => $entity_type,
-//        );
-        
   
   // Update the value of this element so the field can validate the product IDs.
   form_set_value($element, $value, $form_state);
@@ -267,45 +250,3 @@ function tokeninput_entityreference_validate($element, &$form_state, &$form) {
 function tokeninput_entityreference_field_widget_error($element, $error) {
   form_error($element, $error['message']);
 }
-
-
-function tokeninput_entityreference_field_widget_settings_form($field, $instance) {
-  $settings = $field['settings'];
-  $form = array();
-  
-	$form['trim_split_' . $field['field_name']] = array(
-  '#type' => 'textfield', 
-  '#title' => t('Split string by'), 
-  '#description' => t('Split string by delimiter'),
-  '#default_value' => variable_get('trim_split_' . $field['field_name'],''), 
-  '#size' => 4, 
-  '#maxlength' => 4, 
-  '#required' => FALSE,
-	'#element_validate' => array('trim_split_validate'),
-  );
-
-  $form['trim_split_index_' . $field['field_name']] = array(
-  '#type' => 'textfield', 
-  '#title' => t('Split string index'), 
-  '#description' => t('Part of string after split'),
-  '#default_value' => variable_get('trim_split_index_' . $field['field_name'],0), 
-  '#size' => 4, 
-  '#maxlength' => 4, 
-  '#required' => FALSE,
-	'#element_validate' => array('trim_split_index_validate'),
-  );
-  return $form;
-}
-
-function trim_split_validate($element, &$form_state, &$form){
-	$field_name = str_replace('instance[widget][settings][','',$element['#name']);
-	$field_name = str_replace(']','',$field_name);	
-	variable_set($field_name,$element['#value']);
-}
-
-function trim_split_index_validate($element, &$form_state, &$form){
-	$field_name = str_replace('instance[widget][settings][','',$element['#name']);
-	$field_name = str_replace(']','',$field_name);	
-	variable_set($field_name,$element['#value']);
-}
-
