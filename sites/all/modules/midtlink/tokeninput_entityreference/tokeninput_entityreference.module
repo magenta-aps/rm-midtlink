@@ -44,6 +44,14 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
     $entity_type = $instance['entity_type'];
     $entity = isset($element['#entity']) ? $element['#entity'] : NULL;
 
+    // We need to grab the items from $form_state['values'], because the $items
+    // passed into this function contains the old form data and not the newly
+    // saved data which we saved in the validate function.
+    if (key_exists('values', $form_state)) {
+        $items = $form_state['values'][$field['field_name']];
+        $items = isset($items[$langcode]) ? $items[$langcode] : array();
+    }
+    
     // Build an array of entities ID.
     $entity_ids = array();
     foreach ($items as $item) {
@@ -65,7 +73,7 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
 
     $default_value = implode(',', $entity_ids);
     
-    $remoteData = base_path() . 'tokeninput_entityreference/autocomplete/' . $element['#field_name'];
+    $remoteData = base_path() . 'tokeninput_entityreference/autocomplete/' . $field['field_name'];
     $prePopulate = !empty($entity_ids) ? _tokeninput_entityreference_prepopulate_handler($entity_ids) : 'null';
     $tokenLimit = $field['cardinality'] > 0 ? $field['cardinality'] : 'null';
 
@@ -81,11 +89,11 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                                     '#maxlength' => 1024,
                                     '#prefix' => "<div class='tokeninput_entityreference'>",
 
-                                    '#suffix' => "</div><script type='text/javascript'>jQuery('.tokeninput_entityreference input[type=text]').makeFieldTokenInput();</script>",
+                                    '#suffix' => "</div><script type='text/javascript'>jQuery('.tokeninputfield').makeFieldTokenInput();</script>",
 
                                     '#attributes' => array(
                                                     'class' => array(
-                                                                    'field-name-' . $field['field_name'],
+                                                                    'tokeninputfield',
                                                     ),
                                                     'remoteData' => $remoteData,
                                                     'tokenLimit' => $tokenLimit,
@@ -101,30 +109,46 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                     );
                     
                     $element['#attached']['js'] = array("jQuery.fn.makeFieldTokenInput = function(){
-                            console.log('Make token input!');
-                            var jsonValues = JSON.parse(jQuery(this).attr('prePopulate'));
-                            console.log(JSON.parse(jQuery(this).attr('tokenLimit')));
+                            // Only call this function once on each element
+                            if (jQuery(this).attr('tokeninputized') == 'true') {
+                                return;
+                            }
+                            jQuery(this).attr('tokeninputized', 'true');
+                            var prePopulate = jQuery(this).attr('prePopulate');
+                            var tokenLimit = jQuery(this).attr('tokenLimit');
+                            
+                            //console.log('prePopulate', prePopulate);
+                            //console.log('tokenLimit', tokenLimit);
+                            if (prePopulate) {
+                                prePopulate = JSON.parse(prePopulate);
+                            } else {
+                                prePopulate = null;
+                            }
+                            if (tokenLimit) {
+                                tokenLimit = JSON.parse(tokenLimit);
+                            } else {
+                                tokenLimit = null;
+                            }
                             jQuery('.token-input-dropdown-facebook').hide();
                             jQuery(this).tokenInput(
                                 jQuery(this).attr('remoteData'), 
                                 {
                                     preventDuplicates: true,
                                     queryParam: 'query',
-                                    tokenLimit: JSON.parse(jQuery(this).attr('tokenLimit')),
+                                    tokenLimit: tokenLimit,
                                     theme: 'facebook',
-                                    prePopulate: jsonValues,
+                                    prePopulate: prePopulate,
                                 }
                             );
                         }" =>  array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
                     break;
     }
     
-    //$form_state['tokeninput_entityreference']['terms'] = TRUE;
     return $element;
 }
 
 function tokeninput_entityreference_ajax_render_alter(&$commands) {
-    $commands[] = ajax_command_invoke('.tokeninput_entityreference input[type=text]', 'makeFieldTokenInput');
+    $commands[] = ajax_command_invoke('.tokeninputfield', 'makeFieldTokenInput');
 }
 
 /**
@@ -147,6 +171,19 @@ function _tokeninput_entityreference_prepopulate_handler($entity_ids) {
 	}
 
 	return drupal_json_encode($results);
+}
+
+function tokeninput_validateReferencableEntities(array $ids, $entity_type) {
+  if ($ids) {
+    $query = tokeninput_buildEntityFieldQuery(NULL, $entity_type);
+    $query->entityCondition('entity_id', $ids, 'IN');
+    $result = $query->execute();
+    if (!empty($result[$entity_type])) {
+      return array_keys($result[$entity_type]);
+    }
+  }
+
+  return array();
 }
 
 function tokeninput_buildEntityFieldQuery($match, $entity_type, $match_operator = 'STARTS_WITH') {
@@ -231,11 +268,21 @@ function tokeninput_entityreference_validate($element, &$form_state, &$form) {
   // If a value was entered into the autocomplete...
   if (!empty($element['#value'])) {
     $entities = array_unique(explode(',', $element['#value']));
+    
+    $valid_ids = tokeninput_validateReferencableEntities($entities, $entity_type);
+
+    $invalid_entities = array_diff($entities, $valid_ids);
+    if ($invalid_entities) {
+      foreach ($invalid_entities as $id) {
+        form_set_error($field['field_name'], t('The referenced entity (@type: @id) is invalid.', array('@type' => $field['settings']['target_type'], '@id' => $id)));
+      }
+    }
+    
     $value = array();
     foreach ($entities as $entity) {
         $value[] = array(
           'target_id' => intval($entity),
-          'target_type' => $entity_type, // Is this necessary?
+//          'target_type' => $entity_type, // Is this necessary?
         );
     }
   }
