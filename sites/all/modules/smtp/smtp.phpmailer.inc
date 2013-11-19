@@ -455,7 +455,7 @@ class PHPMailer {
    */
   private function AddAnAddress($kind, $address, $name = '') {
     if (!preg_match('/^(to|cc|bcc|ReplyTo)$/', $kind)) {
-      echo 'Invalid recipient array: ' . kind;
+      watchdog('smtp', 'Invalid recipient array: ' . kind);
       return FALSE;
     }
     $address = trim($address);
@@ -465,7 +465,7 @@ class PHPMailer {
       if ($this->exceptions) {
         throw new phpmailerException(t('Invalid address') . ': ' . $address);
       }
-      echo t('Invalid address') . ': ' . $address;
+      watchdog('smtp',  t('Invalid address') . ': ' . $address);
       return FALSE;
     }
     if ($kind != 'ReplyTo') {
@@ -498,7 +498,7 @@ class PHPMailer {
       if ($this->exceptions) {
         throw new phpmailerException(t('Invalid address') . ': ' . $address);
       }
-      echo t('Invalid address') . ': ' . $address;
+      watchdog('smtp',  t('Invalid address') . ': ' . $address);
       return FALSE;
     }
     $this->From = $address;
@@ -590,7 +590,8 @@ class PHPMailer {
       if ($this->exceptions) {
         throw $e;
       }
-      echo $e->getMessage() . "\n";
+      
+      watchdog('smtp',  $e->getMessage());
       return FALSE;
     }
   }
@@ -1361,7 +1362,8 @@ class PHPMailer {
       if ($this->exceptions) {
         throw $e;
       }
-      echo $e->getMessage() . "\n";
+      
+      watchdog('smtp',  $e->getMessage());
       if ( $e->getCode() == self::STOP_CRITICAL ) {
         return FALSE;
       }
