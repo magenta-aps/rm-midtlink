@@ -100,47 +100,53 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                                                     'prePopulate' => $prePopulate,
                                     ),
                                     '#element_validate' => array('tokeninput_entityreference_validate'),
-                                    '#ajax' => array(
+//                                    '#ajax' => array(
 //                                        'event' => 'click',
 //                                        'method' => 'replace',
 //                                        'path' => 'ajax_submit_callback',
 //                                        'wrapper' => 'tokeninput_entityreference_'.$field['field_name'],
-                                    ),
+//                                    ),
                     );
                     
-                    $element['#attached']['js'] = array("jQuery.fn.makeFieldTokenInput = function(){
-                            // Only call this function once on each element
-                            if (jQuery(this).attr('tokeninputized') == 'true') {
-                                return;
-                            }
-                            jQuery(this).attr('tokeninputized', 'true');
-                            var prePopulate = jQuery(this).attr('prePopulate');
-                            var tokenLimit = jQuery(this).attr('tokenLimit');
-                            
-                            //console.log('prePopulate', prePopulate);
-                            //console.log('tokenLimit', tokenLimit);
-                            if (prePopulate) {
-                                prePopulate = JSON.parse(prePopulate);
-                            } else {
-                                prePopulate = null;
-                            }
-                            if (tokenLimit) {
-                                tokenLimit = JSON.parse(tokenLimit);
-                            } else {
-                                tokenLimit = null;
-                            }
-                            jQuery('.token-input-dropdown-facebook').hide();
-                            jQuery(this).tokenInput(
-                                jQuery(this).attr('remoteData'), 
-                                {
-                                    preventDuplicates: true,
-                                    queryParam: 'query',
-                                    tokenLimit: tokenLimit,
-                                    theme: 'facebook',
-                                    prePopulate: prePopulate,
-                                }
-                            );
-                        }" =>  array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
+                    $element['#attached']['js'] = array("(function ($) {
+    \$.fn.makeFieldTokenInput = function(){
+        // Only call this function once on each element
+        if ($(this).attr('tokeninputized') == 'true') {
+            return;
+        }
+        $(this).attr('tokeninputized', 'true');
+        var prePopulate = $(this).attr('prePopulate');
+        var tokenLimit = $(this).attr('tokenLimit');
+
+        //console.log('prePopulate', prePopulate);
+        //console.log('tokenLimit', tokenLimit);
+        if (prePopulate) {
+            prePopulate = JSON.parse(prePopulate);
+        } else {
+            prePopulate = null;
+        }
+        if (tokenLimit) {
+            tokenLimit = JSON.parse(tokenLimit);
+        } else {
+            tokenLimit = null;
+        }
+        $('.token-input-dropdown-facebook').hide();
+        $(this).tokenInput(
+            $(this).attr('remoteData'), 
+            {
+                preventDuplicates: true,
+                queryParam: 'query',
+                tokenLimit: tokenLimit,
+                theme: 'facebook',
+                prePopulate: prePopulate,
+            }
+        );
+    }
+    
+    // Avoid annoying AJAX alerts; log to console instead
+//    window.alert = function(arg) { if (window.console && console.log) { console.log(arg);}};
+
+})(jQuery);" =>  array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
                     break;
     }
     
@@ -149,6 +155,8 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
 
 function tokeninput_entityreference_ajax_render_alter(&$commands) {
     $commands[] = ajax_command_invoke('.tokeninputfield', 'makeFieldTokenInput');
+    // TODO: Focus the replaced input field
+//    $commands[] = ajax_command_invoke('.tokeninputfield', 'makeFieldTokenInput');
 }
 
 /**

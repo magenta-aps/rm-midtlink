@@ -4,11 +4,24 @@ function midtlink_notifications_drupal_mail($to, $subject, $message) {
   $my_module = 'midtlink_notifications';
   $my_mail_token = microtime();
   $from = 'MidtLink <no-reply@rm.midtlink.dk>';
+  
+  $allowHTML = variable_get('smtp_allowhtml', 0);
+  // Drupal's SMTP system will try to convert HTML to text if HTML is not
+  // allowed. Its formatter doesn't support a non-UTF-8 message body, so we
+  // only utf-8 decode the message if we are allowed to send an HTML message.
+  // This avoids sending an empty message body.
+  if ($allowHTML) {
+      $message = utf8_decode($message);
+  }
+  
   $message = array(
     'id' => $my_module . '_' . $my_mail_token,
     'to' => $to,
+    // Set 'from' here also. Otherwise, Drupal's mail system will throw an error
+    // for an invalid address.
+    'from' => $from, 
     'subject' => '=?UTF-8?B?'.base64_encode($subject).'?=',
-    'body' => array(utf8_decode($message)),
+    'body' => array($message),
     'headers' => array(
       'From' => $from, 
       'Sender' => $from, 
@@ -16,6 +29,7 @@ function midtlink_notifications_drupal_mail($to, $subject, $message) {
       'MIME-Version' => '1.0',
     ),
   );
+  
   $system = drupal_mail_system($my_module, $my_mail_token);
   $message = $system->format($message);
 	$system->mail($message);
