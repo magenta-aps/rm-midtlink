@@ -142,7 +142,18 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
             }
         );
     }
-    
+   
+// Always show the submit button, even if there's only 1 editable field.
+Drupal.behaviors.always_show_editablefields_submit = {
+  attach: function (context) {
+    $('.editablefield-item').once('editablefield', function() {
+      // Always show the submit button
+      $(this).find('input.form-submit').show();
+      $(this).find('input[type=text],input[type=radio],textarea,select').change(function() {});
+    });
+  }
+};
+
     // Avoid annoying AJAX alerts; log to console instead
 //    window.alert = function(arg) { if (window.console && console.log) { console.log(arg);}};
 
