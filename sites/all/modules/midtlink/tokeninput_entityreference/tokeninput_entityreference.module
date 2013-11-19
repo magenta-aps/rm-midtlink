@@ -154,9 +154,10 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
 }
 
 function tokeninput_entityreference_ajax_render_alter(&$commands) {
+    // Make the new input field into a tokenInput field
     $commands[] = ajax_command_invoke('.tokeninputfield', 'makeFieldTokenInput');
-    // TODO: Focus the replaced input field
-//    $commands[] = ajax_command_invoke('.tokeninputfield', 'makeFieldTokenInput');
+    // Focus the replaced input field
+    $commands[] = ajax_command_invoke('.tokeninputfield', 'focus');
 }
 
 /**
