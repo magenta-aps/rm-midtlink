@@ -12,6 +12,9 @@ function midtlink_notifications_drupal_mail($to, $subject, $message) {
   // This avoids sending an empty message body.
   if ($allowHTML) {
       $message = utf8_decode($message);
+      $content_type = 'text/html';
+  } else {
+      $content_type = 'text/plain';
   }
   
   $message = array(
@@ -23,6 +26,7 @@ function midtlink_notifications_drupal_mail($to, $subject, $message) {
     'subject' => '=?UTF-8?B?'.base64_encode($subject).'?=',
     'body' => array($message),
     'headers' => array(
+      'Content-type' => $content_type,
       'From' => $from, 
       'Sender' => $from, 
       'Return-Path' => $from,
