@@ -1,48 +1,44 @@
 <?php
+
 // $Id$
 /**
  * Implements hook_menu().
  */
 function tokeninput_entityreference_menu() {
-  $items['tokeninput_entityreference/autocomplete'] = array(
-    'page callback' => 'tokeninput_entityreference_callback',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
+    $items['tokeninput_entityreference/autocomplete'] = array(
+        'page callback' => 'tokeninput_entityreference_callback',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
 
-  return $items;
+    return $items;
 }
 
 /**
  * Implements hook_field_widget_info().
  */
 function tokeninput_entityreference_field_widget_info() {
-  return array(
-    'tokeninput_entityreference' => array(
-      'label' => t('Autocomplete token input'),
-      'field types' => array('entityreference'),
-      'settings' => array(
-        'autocomplete_match' => 'starts with',
-        'size' => 60,
-        'autocomplete_path' => 'tokeninput_entityreference/autocomplete',
-      ),
-      'behaviors' => array(
-        'multiple values' => FIELD_BEHAVIOR_CUSTOM,
-      ),
-    ),
-  );
+    return array(
+        'tokeninput_entityreference' => array(
+            'label' => t('Autocomplete token input'),
+            'field types' => array('entityreference'),
+            'settings' => array(
+                'autocomplete_match' => 'starts with',
+                'size' => 60,
+                'autocomplete_path' => 'tokeninput_entityreference/autocomplete',
+            ),
+            'behaviors' => array(
+                'multiple values' => FIELD_BEHAVIOR_CUSTOM,
+            ),
+        ),
+    );
 }
 
 /**
  * Implements hook_field_widget_form().
  */
 function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-	//dsm($field);
-	// dsm($element);
-	// dsm($instance);
-	
-    $entity_type = $instance['entity_type'];
-    $entity = isset($element['#entity']) ? $element['#entity'] : NULL;
+    $entity_type = $field['settings']['target_type'];
 
     // We need to grab the items from $form_state['values'], because the $items
     // passed into this function contains the old form data and not the newly
@@ -51,64 +47,53 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
         $items = $form_state['values'][$field['field_name']];
         $items = isset($items[$langcode]) ? $items[$langcode] : array();
     }
-    
+
     // Build an array of entities ID.
     $entity_ids = array();
     foreach ($items as $item) {
-      $entity_ids[] = $item['target_id'];
+        $entity_ids[] = $item['target_id'];
     }
-    
-    ///
 
 //    $element['#delta'] = $delta;
 
     $path = libraries_get_path('tokeninput');
     if ($path) {
-                    drupal_add_js($path . '/src/jquery.tokeninput.js');
-                    drupal_add_css(drupal_get_path('module', 'tokeninput_entityreference') . '/tokeninput_entityreference_custom.css');
-                    drupal_add_css($path . '/styles/token-input-facebook.css');
-                    drupal_add_css($path . '/styles/token-input-mac.css');
-                    drupal_add_css($path . '/styles/token-input.css');
+        drupal_add_js($path . '/src/jquery.tokeninput.js');
+        drupal_add_css(drupal_get_path('module', 'tokeninput_entityreference') . '/tokeninput_entityreference_custom.css');
+        drupal_add_css($path . '/styles/token-input-facebook.css');
+        drupal_add_css($path . '/styles/token-input-mac.css');
+        drupal_add_css($path . '/styles/token-input.css');
     }
 
     $default_value = implode(',', $entity_ids);
-    
+
     $remoteData = base_path() . 'tokeninput_entityreference/autocomplete/' . $field['field_name'];
-    $prePopulate = !empty($entity_ids) ? _tokeninput_entityreference_prepopulate_handler($entity_ids) : 'null';
+    $prePopulate = !empty($entity_ids) ? _tokeninput_entityreference_prepopulate_handler($entity_ids, $entity_type) : 'null';
     $tokenLimit = $field['cardinality'] > 0 ? $field['cardinality'] : 'null';
 
     switch ($instance['widget']['type']) {
-            case 'tokeninput_entityreference':
+        case 'tokeninput_entityreference':
+            $element += array(
+                '#type' => 'textfield',
+                '#default_value' => $default_value,
+                // Allow a slightly larger size that the field length to allow for some
+                // configurations where all characters won't fit in input field.
+                '#size' => 60,
+                '#maxlength' => 1024,
+                '#prefix' => "<div class='tokeninput_entityreference'>",
+                '#suffix' => "</div><script type='text/javascript'>jQuery('.tokeninputfield').makeFieldTokenInput();</script>",
+                '#attributes' => array(
+                    'class' => array(
+                        'tokeninputfield',
+                    ),
+                    'remoteData' => $remoteData,
+                    'tokenLimit' => $tokenLimit,
+                    'prePopulate' => $prePopulate,
+                ),
+                '#element_validate' => array('tokeninput_entityreference_validate'),
+            );
 
-                    $element += array(
-                                    '#type' => 'textfield',
-                                    '#default_value' => $default_value,
-                                    // Allow a slightly larger size that the field length to allow for some
-                                    // configurations where all characters won't fit in input field.
-                                    '#size' => 60,
-                                    '#maxlength' => 1024,
-                                    '#prefix' => "<div class='tokeninput_entityreference'>",
-
-                                    '#suffix' => "</div><script type='text/javascript'>jQuery('.tokeninputfield').makeFieldTokenInput();</script>",
-
-                                    '#attributes' => array(
-                                                    'class' => array(
-                                                                    'tokeninputfield',
-                                                    ),
-                                                    'remoteData' => $remoteData,
-                                                    'tokenLimit' => $tokenLimit,
-                                                    'prePopulate' => $prePopulate,
-                                    ),
-                                    '#element_validate' => array('tokeninput_entityreference_validate'),
-//                                    '#ajax' => array(
-//                                        'event' => 'click',
-//                                        'method' => 'replace',
-//                                        'path' => 'ajax_submit_callback',
-//                                        'wrapper' => 'tokeninput_entityreference_'.$field['field_name'],
-//                                    ),
-                    );
-                    
-                    $element['#attached']['js'] = array("(function ($) {
+            $element['#attached']['js'] = array("(function ($) {
     \$.fn.makeFieldTokenInput = function(){
         // Only call this function once on each element
         if ($(this).attr('tokeninputized') == 'true') {
@@ -157,10 +142,10 @@ Drupal.behaviors.always_show_editablefields_submit = {
     // Avoid annoying AJAX alerts; log to console instead
 //    window.alert = function(arg) { if (window.console && console.log) { console.log(arg);}};
 
-})(jQuery);" =>  array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
-                    break;
+})(jQuery);" => array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
+            break;
     }
-    
+
     return $element;
 }
 
@@ -175,53 +160,51 @@ function tokeninput_entityreference_ajax_render_alter(&$commands) {
  * Implements hook_field_widget_info_alter().
  */
 function tokeninput_entityreference_field_widget_info_alter(&$info) {
-  if (module_exists('options')) {
-    $info['options_select']['field types'][] = 'entityreference';
-    $info['options_buttons']['field types'][] = 'entityreference';
-  }
+    if (module_exists('options')) {
+        $info['options_select']['field types'][] = 'entityreference';
+        $info['options_buttons']['field types'][] = 'entityreference';
+    }
 }
 
-function _tokeninput_entityreference_prepopulate_handler($entity_ids) {
-	$results = array();
-	
-	foreach($entity_ids as $id) {
-            $user_object = user_load($id);
-            $label = format_username($user_object);
-            $results[] = array('id' => $id, 'name' => check_plain($label));
-	}
+function _tokeninput_entityreference_prepopulate_handler($entity_ids, $entity_type) {
+    $results = array();
 
-	return drupal_json_encode($results);
+    foreach ($entity_ids as $id) {
+        $label = _tokeninput_label_from_entity_id($id, $entity_type);
+        $results[] = array('id' => $id, 'name' => check_plain($label));
+    }
+
+    return drupal_json_encode($results);
 }
 
 function tokeninput_validateReferencableEntities(array $ids, $entity_type) {
-  if ($ids) {
-    $query = tokeninput_buildEntityFieldQuery(NULL, $entity_type);
-    $query->entityCondition('entity_id', $ids, 'IN');
-    $result = $query->execute();
-    if (!empty($result[$entity_type])) {
-      return array_keys($result[$entity_type]);
+    if ($ids) {
+        $query = tokeninput_buildEntityFieldQuery(NULL, $entity_type);
+        $query->entityCondition('entity_id', $ids, 'IN');
+        $result = $query->execute();
+        if (!empty($result[$entity_type])) {
+            return array_keys($result[$entity_type]);
+        }
     }
-  }
 
-  return array();
+    return array();
 }
 
 function tokeninput_buildEntityFieldQuery($match, $entity_type, $match_operator = 'STARTS_WITH') {
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', $entity_type);
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', $entity_type);
 //  if (!empty($this->field['settings']['handler_settings']['target_bundles'])) {
 //    $query->entityCondition('bundle', $this->field['settings']['handler_settings']['target_bundles'], 'IN');
 //  }
-  if (isset($match)) {
-      $query->propertyCondition('name', $match, $match_operator);
-  }
+    if (isset($match)) {
+        $query->propertyCondition('name', $match, $match_operator);
+    }
 
-  // Add a generic entity access tag to the query.
-  $query->addTag($entity_type. '_access');
-  // We don't want this, otherwise our query will get altered by entityreference_query_entityreference_alter
+    // Add a generic entity access tag to the query.
+    $query->addTag($entity_type . '_access');
+    // We don't want this, otherwise our query will get altered by entityreference_query_entityreference_alter
 //  $query->addTag('entityreference');
-  
-  // Add the sort option.
+    // Add the sort option.
 //  if (!empty($this->field['settings']['handler_settings']['sort'])) {
 //    $sort_settings = $this->field['settings']['handler_settings']['sort'];
 //    if ($sort_settings['type'] == 'property') {
@@ -233,87 +216,95 @@ function tokeninput_buildEntityFieldQuery($match, $entity_type, $match_operator 
 //    }
 //  }
 
-  return $query;
+    return $query;
 }
 
+/**
+ * Get a label for the given entity id.
+ * Calls the entity_label function.
+ * @param type $id
+ * @param type $entity_type
+ * @return type
+ */
+function _tokeninput_label_from_entity_id($id, $entity_type) {
+    $entity = entity_load_single($entity_type, $id);
+    return entity_label($entity_type, $entity);
+}
 
 /**
  * AJAX autocomplete callback, to provide JSON results for tokeninput field..
  */
 function tokeninput_entityreference_callback($field_name, $tags_typed = '') {
-  $field = field_info_field($field_name);
-  $entity_type = $field['settings']['target_type'];
-  
-  $tags_typed = isset($_GET['query']) ? $_GET['query'] : '';
-  
-  // The user enters a comma-separated list of tags. We only autocomplete the last tag.
-  $tags_typed = explode(',', $tags_typed);
-  $tag_last = drupal_strtolower(trim(array_pop($tags_typed)));
+    $field = field_info_field($field_name);
+    $entity_type = $field['settings']['target_type'];
 
-  $matches = array();
-  
-  $query = tokeninput_buildEntityFieldQuery($tag_last, $entity_type);
+    $tags_typed = isset($_GET['query']) ? $_GET['query'] : '';
 
-  $query->addMetaData('field', $field_name);
+    // The user enters a comma-separated list of tags. We only autocomplete the last tag.
+    $tags_typed = explode(',', $tags_typed);
+    $tag_last = drupal_strtolower(trim(array_pop($tags_typed)));
 
-  $limit = 10;
-  if ($limit > 0) {
-      $query->range(0, $limit);
-  }
-  $results = $query->execute();
+    $matches = array();
 
-  $matches = array();
-  
-  
+    $query = tokeninput_buildEntityFieldQuery($tag_last, $entity_type);
+
+    $query->addMetaData('field', $field_name);
+
+    $limit = 10;
+    if ($limit > 0) {
+        $query->range(0, $limit);
+    }
+    $results = $query->execute();
+
+    $matches = array();
+
+
     $entity_info = entity_get_info($entity_type);
     $label_callback = $entity_info['label callback'];
-        
+
     foreach ($results[$entity_type] as $id => $entity_object) {
-//        $label = entity_label($entity_type, $id);
-//        $label = $label_callback($id);
-        $user_object = user_load($id);
-        $label = format_username($user_object);
+        $label = _tokeninput_label_from_entity_id($id, $entity_type);
         $matches[] = array('id' => $id, 'name' => check_plain($label));
     }
-	
-  drupal_json_output($matches);
+
+    drupal_json_output($matches);
 }
 
 function tokeninput_entityreference_validate($element, &$form_state, &$form) {
-  $value = array();
-  
-  $field = field_info_field($element['#field_name']);
-  $entity_type = $field['settings']['target_type'];
-  
-  // If a value was entered into the autocomplete...
-  if (!empty($element['#value'])) {
-    $entities = array_unique(explode(',', $element['#value']));
-    
-    $valid_ids = tokeninput_validateReferencableEntities($entities, $entity_type);
-
-    $invalid_entities = array_diff($entities, $valid_ids);
-    if ($invalid_entities) {
-      foreach ($invalid_entities as $id) {
-        form_set_error($field['field_name'], t('The referenced entity (@type: @id) is invalid.', array('@type' => $field['settings']['target_type'], '@id' => $id)));
-      }
-    }
-    
     $value = array();
-    foreach ($entities as $entity) {
-        $value[] = array(
-          'target_id' => intval($entity),
+
+    $field = field_info_field($element['#field_name']);
+    $entity_type = $field['settings']['target_type'];
+
+    // If a value was entered into the autocomplete...
+    if (!empty($element['#value'])) {
+        $entities = array_unique(explode(',', $element['#value']));
+
+        $valid_ids = tokeninput_validateReferencableEntities($entities, $entity_type);
+
+        $invalid_entities = array_diff($entities, $valid_ids);
+        if ($invalid_entities) {
+            foreach ($invalid_entities as $id) {
+                form_set_error($field['field_name'], t('The referenced entity (@type: @id) is invalid.', array('@type' => $field['settings']['target_type'], '@id' => $id)));
+            }
+        }
+
+        $value = array();
+        foreach ($entities as $entity) {
+            $value[] = array(
+                'target_id' => intval($entity),
 //          'target_type' => $entity_type, // Is this necessary?
-        );
+            );
+        }
     }
-  }
-  
-  // Update the value of this element so the field can validate the product IDs.
-  form_set_value($element, $value, $form_state);
+
+    // Update the value of this element so the field can validate the product IDs.
+    form_set_value($element, $value, $form_state);
 }
 
 /**
  * Implements hook_field_widget_error().
  */
 function tokeninput_entityreference_field_widget_error($element, $error) {
-  form_error($element, $error['message']);
+    form_error($element, $error['message']);
 }

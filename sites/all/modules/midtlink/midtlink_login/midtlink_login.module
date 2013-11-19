@@ -1,5 +1,21 @@
 <?php
 
+function midtlink_login_entity_info_alter(&$entity_info) {
+  // Give user entities an alternate label,
+  // formatted as: 'regionsID (full name)'.
+  $entity_info['user']['label callback'] = '_midtlink_login_callback_entity_info_label';
+}
+
+function _midtlink_login_callback_entity_info_label($entity, $entity_type) {
+  if ($entity_type == 'user') {
+    $full_name = $entity->field_fullname[LANGUAGE_NONE][0]['value'];
+    $regionsID = $entity->name;
+    return $full_name . ' (' . $regionsID . ')';
+  } else {
+      return '';
+  }
+}
+
 function midtlink_login_menu() {
 	$items['loginpage'] = array(
 		'title' => 'Log venligst ind', 
