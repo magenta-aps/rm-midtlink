@@ -63,7 +63,7 @@ function midtlink_utils_terms() {
 }
 
 
-function midtlink_get_unit_tree() {
+function midtlink_get_unit_tree($getChildren = TRUE) {
 	global $user;
 	$out = array();
 	
@@ -85,13 +85,15 @@ function midtlink_get_unit_tree() {
 		$out[$u->tid]['name'] = $u->name;
 	}
 	
-	foreach($out as $tid=>$u) {
-		$terms = taxonomy_get_children($tid,4);
-		foreach($terms as $t) {
-			$out[$tid]['units'][$t->tid] = $t->name;
-		}
-	}
-	
+        if ($getChildren) {
+            foreach($out as $tid=>$u) {
+                    $terms = taxonomy_get_children($tid,4);
+                    foreach($terms as $t) {
+                            $out[$tid]['units'][$t->tid] = $t->name;
+                    }
+        	}
+        }
+        
 	return $out;
 }
 

@@ -1,10 +1,15 @@
 <div class="<?php print $classes; ?>">
   <div class="mini-tabs">
 		<ul>
-
-			<li<?php if($_GET['tid'] == '528') { echo ' class="active"'; } ?>><a href="<?php echo url($_GET['q']); ?>?tid=528">OLES AFDELING</a></li>
-			<li<?php if($_GET['tid'] == '300') { echo ' class="active"'; } ?>><a href="<?php echo url($_GET['q']); ?>?tid=300">Aarhus Universitetshospital</a></li>
-			<li<?php if($_GET['tid'] == '301') { echo ' class="active"'; } ?>><a href="<?php echo url($_GET['q']); ?>?tid=301">Hospitalsenhed Horsens</a></li>
+                    <?php
+                    $units = midtlink_get_unit_tree(FALSE);
+                    foreach ($units as $tid => $unit):
+                        if ($unit['name'] == 'Andre') {
+                            continue;
+                        }
+                    ?>
+			<li<?php if($_GET['tid'] == $tid) { echo ' class="active"'; } ?>><a href="<?php echo url($_GET['q']); ?>?tid=<?php echo $tid; ?>"><?php echo $unit['name']; ?></a></li>
+                    <?php endforeach; ?>
 		</ul>
   </div>
     
