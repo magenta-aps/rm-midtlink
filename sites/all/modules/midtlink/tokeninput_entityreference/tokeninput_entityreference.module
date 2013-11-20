@@ -204,6 +204,7 @@ function tokeninput_buildEntityFieldQuery($match, $entity_type, $match_operator 
     $query->addTag($entity_type . '_access');
     // We don't want this, otherwise our query will get altered by entityreference_query_entityreference_alter
 //  $query->addTag('entityreference');
+
     // Add the sort option.
 //  if (!empty($this->field['settings']['handler_settings']['sort'])) {
 //    $sort_settings = $this->field['settings']['handler_settings']['sort'];
@@ -234,19 +235,14 @@ function _tokeninput_label_from_entity_id($id, $entity_type) {
 /**
  * AJAX autocomplete callback, to provide JSON results for tokeninput field..
  */
-function tokeninput_entityreference_callback($field_name, $tags_typed = '') {
+function tokeninput_entityreference_callback($field_name) {
     $field = field_info_field($field_name);
     $entity_type = $field['settings']['target_type'];
 
-    $tags_typed = isset($_GET['query']) ? $_GET['query'] : '';
+    $input = isset($_GET['query']) ? $_GET['query'] : '';
+    $input = drupal_strtolower(trim($input));
 
-    // The user enters a comma-separated list of tags. We only autocomplete the last tag.
-    $tags_typed = explode(',', $tags_typed);
-    $tag_last = drupal_strtolower(trim(array_pop($tags_typed)));
-
-    $matches = array();
-
-    $query = tokeninput_buildEntityFieldQuery($tag_last, $entity_type);
+    $query = tokeninput_buildEntityFieldQuery($input, $entity_type);
 
     $query->addMetaData('field', $field_name);
 
@@ -256,8 +252,9 @@ function tokeninput_entityreference_callback($field_name, $tags_typed = '') {
     }
     $results = $query->execute();
 
+    
+    // Build the matches array to be sent as JSON
     $matches = array();
-
 
     $entity_info = entity_get_info($entity_type);
     $label_callback = $entity_info['label callback'];
