@@ -95,37 +95,35 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
 
             $element['#attached']['js'] = array("(function ($) {
     $.fn.makeFieldTokenInput = function() {
-        // Only call this function once on each element
-        if ($(this).attr('tokeninputized') == 'true') {
-            return;
-        }
-        $(this).attr('tokeninputized', 'true');
-        var prePopulate = $(this).attr('prePopulate');
-        var tokenLimit = $(this).attr('tokenLimit');
-
-        //console.log('prePopulate', prePopulate);
-        //console.log('tokenLimit', tokenLimit);
-        if (prePopulate) {
-            prePopulate = JSON.parse(prePopulate);
-        } else {
-            prePopulate = null;
-        }
-        if (tokenLimit) {
-            tokenLimit = JSON.parse(tokenLimit);
-        } else {
-            tokenLimit = null;
-        }
-        $('.token-input-dropdown-facebook').hide();
-        $(this).tokenInput(
-            $(this).attr('remoteData'), 
-            {
-                preventDuplicates: true,
-                queryParam: 'query',
-                tokenLimit: tokenLimit,
-                theme: 'facebook',
-                prePopulate: prePopulate,
+        $('.tokeninputfield').each(function () {
+            // Only call this function once on each element
+            if ($(this).attr('tokeninputized') == 'true') {
+                return;
             }
-        );
+            $(this).attr('tokeninputized', 'true');
+            var prePopulate = $(this).attr('prePopulate');
+            var tokenLimit = $(this).attr('tokenLimit');
+
+            //console.log('prePopulate', prePopulate);
+            //console.log('tokenLimit', tokenLimit);
+            prePopulate = prePopulate ? JSON.parse(prePopulate) : null;
+            tokenLimit = tokenLimit ? JSON.parse(tokenLimit) : null;
+            
+            // For some reason the 'Type to Search' drop-down remains shown,
+            // so we hide it
+            $('.token-input-dropdown-facebook').hide();
+            
+            $(this).tokenInput(
+                $(this).attr('remoteData'), 
+                {
+                    preventDuplicates: true,
+                    queryParam: 'query',
+                    tokenLimit: tokenLimit,
+                    theme: 'facebook',
+                    prePopulate: prePopulate,
+                }
+            );
+        });
     }
    
 // Always show the submit button, even if there's only 1 editable field.
