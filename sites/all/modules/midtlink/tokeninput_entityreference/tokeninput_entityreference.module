@@ -94,7 +94,7 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
             );
 
             $element['#attached']['js'] = array("(function ($) {
-    \$.fn.makeFieldTokenInput = function(){
+    $.fn.makeFieldTokenInput = function() {
         // Only call this function once on each element
         if ($(this).attr('tokeninputized') == 'true') {
             return;
@@ -171,7 +171,7 @@ function _tokeninput_entityreference_prepopulate_handler($entity_ids, $entity_ty
 
     foreach ($entity_ids as $id) {
         $label = _tokeninput_label_from_entity_id($id, $entity_type);
-        $results[] = array('id' => $id, 'name' => check_plain($label));
+        $results[] = array('id' => intval($id), 'name' => check_plain($label));
     }
 
     return drupal_json_encode($results);
