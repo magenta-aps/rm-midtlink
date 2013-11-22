@@ -341,7 +341,7 @@ function midtlink_utils_init() {
 		$unitTID = $r->tid;
 		
 		$mainUnit = midtlink_get_main_unit($r->tid);
-		if($r->tid != $mainUnit->tid) {
+		if($mainUnit && $r->tid != $mainUnit->tid) {
 			$mainUnitTID = $mainUnit->tid;
 			$mainUnitName = $mainUnit->name;
 			$mainUnitShortname = $mainUnit->shortname;
