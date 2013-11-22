@@ -1,6 +1,5 @@
 <?php
 
-// $Id$
 /**
  * Implements hook_menu().
  */
@@ -210,10 +209,6 @@ Drupal.behaviors.always_show_editablefields_submit = {
         });
     }
 };
-
-// Avoid annoying AJAX alerts; log to console instead
-//    window.alert = function(arg) { if (window.console && console.log) { console.log(arg);}};
-
 })(jQuery);"
             => array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
     }
