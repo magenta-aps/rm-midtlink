@@ -38,7 +38,9 @@ function tokeninput_entityreference_field_widget_info() {
  * Implements hook_field_widget_form().
  */
 function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-    $entity_type = $field['settings']['target_type'];
+    $entity_type = $instance['entity_type'];
+    $entity = isset($element['#entity']) ? $element['#entity'] : NULL;
+    $handler = entityreference_get_selection_handler($field, $instance, $entity_type, $entity);
 
     // We need to grab the items from $form_state['values'], because the $items
     // passed into this function contains the old form data and not the newly
@@ -48,12 +50,25 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
         $items = isset($items[$langcode]) ? $items[$langcode] : array();
     }
 
-    // Build an array of entities ID.
     $entity_ids = array();
+
+    // Build an array of entities ID.
     foreach ($items as $item) {
         $entity_ids[] = $item['target_id'];
     }
+    
+    $prePopulate = array();
+    
+    // Load those entities and loop through them to extract their labels.
+    $entities = entity_load($field['settings']['target_type'], $entity_ids);
 
+    foreach ($entities as $entity_id => $entity_item) {
+        $label = $handler->getLabel($entity_item);
+        $prePopulate[] = array('id' => intval($entity_id), 'name' => check_plain($label));
+    }
+
+    $prePopulate = drupal_json_encode($prePopulate);
+    
 //    $element['#delta'] = $delta;
 
     $path = libraries_get_path('tokeninput');
@@ -68,7 +83,7 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
     $default_value = implode(',', $entity_ids);
 
     $remoteData = base_path() . 'tokeninput_entityreference/autocomplete/' . $field['field_name'];
-    $prePopulate = !empty($entity_ids) ? _tokeninput_entityreference_prepopulate_handler($entity_ids, $entity_type) : 'null';
+    $prePopulate = !empty($entity_ids) ? $prePopulate : 'null';
     $tokenLimit = $field['cardinality'] > 0 ? $field['cardinality'] : 'null';
 
     switch ($instance['widget']['type']) {
@@ -162,17 +177,6 @@ function tokeninput_entityreference_field_widget_info_alter(&$info) {
         $info['options_select']['field types'][] = 'entityreference';
         $info['options_buttons']['field types'][] = 'entityreference';
     }
-}
-
-function _tokeninput_entityreference_prepopulate_handler($entity_ids, $entity_type) {
-    $results = array();
-
-    foreach ($entity_ids as $id) {
-        $label = _tokeninput_label_from_entity_id($id, $entity_type);
-        $results[] = array('id' => intval($id), 'name' => check_plain($label));
-    }
-
-    return drupal_json_encode($results);
 }
 
 function tokeninput_validateReferencableEntities(array $ids, $entity_type) {
