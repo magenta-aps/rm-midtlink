@@ -43,7 +43,7 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
     // We need to grab the items from $form_state['values'], because the $items
     // passed into this function contains the old form data and not the newly
     // saved data which we saved in the validate function.
-    if (key_exists('values', $form_state)) {
+    if (key_exists('values', $form_state) && key_exists($field['field_name'], $form_state['values'])) {
         $items = $form_state['values'][$field['field_name']];
         $items = isset($items[$langcode]) ? $items[$langcode] : array();
     }
