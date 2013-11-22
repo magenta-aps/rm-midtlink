@@ -29,6 +29,7 @@ function tokeninput_entityreference_field_widget_info() {
                 'match_operator' => 'CONTAINS',
                 'size' => 60,
                 'path' => '',
+                'theme' => 'facebook',
             ),
             'behaviors' => array(
                 'multiple values' => FIELD_BEHAVIOR_CUSTOM,
@@ -63,6 +64,12 @@ function tokeninput_entityreference_field_widget_settings_form($field, $instance
       '#default_value' => $settings['size'],
       '#element_validate' => array('_element_validate_integer_positive'),
       '#required' => TRUE,
+    );
+    $form['theme'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Theme'),
+      '#default_value' => $settings['theme'],
+      '#description' => t('Set this to a string, eg "facebook" when including theme css files to set the css class suffix.'),
     );
   }
 
@@ -131,6 +138,8 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
     // Set the token limit based on the field's cardinality
     $tokenLimit = $field['cardinality'] > 0 ? $field['cardinality'] : 'null';
     
+    $theme = $instance['widget']['settings']['theme'];
+    
     // Add our JavaScript/CSS libraries
     $path = libraries_get_path('tokeninput');
     if ($path) {
@@ -158,8 +167,9 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
                     'tokeninputfield',
                 ),
                 'autocompletePath' => $autocomplete_path,
-                'tokenLimit' => $tokenLimit,
                 'prePopulate' => $prePopulate,
+                'tokenLimit' => $tokenLimit,
+                'theme' => $theme,
             ),
             '#element_validate' => array('tokeninput_entityreference_validate'),
         );
@@ -170,21 +180,23 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
 $.fn.makeFieldTokenInput = function() {
     $('.tokeninputfield').each(function () {
         // Only call this function once on each element
-        if ($(this).attr('tokeninputized') == 'true') {
+        if ($(this).data('tokeninputized') == 'true') {
             return;
         }
-        $(this).attr('tokeninputized', 'true');
+        $(this).data('tokeninputized', 'true');
         var prePopulate = $(this).attr('prePopulate');
         var tokenLimit = $(this).attr('tokenLimit');
+        var theme = $(this).attr('theme');
 
         //console.log('prePopulate', prePopulate);
         //console.log('tokenLimit', tokenLimit);
         prePopulate = prePopulate ? JSON.parse(prePopulate) : null;
-        tokenLimit = tokenLimit ? JSON.parse(tokenLimit) : null;
+        tokenLimit = tokenLimit != 'null' ? parseInt(tokenLimit) : null;
+        theme = theme ? theme : '';
 
         // For some reason the 'Type to Search' drop-down remains shown,
         // so we hide it
-        $('.token-input-dropdown-facebook').hide();
+        $('.token-input-dropdown' + (theme ? '-' + theme : '')).hide();
 
         $(this).tokenInput(
             $(this).attr('autocompletePath'), 
@@ -192,12 +204,24 @@ $.fn.makeFieldTokenInput = function() {
                 preventDuplicates: true,
                 queryParam: 'query',
                 tokenLimit: tokenLimit,
-                theme: 'facebook',
+                theme: theme,
                 prePopulate: prePopulate,
             }
         );
     });
-}
+};
+
+// Always show the submit button for editablefields forms,
+// even if there's only 1 editable field.
+Drupal.behaviors.always_show_editablefields_submit = {
+    attach: function (context) {
+        $('.editablefield-item').once('editablefield', function() {
+            // Always show the submit button
+            $(this).find('input.form-submit').show();
+            $(this).find('input[type=text],input[type=radio],textarea,select').change(function() {});
+        });
+    }
+};
 })(jQuery);"
             => array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
     }
