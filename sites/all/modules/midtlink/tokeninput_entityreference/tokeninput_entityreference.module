@@ -26,7 +26,7 @@ function tokeninput_entityreference_field_widget_info() {
             'label' => t('Autocomplete token input'),
             'field types' => array('entityreference'),
             'settings' => array(
-                'match_operator' => 'CONTAINS',
+                'match_operator' => 'STARTS_WITH',
                 'size' => 60,
                 'path' => '',
                 'theme' => 'facebook',
@@ -34,6 +34,7 @@ function tokeninput_entityreference_field_widget_info() {
             'behaviors' => array(
                 'multiple values' => FIELD_BEHAVIOR_CUSTOM,
             ),
+            'weight' => 100,
         ),
     );
 }
