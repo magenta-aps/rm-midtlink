@@ -1,8 +1,15 @@
 	<div class="documentation actions" style="height:80px;">
 		<div class="mini-tabs">
 			<ul>
-				<li<?php if(arg(1) == '300') { echo ' class="active"'; } ?>><a href="<?php echo url('dokumentation/300'); ?>">Aarhus Universitetshospital</a></li>
-				<li<?php if(arg(1) == '301') { echo ' class="active"'; } ?>><a href="<?php echo url('dokumentation/301'); ?>">Hospitalsenhed Horsens</a></li>
+        <?php
+          $units = midtlink_get_unit_tree(FALSE);
+          foreach ($units as $tid => $unit):
+              if ($unit['name'] == 'Andre') {
+                  continue;
+              }
+        ?>
+        <li<?php if(arg(1) == $tid) { echo ' class="active"'; } ?>><a href="<?php echo url('dokumentation/' . $tid); ?>"><?php echo $unit['name']; ?></a></li>
+        <?php endforeach; ?>
 			</ul>
     </div>
     		
