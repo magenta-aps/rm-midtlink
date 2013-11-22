@@ -47,3 +47,16 @@ jQuery(document).ready(function() {
   //jQuery('.tooltipped').tooltip();
 
 });
+
+
+// Always show the submit button for editablefields forms,
+// even if there's only 1 editable field.
+Drupal.behaviors.always_show_editablefields_submit = {
+    attach: function (context) {
+        $('.editablefield-item').once('editablefield', function() {
+            // Always show the submit button
+            $(this).find('input.form-submit').show();
+            $(this).find('input[type=text],input[type=radio],textarea,select').change(function() {});
+        });
+    }
+};

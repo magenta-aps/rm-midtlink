@@ -1,0 +1,8 @@
+DESCRIPTION
+===========
+Provides a widget for entityreference fields that can autocomplete using the
+jQuery Tokeninput plugin.
+
+You must download the jQuery Tokeninput files from
+http://loopj.com/jquery-tokeninput/
+and place them in sites/all/libraries/tokeninput/
