@@ -5,9 +5,13 @@
  * Implements hook_menu().
  */
 function tokeninput_entityreference_menu() {
-    $items['tokeninput_entityreference/autocomplete'] = array(
+    $items['entityreference/autocomplete/tokeninput/%/%/%'] = array(
         'page callback' => 'tokeninput_entityreference_callback',
+        'page arguments' => array(2, 3, 4, 5),
         'access arguments' => array('access content'),
+        // We use entityreference's access callback here, since it's the same
+        'access callback' => 'entityreference_autocomplete_access_callback',
+        'access arguments' => array(2, 3, 4, 5),
         'type' => MENU_CALLBACK,
     );
 
@@ -23,15 +27,47 @@ function tokeninput_entityreference_field_widget_info() {
             'label' => t('Autocomplete token input'),
             'field types' => array('entityreference'),
             'settings' => array(
-                'autocomplete_match' => 'starts with',
+                'match_operator' => 'CONTAINS',
                 'size' => 60,
-                'autocomplete_path' => 'tokeninput_entityreference/autocomplete',
+                'path' => '',
             ),
             'behaviors' => array(
                 'multiple values' => FIELD_BEHAVIOR_CUSTOM,
             ),
         ),
     );
+}
+
+/**
+ * Implements hook_field_widget_settings_form().
+ */
+function tokeninput_entityreference_field_widget_settings_form($field, $instance) {
+  $widget = $instance['widget'];
+  $settings = $widget['settings'] + field_info_widget_settings($widget['type']);
+
+  $form = array();
+
+  if ($widget['type'] == 'tokeninput_entityreference') {
+    $form['match_operator'] = array(
+      '#type' => 'select',
+      '#title' => t('Autocomplete matching'),
+      '#default_value' => $settings['match_operator'],
+      '#options' => array(
+        'STARTS_WITH' => t('Starts with'),
+        'CONTAINS' => t('Contains'),
+      ),
+      '#description' => t('Select the method used to collect autocomplete suggestions. Note that <em>Contains</em> can cause performance issues on sites with thousands of nodes.'),
+    );
+    $form['size'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Size of textfield'),
+      '#default_value' => $settings['size'],
+      '#element_validate' => array('_element_validate_integer_positive'),
+      '#required' => TRUE,
+    );
+  }
+
+  return $form;
 }
 
 /**
@@ -68,9 +104,35 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
     }
 
     $prePopulate = drupal_json_encode($prePopulate);
+    $prePopulate = !empty($entity_ids) ? $prePopulate : 'null';
     
-//    $element['#delta'] = $delta;
+    // Prepare the autocomplete path.
+    if (!empty($instance['widget']['settings']['path'])) {
+      $autocomplete_path = $instance['widget']['settings']['path'];
+    }
+    else {
+      $autocomplete_path = base_path() . 'entityreference/autocomplete/tokeninput';
+    }
 
+    $autocomplete_path .= '/' . $field['field_name'] . '/' . $instance['entity_type'] . '/' . $instance['bundle'] . '/';
+    // Use <NULL> as a placeholder in the URL when we don't have an entity.
+    // Most webservers collapse two consecutive slashes.
+    $id = 'NULL';
+    if ($entity) {
+      list($eid) = entity_extract_ids($entity_type, $entity);
+      if ($eid) {
+        $id = $eid;
+      }
+    }
+    $autocomplete_path .= $id;
+    
+    // Set the default value
+    $default_value = implode(',', $entity_ids);
+    
+    // Set the token limit based on the field's cardinality
+    $tokenLimit = $field['cardinality'] > 0 ? $field['cardinality'] : 'null';
+    
+    // Add our JavaScript/CSS libraries
     $path = libraries_get_path('tokeninput');
     if ($path) {
         drupal_add_js($path . '/src/jquery.tokeninput.js');
@@ -80,88 +142,89 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
         drupal_add_css($path . '/styles/token-input.css');
     }
 
-    $default_value = implode(',', $entity_ids);
-
-    $remoteData = base_path() . 'tokeninput_entityreference/autocomplete/' . $field['field_name'];
-    $prePopulate = !empty($entity_ids) ? $prePopulate : 'null';
-    $tokenLimit = $field['cardinality'] > 0 ? $field['cardinality'] : 'null';
-
-    switch ($instance['widget']['type']) {
-        case 'tokeninput_entityreference':
-            $element += array(
-                '#type' => 'textfield',
-                '#default_value' => $default_value,
-                // Allow a slightly larger size that the field length to allow for some
-                // configurations where all characters won't fit in input field.
-                '#size' => 60,
-                '#maxlength' => 1024,
-                '#prefix' => "<div class='tokeninput_entityreference'>",
-                '#suffix' => "</div><script type='text/javascript'>jQuery('.tokeninputfield').makeFieldTokenInput();</script>",
-                '#attributes' => array(
-                    'class' => array(
-                        'tokeninputfield',
-                    ),
-                    'remoteData' => $remoteData,
-                    'tokenLimit' => $tokenLimit,
-                    'prePopulate' => $prePopulate,
+    if ($instance['widget']['type'] == 'tokeninput_entityreference') {
+        $element += array(
+            '#type' => 'textfield',
+            '#default_value' => $default_value,
+            // Allow a slightly larger size that the field length to allow for some
+            // configurations where all characters won't fit in input field.
+            '#size' => 60,
+            '#maxlength' => 1024,
+            '#prefix' => "<div class='tokeninput_entityreference'>",
+            // Insert our javascript to make the input element into a
+            // tokenInput field.
+            '#suffix' => "</div><script type='text/javascript'>jQuery('.tokeninputfield').makeFieldTokenInput();</script>",
+            '#attributes' => array(
+                'class' => array(
+                    'tokeninputfield',
                 ),
-                '#element_validate' => array('tokeninput_entityreference_validate'),
-            );
+                'autocompletePath' => $autocomplete_path,
+                'tokenLimit' => $tokenLimit,
+                'prePopulate' => $prePopulate,
+            ),
+            '#element_validate' => array('tokeninput_entityreference_validate'),
+        );
 
-            $element['#attached']['js'] = array("(function ($) {
-    $.fn.makeFieldTokenInput = function() {
-        $('.tokeninputfield').each(function () {
-            // Only call this function once on each element
-            if ($(this).attr('tokeninputized') == 'true') {
-                return;
+        // This function calls the appropriate function to make all the correct
+        // fields on the page into tokenInput fields.
+        $element['#attached']['js'] = array("(function ($) {
+$.fn.makeFieldTokenInput = function() {
+    $('.tokeninputfield').each(function () {
+        // Only call this function once on each element
+        if ($(this).attr('tokeninputized') == 'true') {
+            return;
+        }
+        $(this).attr('tokeninputized', 'true');
+        var prePopulate = $(this).attr('prePopulate');
+        var tokenLimit = $(this).attr('tokenLimit');
+
+        //console.log('prePopulate', prePopulate);
+        //console.log('tokenLimit', tokenLimit);
+        prePopulate = prePopulate ? JSON.parse(prePopulate) : null;
+        tokenLimit = tokenLimit ? JSON.parse(tokenLimit) : null;
+
+        // For some reason the 'Type to Search' drop-down remains shown,
+        // so we hide it
+        $('.token-input-dropdown-facebook').hide();
+
+        $(this).tokenInput(
+            $(this).attr('autocompletePath'), 
+            {
+                preventDuplicates: true,
+                queryParam: 'query',
+                tokenLimit: tokenLimit,
+                theme: 'facebook',
+                prePopulate: prePopulate,
             }
-            $(this).attr('tokeninputized', 'true');
-            var prePopulate = $(this).attr('prePopulate');
-            var tokenLimit = $(this).attr('tokenLimit');
+        );
+    });
+}
 
-            //console.log('prePopulate', prePopulate);
-            //console.log('tokenLimit', tokenLimit);
-            prePopulate = prePopulate ? JSON.parse(prePopulate) : null;
-            tokenLimit = tokenLimit ? JSON.parse(tokenLimit) : null;
-            
-            // For some reason the 'Type to Search' drop-down remains shown,
-            // so we hide it
-            $('.token-input-dropdown-facebook').hide();
-            
-            $(this).tokenInput(
-                $(this).attr('remoteData'), 
-                {
-                    preventDuplicates: true,
-                    queryParam: 'query',
-                    tokenLimit: tokenLimit,
-                    theme: 'facebook',
-                    prePopulate: prePopulate,
-                }
-            );
-        });
-    }
-   
 // Always show the submit button, even if there's only 1 editable field.
 Drupal.behaviors.always_show_editablefields_submit = {
-  attach: function (context) {
-    $('.editablefield-item').once('editablefield', function() {
-      // Always show the submit button
-      $(this).find('input.form-submit').show();
-      $(this).find('input[type=text],input[type=radio],textarea,select').change(function() {});
-    });
-  }
+    attach: function (context) {
+        $('.editablefield-item').once('editablefield', function() {
+            // Always show the submit button
+            $(this).find('input.form-submit').show();
+            $(this).find('input[type=text],input[type=radio],textarea,select').change(function() {});
+        });
+    }
 };
 
-    // Avoid annoying AJAX alerts; log to console instead
+// Avoid annoying AJAX alerts; log to console instead
 //    window.alert = function(arg) { if (window.console && console.log) { console.log(arg);}};
 
-})(jQuery);" => array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
-            break;
+})(jQuery);"
+            => array('type' => 'inline', 'scope' => 'header', 'weight' => 5));
     }
 
     return $element;
 }
 
+/**
+ * Insert our AJAX commands.
+ * @param type $commands
+ */
 function tokeninput_entityreference_ajax_render_alter(&$commands) {
     // Make the new input field into a tokenInput field
     $commands[] = ajax_command_invoke('.tokeninputfield', 'makeFieldTokenInput');
@@ -179,91 +242,36 @@ function tokeninput_entityreference_field_widget_info_alter(&$info) {
     }
 }
 
-function tokeninput_validateReferencableEntities(array $ids, $entity_type) {
-    if ($ids) {
-        $query = tokeninput_buildEntityFieldQuery(NULL, $entity_type);
-        $query->entityCondition('entity_id', $ids, 'IN');
-        $result = $query->execute();
-        if (!empty($result[$entity_type])) {
-            return array_keys($result[$entity_type]);
-        }
-    }
-
-    return array();
-}
-
-function tokeninput_buildEntityFieldQuery($match, $entity_type, $match_operator = 'STARTS_WITH') {
-    $query = new EntityFieldQuery();
-    $query->entityCondition('entity_type', $entity_type);
-//  if (!empty($this->field['settings']['handler_settings']['target_bundles'])) {
-//    $query->entityCondition('bundle', $this->field['settings']['handler_settings']['target_bundles'], 'IN');
-//  }
-    if (isset($match)) {
-        $query->propertyCondition('name', $match, $match_operator);
-    }
-
-    // Add a generic entity access tag to the query.
-    $query->addTag($entity_type . '_access');
-    // We don't want this, otherwise our query will get altered by entityreference_query_entityreference_alter
-//  $query->addTag('entityreference');
-
-    // Add the sort option.
-//  if (!empty($this->field['settings']['handler_settings']['sort'])) {
-//    $sort_settings = $this->field['settings']['handler_settings']['sort'];
-//    if ($sort_settings['type'] == 'property') {
-//      $query->propertyOrderBy($sort_settings['property'], $sort_settings['direction']);
-//    }
-//    elseif ($sort_settings['type'] == 'field') {
-//      list($field, $column) = explode(':', $sort_settings['field'], 2);
-//      $query->fieldOrderBy($field, $column, $sort_settings['direction']);
-//    }
-//  }
-
-    return $query;
-}
-
-/**
- * Get a label for the given entity id.
- * Calls the entity_label function.
- * @param type $id
- * @param type $entity_type
- * @return type
- */
-function _tokeninput_label_from_entity_id($id, $entity_type) {
-    $entity = entity_load_single($entity_type, $id);
-    return entity_label($entity_type, $entity);
-}
-
 /**
  * AJAX autocomplete callback, to provide JSON results for tokeninput field..
  */
-function tokeninput_entityreference_callback($field_name) {
+function tokeninput_entityreference_callback($type, $field_name, $entity_type, $bundle_name, $entity_id = '') {
     $field = field_info_field($field_name);
-    $entity_type = $field['settings']['target_type'];
+    $instance = field_info_instance($entity_type, $field_name, $bundle_name);
+    
+    $entity = NULL;
+    if ($entity_id !== 'NULL') {
+        $entity = entity_load_single($entity_type, $entity_id);
+        if (!$entity || !entity_access('view', $entity_type, $entity)) {
+            return MENU_ACCESS_DENIED;
+        }
+    }
 
+    $handler = entityreference_get_selection_handler($field, $instance, $entity_type, $entity);
+    
     $input = isset($_GET['query']) ? $_GET['query'] : '';
     $input = drupal_strtolower(trim($input));
-
-    $query = tokeninput_buildEntityFieldQuery($input, $entity_type);
-
-    $query->addMetaData('field', $field_name);
-
-    $limit = 10;
-    if ($limit > 0) {
-        $query->range(0, $limit);
-    }
-    $results = $query->execute();
-
+    
+    // Get an array of matching entities.
+    $entity_labels = $handler->getReferencableEntities($input, $instance['widget']['settings']['match_operator'], 10);
     
     // Build the matches array to be sent as JSON
     $matches = array();
-
-    $entity_info = entity_get_info($entity_type);
-    $label_callback = $entity_info['label callback'];
-
-    foreach ($results[$entity_type] as $id => $entity_object) {
-        $label = _tokeninput_label_from_entity_id($id, $entity_type);
-        $matches[] = array('id' => $id, 'name' => check_plain($label));
+    
+    foreach ($entity_labels as $values) {
+        foreach ($values as $entity_id => $label) {
+            $matches[] = array('id' => $entity_id, 'name' => check_plain($label));
+        }
     }
 
     drupal_json_output($matches);
@@ -279,20 +287,10 @@ function tokeninput_entityreference_validate($element, &$form_state, &$form) {
     if (!empty($element['#value'])) {
         $entities = array_unique(explode(',', $element['#value']));
 
-        $valid_ids = tokeninput_validateReferencableEntities($entities, $entity_type);
-
-        $invalid_entities = array_diff($entities, $valid_ids);
-        if ($invalid_entities) {
-            foreach ($invalid_entities as $id) {
-                form_set_error($field['field_name'], t('The referenced entity (@type: @id) is invalid.', array('@type' => $field['settings']['target_type'], '@id' => $id)));
-            }
-        }
-
         $value = array();
         foreach ($entities as $entity) {
             $value[] = array(
                 'target_id' => intval($entity),
-//          'target_type' => $entity_type, // Is this necessary?
             );
         }
     }
