@@ -281,7 +281,6 @@ function tokeninput_entityreference_validate($element, &$form_state, &$form) {
     $value = array();
 
     $field = field_info_field($element['#field_name']);
-    $entity_type = $field['settings']['target_type'];
 
     // If a value was entered into the autocomplete...
     if (!empty($element['#value'])) {
