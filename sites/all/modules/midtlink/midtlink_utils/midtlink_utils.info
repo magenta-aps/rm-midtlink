@@ -2,3 +2,9 @@ name = MidtLink Utils
 description = Helper functions for MidtLink
 package = MidtLink
 core=7.x
+
+
+dependencies[] = ctools
+
+files[] = plugins/selection/fullname.inc
+files[] = plugins/selection/EntityReferenceSelectFullname.class.php

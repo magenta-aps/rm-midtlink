@@ -2,6 +2,15 @@
 define('FLAG_ID_COMMENT_APPROVED',7);
 define('FLAG_ID_COMMENT_ARCHIVED',8);
 
+/* 
+ * Implements hook_ctools_plugin_directory
+ */
+function midtlink_utils_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'entityreference') {
+    return 'plugins/' . $plugin;
+  }
+}
+
 function midtlink_utils_menu() {
 	$items['betingelser'] = array(
 		'title' => 'Brugerbetingelser for MidtLink', 
