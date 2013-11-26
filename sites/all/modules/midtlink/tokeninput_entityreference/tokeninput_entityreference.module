@@ -216,6 +216,9 @@ $.fn.makeFieldTokenInput = function() {
         tokenLimit: tokenLimit,
         theme: theme,
         prePopulate: prePopulate,
+    	hintText: 'Indtast navnet på den du ønsker at spørge',
+    	noResultsText: 'Ingen resultater',
+    	searchingText: 'Søger…',	
       }
     );
   });
