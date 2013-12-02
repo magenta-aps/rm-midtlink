@@ -206,20 +206,6 @@ function midtlink_notification_get_message($obj,$type='text') {
 			break;
 			
 		case 'assign_responsible':
-			/*$msg = 'Du er gjort ansvarlig for indlægget '.l(midtlink_get_node_title($obj->source_nid),'node/'.$obj->source_nid).'';
-			if($type == 'mail') {
-				$url = url('node/'.$obj->source_nid,array('absolute'=>true));
-				
-				$body = "Hej ".format_username(user_load($obj->target_uid)).",\n\n";
-				$body.= "Du er gjort ansvarlig for indlæg: ".midtlink_get_node_title($obj->source_nid)."\n\n";
-				$body.= "Du kan klikke ind og svare på indlægget på nedenstående link:\n";
-				$body.= '<a href="'.$url.'">'.$url.'</a>'."\n\n";
-				$body.= "Denne notifikation er automatisk udsendt af MidtLink\n";
-				$msg = array('subj'=>strip_tags($msg), 'body'=>$body);
-			}
-			break;
-		*/
-		case 'askdirect':
 			$msg = 'Du er blevet spurgt direkte om '.l(midtlink_get_node_title($obj->source_nid),'node/'.$obj->source_nid).'';
 			if($type == 'mail') {
 				$url = url('node/'.$obj->source_nid,array('absolute'=>true));

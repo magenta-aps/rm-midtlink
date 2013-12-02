@@ -1035,7 +1035,7 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
 	
 	
 	if(arg(0) == 'create_observation') {
-		if($_GET['text'] != '') {
+		if(array_key_exists('text', $_GET) && $_GET['text'] != '') {
 			$form['title']['#value'] = $_GET['text'];
 		}
 		
@@ -1101,11 +1101,6 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
 		$form['obsinfo']['field_responsible'] = $form['field_responsible'];
 		unset($form['field_responsible']);
 		
-		$form['obsinfo']['field_askdirect'] = $form['field_askdirect'];
-		$form['obsinfo']['field_askdirect']['#access'] = false;
-		unset($form['field_askdirect']);
-		
-		
 		$form['obsinfo']['field_sdnumber'] = $form['field_sdnumber'];
 		unset($form['field_sdnumber']);
 		
@@ -1128,7 +1123,6 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
 		$form['field_description']['#language'] = 'und';
 		$form['field_responsible']['#language'] = 'und';
 		$form['field_unit']['#language'] = 'und';
-		$form['field_askdirect']['#language'] = 'und';
 		
 		
 		if(isset($_GET['type']) && $_GET['type'] == 'unit') {
@@ -1214,25 +1208,6 @@ function midtlink_obssheet_node_update($node) {
 			}
 		}
 	}
-	
-	$currentlyAskDirect = array();
-	if(isset($node->original->field_askdirect['und'])) {
-		foreach($node->original->field_askdirect['und'] as $resp) {
-			$currentlyAskDirect[$resp['target_id']] = $resp['target_id'];
-		}
-	}
-	
-	if(isset($node->field_askdirect['und'])) {
-		foreach($node->field_askdirect['und'] as $resp) {
-			if(empty($currentlyAskDirect[$resp['target_id']])) {
-				//flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
-				if($user->uid != $resp['target_id']) {
-					midtlink_notification_send($resp['target_id'],'askdirect',null,$node->nid);
-				}
-			}
-		}
-	}
-	
 }
 
 function midtlink_obssheet_node_insert($node) {
@@ -1246,15 +1221,6 @@ function midtlink_obssheet_node_insert($node) {
 			flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
 			if($user->uid != $resp['target_id']) {
 				midtlink_notification_send($resp['target_id'],'assign_responsible',null,$node->nid);
-			}
-		}
-	}
-	
-	if(isset($node->field_askdirect['und'])) {
-		foreach($node->field_askdirect['und'] as $resp) {
-			//flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
-			if($user->uid != $resp['target_id']) {
-				midtlink_notification_send($resp['target_id'],'askdirect',null,$node->nid);
 			}
 		}
 	}
