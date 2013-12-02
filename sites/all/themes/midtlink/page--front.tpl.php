@@ -60,7 +60,7 @@
 						<?php 
 						/* embed view! */
 						if(!empty($user->unitTID)) {
-								echo views_embed_view('recent_posts','default',array($user->mainUnitTID));
+								echo views_embed_view('recent_posts','default', $user->mainUnitTID);
 						}
 						else {
 							echo '<p>Du skal have valgt afdeling i din profil for at se seneste indlæg</p>';
@@ -72,7 +72,7 @@
 						<?php 
 						/* embed view! */
 						if(!empty($user->unitTID)) {
-								echo views_embed_view('recent_unit_posts','default',array($user->unitTID));
+								echo views_embed_view('recent_unit_posts','default', $user->unitTID);
 						}
 						else {
 							echo '<p>Du skal have valgt afdeling i din profil for at se seneste indlæg</p>';
