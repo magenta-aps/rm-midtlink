@@ -1,5 +1,15 @@
 <?php
 
+$bsk_database = array(
+    'database' => 'midtlink_bsk',
+    'username' => 'midtlink', 
+    'password' => 'midtlinktest',
+    'host' => 'localhost',
+    'driver' => 'mysql',
+);
+
+Database::addConnectionInfo('midtlink_bsk', 'default', $bsk_database);
+
 function midtlink_login_entity_info_alter(&$entity_info) {
   // Give user entities an alternate label,
   // formatted as: 'regionsID (full name)'.
@@ -53,22 +63,33 @@ function midtlink_login_menu() {
 }
 
 function midtlink_login_bsk_user_exists($regid,$institutionCodes=array()) {
+  db_set_active('midtlink_bsk');
 	$sql = "SELECT COUNT(user_id) FROM {bsk_user_data} WHERE user_id = :userid";
 	if(sizeof($institutionCodes)>0) {
 		$sql.= " AND (institutionCode = '".implode("' OR institutionCode = '",$institutionCodes)."')";
 	}
 	
 	$r = db_query($sql,array(':userid'=>$regid))->fetchColumn(0);
+  db_set_active();
+  
 	if($r > 0) { return true; }
 	return false;
 }
 
 function midtlink_login_create_user_from_bsk($regid,$status=0) {
+  db_set_active('midtlink_bsk');
 	$sql = "SELECT user_id, email, position, display_name 
 		FROM {bsk_user_data} WHERE user_id = :regid";
 	$res = db_query($sql,array(':regid'=>$regid));
-	if($res->rowCount() <= 0) { return false; }
-	$r = $res->fetchObject();
+
+  if($res->rowCount() <= 0) {
+    db_set_active();
+    return false;
+  }
+	
+  $r = $res->fetchObject();
+    
+  db_set_active();
 	
 	$new_user = array(
       'name' => $r->user_id,
@@ -350,6 +371,9 @@ function midtlink_login_form_validate($form, &$form_state) {
 function midtlink_login_form_submit($form,&$fs) {
 	$sql = "SELECT uid FROM {users} WHERE name = :name AND status = 1 LIMIT 1";
   $uid = db_query($sql,array(':name'=>$fs['values']['regionsid']))->fetchColumn();
+  if ($uid === FALSE) {
+    form_set_error('regionsid', t('Brugeren er ikke aktiveret.'));
+  }
   $form_state['uid'] = $uid;
   
   user_login_submit(array(), $form_state);
