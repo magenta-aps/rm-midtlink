@@ -226,6 +226,14 @@ $databases = array (
   ),
 );
 
+$databases['midtlink_bsk']['default'] = array(
+    'database' => 'midtlink_bsk',
+    'username' => 'midtlink', 
+    'password' => 'midtlinktest',
+    'host' => 'localhost',
+    'driver' => 'mysql',
+);
+
  ini_set('xdebug.max_nesting_level', 200);
 
 /**

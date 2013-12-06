@@ -1,15 +1,5 @@
 <?php
 
-$bsk_database = array(
-    'database' => 'midtlink_bsk',
-    'username' => 'midtlink', 
-    'password' => 'midtlinktest',
-    'host' => 'localhost',
-    'driver' => 'mysql',
-);
-
-Database::addConnectionInfo('midtlink_bsk', 'default', $bsk_database);
-
 function midtlink_login_entity_info_alter(&$entity_info) {
   // Give user entities an alternate label,
   // formatted as: 'regionsID (full name)'.
