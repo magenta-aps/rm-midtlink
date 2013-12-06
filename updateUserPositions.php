@@ -5,6 +5,9 @@ drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
 //Only updates from the last 30 hours
 
+
+db_set_active('midtlink_bsk');
+
 $sql = "SELECT u.name, u.uid, b.position FROM users u
 	INNER JOIN bsk_user_data b ON b.user_id = u.name AND b.position != ''
 	WHERE u.status = 1 AND b.updated >= ".(time()-108000);
@@ -17,3 +20,5 @@ foreach($res as $r) {
 	echo 'UPDATE '.$r->name.': '.$r->position."\n";
 }
 
+
+db_set_active();
