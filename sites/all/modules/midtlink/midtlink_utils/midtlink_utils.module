@@ -32,6 +32,37 @@ function midtlink_utils_terms() {
   return midtlink_utils_render_blocks("betingelser");
 }
 
+function midtlink_get_local_and_global_keywords($unit) {
+  $global_categories = midtlink_get_global_keywords();
+  $local_categories = midtlink_get_keywords_by_unit($unit);
+  return array_merge($global_categories, $local_categories);
+}
+
+function midtlink_get_global_keywords() {
+  $terms = taxonomy_get_term_by_name("Global", "category");
+  if (!empty($terms) && count($terms) == 1) {
+    $global_term = array_shift($terms);
+    return taxonomy_get_tree($global_term->vid, $global_term->tid);
+  } else {
+    return array();
+  }
+}
+
+/**
+ * 
+ * @param string $unit
+ * @return array
+ */
+function midtlink_get_keywords_by_unit($unit) {
+  $terms = taxonomy_get_term_by_name($unit, "category");
+  if (!empty($terms) && count($terms) == 1) {
+    $local_term = array_shift($terms);
+    return taxonomy_get_tree($local_term->vid, $local_term->tid);
+  } else {
+    return array();
+  }
+}
+
 function midtlink_get_unit_tree($getChildren = TRUE) {
 	global $user;
 	$out = array();
