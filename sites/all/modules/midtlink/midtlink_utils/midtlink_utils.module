@@ -21,56 +21,16 @@ function midtlink_utils_menu() {
 	return $items;
 }
 
-function midtlink_utils_terms() {
-	$o = '';
-	$o.= '<h1>Brugerbetingelser for MidtLink</h1>';
-	$o.= '<p>';
-	$o.= 'MidtLink er en intern social platform som potentielt er 
-				tilgængelig for alle ansatte ved Region Midtjyllands sygehuse.
-				Det betyder, at den viden du deler med dine kolleger på MidtLink
-				kun kan tilgås af ansatte ved regionens sygehuse.';
-	$o.= '</p><p>';
-	$o.= 'På MidtLink bidrager medarbejdere fra regionens sygehuse frit 
-				til en fælles dialog i et lukket socialt netværk ved at stille 
-				og besvare spørgsmål. MidtLink stiller desuden en stærk 
-				søgemaskine til rådighed som gør det muligt at fremsøge viden 
-				fra officielle vejledninger samt fra brugergenererede spørgsmål 
-				og svar. For disse aktiviteter gør følgende forhold sig gældende:';
-	$o.= '</p><ul><li>';
-	$o.= 'Al deling af data på MidtLink er omfattet af Sundhedslovens § 40, 
-				og personfølsomme oplysninger må derfor ikke deles på MidtLink, 
-				ligesom der ikke må linkes til sider eller screen dumps fra andre 
-				systemer som indeholder personfølsomme oplysninger. Det er dog, 
-				ifølge Patientombuddets praksis, tilladt for læger/sundhedspersoner 
-				at drøfte patienter med hinanden, når det drejer sig om et forhold 
-				som de enten er tvivl om eller finder principielt, men drøftelsen 
-				skal foregå uden at nævne navne, cpr. nr. eller andre oplysninger, 
-				som gør det muligt at identificere den eller de pågældende personer.';
-	$o.= '</li><li>';
-	$o.= 'Viden som udstilles på MidtLink er primært brugergenereret. 
-				Administrationen i Region Midtjylland og på regionens sygehuse 
-				kan derfor ikke stå til ansvar for kvaliteten af publiceret 
-				materiale. Det betyder, at vi i fællesskab må bidrage til at 
-				vedligeholde den høje faglige standard, og at det er nødvendigt 
-				at navigere i MidtLink med en almindelig kritisk sans.';
-	$o.= '</li></ul><p>';
-	$o.= 'MidtLink bakkes op af Hospitalsledelsen på din arbejdsplads som 
-				anerkender værdien i, at vi i fællesskab udvikler vores faglighed 
-				og kompetencer ved at dele vores viden på MidtLink. Derfor er der 
-				ledelsesopbakning til, at du anvender MidtLink når du udfører dit 
-				arbejde.';
-	$o.= '</p><p>';
-	$o.= 'Vi ønsker dig god fornøjelse med MidtLink!';
-	$o.= '</p><p>';
-	$o.= 'Med venlig hilsen';
-	$o.= '<br />';
-	$o.= 'MidtLink-teamet';
-	$o.= '<br />';
-	$o.= '<a href="mailto:auhskejby.midtlink@rm.dk">auhskejby.midtlink@rm.dk</a>';
-	$o.= '</p>';
-	return $o;
+function midtlink_utils_render_blocks($region) {
+  if ($list = block_list($region)) {
+    $build = _block_get_renderable_array($list);
+    return render($build);
+  }
 }
 
+function midtlink_utils_terms() {
+  return midtlink_utils_render_blocks("betingelser");
+}
 
 function midtlink_get_unit_tree($getChildren = TRUE) {
 	global $user;

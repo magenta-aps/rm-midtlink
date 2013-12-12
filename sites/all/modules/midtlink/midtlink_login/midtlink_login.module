@@ -318,10 +318,17 @@ function midtlink_start_page() {
 }
 
 function midtlink_login_page() {
-	return '<div class="grid-6">
-      <h1>Sammen bli\'r vi bedre</h1>
+  $above_login_block = midtlink_utils_render_blocks('loginpage_above_form');
+  $below_login_block = midtlink_utils_render_blocks('loginpage_below_form');
+  return '<div class="grid-6">'
+    . $above_login_block
+    . render(drupal_get_form('midtlink_login_form'))
+    . $below_login_block
+    . '</div>';
+  return 
+      '<h1>Sammen bli\'r vi bedre</h1>
       <p class="large">MidtLink er din genvej til hurtige svar p&aring; dine EPJ-sp&oslash;rgsm&aring;l. F&aring; hj&aelig;lp og sparring fra dine kollegaer her og nu, og giv tilbage af din egen viden n&aring;r du kan.</p>
-      '.render(drupal_get_form('midtlink_login_form')).'
+      '.'
       <p>Alle ansatte på AUH og HEH er automatisk oprettede i MidtLink. Hvis du har problemer med at logge ind, er du velkommen til at kontakte <a href="mailto:AUHKAS@rm.dk">auhkas@rm.dk</a>.</p>
 			<p class="large"><br />Læs om MidtLink og se en video på <a href="http://blog.midtlink.dk" target="_blank">blog.midtlink.dk</a></p>
       

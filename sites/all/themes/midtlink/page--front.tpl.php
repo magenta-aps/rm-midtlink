@@ -29,13 +29,8 @@
       <div class="grid-12">
         <div id="content" class="grid-8 alpha">
 					<div id="add-post" class="block">
-						<h2>Sammen bli'r vi bedre</h2>
-						<div class="content">  
-							<p class="description">
-								'MidtLink' er din genvej til hurtige svar på dine EPJ spørgsmål.
-								Få hjælp og sparring fra dine kollegaer her og nu, og giv tilbage
-								af din egen viden når du kan.
-							</p>
+            <?php print render($page['front_text']); ?>
+						<div class="content">
 							<form action="/create_observation">
 								<p>
 									<input id="askquestion_input" style="width:400px;" type="text" name="text" placeholder="Skriv dit spørgsmål" value="" />
@@ -82,33 +77,12 @@
 					<?php $miniTeaser = false; ?>
         </div><!-- /#content -->
 
-            <div id="sidebar" class="grid-4 omega solid">
-              <div style="margin-bottom:15px;">
-								<iframe src="http://player.vimeo.com/video/43164410?title=1&amp;byline=0&amp;portrait=0&amp;color=ffffff" width="300" height="169" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-								<p>
-									<a href="<?php echo url('forum/294',array('query'=>array('tid'=>300))); ?>">Spørgsmål og svar omkring brugen af MidtLink</a>
-								</p>
-							</div>
+            <div id="sidebar" class="grid-4 omega solid">                
+              <?php print render($page['front_sidebar']); ?>
               <div class="section">
                 
-                <div id="about" class="block">      
-                  <div class="content">
-                    <h2>Om MidtLink</h2>
-                    <p>
-											MidtLink er vores fælles supportløsning, 
-											hvor alle brugere kan bidrage både med spørgsmål
-											og svar.
-										</p>
-										<p>
-											Med MidtLink kan alle MidtEPJ-brugere være med 
-											til at dele deres erfaringer og dermed være med 
-											til at sikre den optimale brug af MidtEPJ.
-                    </p>
-                    <p>
-											Læs om MidtLink og se en video på
-											<a href="http://blog.midtlink.dk" target="_blank">blog.midtlink.dk</a>
-                    </p>
-                  </div>
+                <div id="about" class="block">  
+                  <?php print render($page['front_sidebar_about']); ?>
                 </div>
               
               </div>
