@@ -398,7 +398,7 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 		$o.= '<div class="form-item"><label for="filter_category">Emne</label> ';
 		$o.= '<select name="filter_category" id="filter_category" class="form-select">';
 			$o.= '<option value="">Alle</option>';
-			$categories = taxonomy_get_tree(3);
+			$categories = midtlink_get_global_keywords();
 			foreach($categories as $i) {
 				$o .= '<option value="'.$i->tid.'"'.($i->tid == $filter['category'] ? ' selected="selected"' : '').'>'.$i->name.'</option>'."\n";
 			}
