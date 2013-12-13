@@ -36,6 +36,23 @@
 			</form>
 		</div>
 	</div>
+	<?php
+  if(arg(2) != '') {
+		$term = taxonomy_term_load(arg(2));
+		echo '<h1 class="greenbuttonstyle">'.$term->name.'</h1>';
+		if($term->description!='') {
+			echo '<div class="categorydescription">';
+			if(strpos($term->description,'<p>')===false) {
+				echo '<p>'.$term->description.'</p>';	
+			}
+			else {
+				echo $term->description;
+			}
+			echo '</div>';
+		}
+	}
+	?>
+	
   <?php if ($rows): ?>
     <div class="list-item"><div class="section">
       <?php print $rows; ?>

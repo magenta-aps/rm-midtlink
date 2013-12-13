@@ -11,7 +11,7 @@ if(!$page) {
 	?>
 	<div class="item-content documentation">  
 		<div class="content-wrapper">
-			<div class="node-type documentation">Vejledning</div>
+			<div class="node-type documentation"><a href="<?php echo $node_url; ?>">Vejledning</a></div>
     
     	<div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
     	<div class="body">
@@ -20,7 +20,7 @@ if(!$page) {
 			</div>
 			<ul class="categories reset">
     		<?php foreach($categories as $c) { ?>
-					<li><a href="<?php echo url('dokumentation/'.$c['tid']); ?>"><?php echo $c['name']; ?></a></li>
+					<li><a href="<?php echo url('dokumentation/'.arg(1).'/'.$c['tid']); ?>"><?php echo $c['name']; ?></a></li>
 				<?php } ?>
     	</ul>
     </div>

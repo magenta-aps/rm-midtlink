@@ -2,6 +2,10 @@
 	color:#fff !important;
 }
 
+.node,.item-content {
+	word-wrap:break-word;
+}
+
 .post-indicator {
         background-image: url(../images/sprite_v2.png?2); /* This sprite has changed */
         text-indent:0;

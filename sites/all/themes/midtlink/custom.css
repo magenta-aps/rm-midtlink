@@ -1,3 +1,31 @@
+.greenbuttonstyle {
+	background-color: #85d683;
+	color: #154F24;
+	padding: 5px 10px;
+	border-radius: 3px;
+	border-bottom: 1px solid #32984b;
+	text-align:center;
+}
+.bluebuttonstyle {
+	background-color: #D5E4F4;
+	color: #3279BE;
+	padding: 5px 10px;
+	border-radius: 3px;
+	border-bottom: 1px solid #25598D;
+	text-align:center;
+}
+.categorydescription {
+	font-size: 12px;
+	border: 1px solid #32984b;
+	padding: 10px;
+	padding-right: 20px;
+	padding-bottom:0;
+	border-radius: 3px;
+	margin-top: -5px;
+	margin-bottom: 20px;
+}
+
+
 .region-content #search-form label {
 	display:none;
 }

@@ -61,6 +61,9 @@
 							echo '<p>Du skal have valgt afdeling i din profil for at se seneste indlæg</p>';
 						}
 						?> 
+						<p style="font-weight:bold;text-align:right;">
+							<a href="<?php echo url('forum'); ?>">Se flere indlæg</a>
+						</p>
 					</div>
 					<div class="grid-4 omega">
 						<h2>Seneste om min afdeling</h2>
@@ -72,12 +75,18 @@
 						else {
 							echo '<p>Du skal have valgt afdeling i din profil for at se seneste indlæg</p>';
 						}
-						?> 
+						?>
+						<p style="font-weight:bold;text-align:right;">
+							<a href="<?php echo url('obssheet/unit/'.$user->unitTID); ?>">Se flere indlæg fra min afdeling</a>
+						</p>
 					</div>
 					<?php $miniTeaser = false; ?>
         </div><!-- /#content -->
 
-            <div id="sidebar" class="grid-4 omega solid">                
+            <div id="sidebar" class="grid-4 omega solid">
+
+              <?php if($user->uid > 0) include('includes/sidebar.inc.php'); ?>
+                
               <?php print render($page['front_sidebar']); ?>
               <div class="section">
                 
@@ -86,8 +95,6 @@
                 </div>
               
               </div>
-              
-              <?php if($user->uid > 0) include('includes/sidebar.inc.php'); ?>
               
             </div><!--/#sidebar-->
         

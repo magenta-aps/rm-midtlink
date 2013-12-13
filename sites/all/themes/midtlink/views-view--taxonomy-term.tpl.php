@@ -1,39 +1,57 @@
+<?php
+/**
+ * @file views-view.tpl.php
+ * Main view template
+ *
+ * Variables available:
+ * - $classes_array: An array of classes determined in
+ *   template_preprocess_views_view(). Default classes are:
+ *     .view
+ *     .view-[css_name]
+ *     .view-id-[view_name]
+ *     .view-display-id-[display_name]
+ *     .view-dom-id-[dom_id]
+ * - $classes: A string version of $classes_array for use in the class attribute
+ * - $css_name: A css-safe version of the view name.
+ * - $css_class: The user-specified classes names, if any
+ * - $header: The view header
+ * - $footer: The view footer
+ * - $rows: The results of the view query, if any
+ * - $empty: The empty text to display if the view is empty
+ * - $pager: The pager next/prev links to display, if any
+ * - $exposed: Exposed widget form/info to display
+ * - $feed_icon: Feed icon to display, if any
+ * - $more: A link to view more, if any
+ *
+ * @ingroup views_templates
+ */
+?>
 <div class="<?php print $classes; ?>">
-  <div class="mini-tabs">
-		<ul>
-                    <?php
-                    $units = midtlink_get_unit_tree(FALSE);
-                    foreach ($units as $tid => $unit):
-                        if ($unit['name'] == 'Andre') {
-                            continue;
-                        }
-                    ?>
-			<li<?php if($_GET['tid'] == $tid) { echo ' class="active"'; } ?>><a href="<?php echo url($_GET['q']); ?>?tid=<?php echo $tid; ?>"><?php echo $unit['name']; ?></a></li>
-                    <?php endforeach; ?>
-		</ul>
-  </div>
-    
   <?php print render($title_prefix); ?>
   <?php
-  if(arg(1) != '') {
-		$term = taxonomy_term_load(arg(1));
-		echo '<h1 class="greenbuttonstyle">'.$term->name.'</h1>';
+  if(arg(2) != '') {
+		$term = taxonomy_term_load(arg(2));
+		echo '<h1 class="bluebuttonstyle">'.$term->name.'</h1>';
 		if($term->description!='') {
-			echo '<div class="categorydescription">';
 			if(strpos($term->description,'<p>')===false) {
 				echo '<p>'.$term->description.'</p>';	
 			}
 			else {
 				echo $term->description;
 			}
-			echo '</div>';
 		}
 	}
 	?>
-	<?php print render($title_suffix); ?>
+  <?php print render($title_suffix); ?>
   <?php if ($header): ?>
     <div class="view-header">
       <?php print $header; ?>
+    </div>
+  <?php endif; ?>
+
+  <?php if ($exposed): ?>
+    <div class="view-filters">
+      <?php print $exposed; ?>
     </div>
   <?php endif; ?>
 
