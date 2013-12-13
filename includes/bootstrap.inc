@@ -2263,10 +2263,7 @@ function _drupal_error_handler($error_level, $message, $filename, $line, $contex
  *   The exception object that was thrown.
  */
 function _drupal_exception_handler($exception) {
-#print_r( $exception );
-#exit;
-    
-    require_once DRUPAL_ROOT . '/includes/errors.inc';
+  require_once DRUPAL_ROOT . '/includes/errors.inc';
 
   try {
     // Log the message to the watchdog and return an error page to the user.

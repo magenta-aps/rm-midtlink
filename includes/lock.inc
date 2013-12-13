@@ -165,14 +165,12 @@ function lock_acquire($name, $timeout = 30.0) {
  */
 function lock_may_be_available($name) {
   $lock = db_query('SELECT expire, value FROM {semaphore} WHERE name = :name', array(':name' => $name))->fetchAssoc();
-  
   if (!$lock) {
     return TRUE;
   }
   $expire = (float) $lock['expire'];
   $now = microtime(TRUE);
   if ($now > $expire) {
-      
     // We check two conditions to prevent a race condition where another
     // request acquired the lock and set a new expire time. We add a small
     // number to $expire to avoid errors with float to string conversion.
@@ -202,8 +200,7 @@ function lock_may_be_available($name) {
  * @return
  *   TRUE if the lock holds, FALSE if it is available.
  */
-function lock_wait($name, $delay = 1) {
-    
+function lock_wait($name, $delay = 30) {
   // Pause the process for short periods between calling
   // lock_may_be_available(). This prevents hitting the database with constant
   // database queries while waiting, which could lead to performance issues.
@@ -248,8 +245,7 @@ function lock_wait($name, $delay = 1) {
  *   The name of the lock.
  */
 function lock_release($name) {
-
-    global $locks;
+  global $locks;
 
   unset($locks[$name]);
   db_delete('semaphore')

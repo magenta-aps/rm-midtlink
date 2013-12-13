@@ -1,0 +1,3 @@
+/admin/structure/flags/manage/obssheet_unit => Ændre til oversigt
+/admin/structure/flags/manage/obssheet_global => Ændre til oversigt
+/admin/structure/flags/manage/approve_answer => Ændre til "Markér som løsning" og "Fjern markering som løsning"

@@ -1,0 +1,7 @@
+Order deny,allow
+Deny from all
+#allow from 90.185.130.109
+allow from 176.222.232.170
+allow from 10.85.2.193
+allow from 10.85.2.
+allow from 83.221.154.133 #Wemind Office
