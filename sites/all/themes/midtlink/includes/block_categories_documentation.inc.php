@@ -17,7 +17,7 @@
 			$mainTID = $user->mainUnitTID;
 		}
 	  
-	  $categories = taxonomy_get_tree(3);
+	  $categories = midtlink_get_global_keywords();
 	  $c = 0;
 	  foreach($categories as $i) {
 		  $c++;
