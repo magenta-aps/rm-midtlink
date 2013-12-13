@@ -1078,16 +1078,21 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
 		unset($form['author']['name']);
 		$form['obs']['name']['#title'] = 'Indberettet af';
 		$form['obs']['name']['#weight'] = 4;
+		//REMOVE FIELD
+		$form['obs']['name']['#access'] = false;
 		
 		$form['obs']['field_unit'] = $form['field_unit'];
 		unset($form['field_unit']);
 		$form['obs']['field_unit']['#weight'] = 2;
 		$form['obs']['field_unit']['und']['#title'] = 'Observeret i afdelingen';
+		//REMOVE FIELD
+		$form['obs']['field_unit']['#access'] = false;
+		
 		
 		$form['obs']['field_description'] = $form['field_description'];
 		unset($form['field_description']);
 		$form['obs']['field_description']['#weight'] = 20;
-		$form['obs']['field_description']['und'][0]['#rows'] = 3;
+		$form['obs']['field_description']['und'][0]['#rows'] = 9;
 		$form['obs']['field_description']['und'][0]['#title'] = 'Beskrivelse af problemet';
 		
 		/* Add solution field */
@@ -1102,12 +1107,19 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
 		$form['obs']['obs_solution']['#access'] = false;
 		$form['obs']['obs_solution_approve']['#access'] = false;
 		
-		
-		
-		$form['obsinfo'] = array('#type'=>'fieldset','#title'=>'Oversigtsark specifikke felter','#weight'=>80);
-		
-		$form['obsinfo']['field_responsible'] = $form['field_responsible'];
+		$form['obs']['field_responsible'] = $form['field_responsible'];
+		$form['obs']['field_responsible']['#weight'] = 50;
 		unset($form['field_responsible']);
+		
+		
+		//REMOVED ACCESS
+		$form['obsinfo'] = array('#type'=>'fieldset','#title'=>'Oversigtsark specifikke felter','#weight'=>80,'#access'=>false);
+		
+		
+		$form['obsinfo']['field_askdirect'] = $form['field_askdirect'];
+		$form['obsinfo']['field_askdirect']['#access'] = false;
+		unset($form['field_askdirect']);
+		
 		
 		$form['obsinfo']['field_sdnumber'] = $form['field_sdnumber'];
 		unset($form['field_sdnumber']);
@@ -1131,6 +1143,10 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
 		$form['field_description']['#language'] = 'und';
 		$form['field_responsible']['#language'] = 'und';
 		$form['field_unit']['#language'] = 'und';
+		$form['field_askdirect']['#language'] = 'und';
+		
+
+		$form['path']['#access'] = false;
 		
 		
 		if(isset($_GET['type']) && $_GET['type'] == 'unit') {
@@ -1216,6 +1232,25 @@ function midtlink_obssheet_node_update($node) {
 			}
 		}
 	}
+	
+	$currentlyAskDirect = array();
+	if(isset($node->original->field_askdirect['und'])) {
+		foreach($node->original->field_askdirect['und'] as $resp) {
+			$currentlyAskDirect[$resp['target_id']] = $resp['target_id'];
+		}
+	}
+	
+	if(isset($node->field_askdirect['und'])) {
+		foreach($node->field_askdirect['und'] as $resp) {
+			if(empty($currentlyAskDirect[$resp['target_id']])) {
+				//flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
+				if($user->uid != $resp['target_id']) {
+					midtlink_notification_send($resp['target_id'],'askdirect',null,$node->nid);
+				}
+			}
+		}
+	}
+	
 }
 
 function midtlink_obssheet_node_insert($node) {
@@ -1229,6 +1264,15 @@ function midtlink_obssheet_node_insert($node) {
 			flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
 			if($user->uid != $resp['target_id']) {
 				midtlink_notification_send($resp['target_id'],'assign_responsible',null,$node->nid);
+			}
+		}
+	}
+	
+	if(isset($node->field_askdirect['und'])) {
+		foreach($node->field_askdirect['und'] as $resp) {
+			//flag('flag','subscribe',$node->nid,user_load($resp['target_id']));
+			if($user->uid != $resp['target_id']) {
+				midtlink_notification_send($resp['target_id'],'askdirect',null,$node->nid);
 			}
 		}
 	}
