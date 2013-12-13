@@ -398,10 +398,18 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 		$o.= '<div class="form-item"><label for="filter_category">Emne</label> ';
 		$o.= '<select name="filter_category" id="filter_category" class="form-select">';
 			$o.= '<option value="">Alle</option>';
-			$categories = midtlink_get_global_keywords();
-			foreach($categories as $i) {
-				$o .= '<option value="'.$i->tid.'"'.($i->tid == $filter['category'] ? ' selected="selected"' : '').'>'.$i->name.'</option>'."\n";
-			}
+      $unit_name = taxonomy_term_load($unit_id)->name;
+			$category_tree = midtlink_get_local_and_global_keyword_tree($unit_name);
+      foreach ($category_tree as $category_name => $categories) {
+        if (empty($categories)) {
+          continue;
+        }
+        $o.= '<optgroup label="'.$category_name.'">';
+        foreach($categories as $i) {
+          $o .= '<option value="'.$i->tid.'"'.($i->tid == $filter['category'] ? ' selected="selected"' : '').'>'.$i->name.'</option>'."\n";
+        }
+      }
+      
 		$o.= '</select></div>';
 		$o.= '</div>';
 		
