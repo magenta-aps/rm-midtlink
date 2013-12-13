@@ -38,6 +38,15 @@ function midtlink_get_local_and_global_keywords($unit) {
   return array_merge($global_categories, $local_categories);
 }
 
+function midtlink_get_local_and_global_keyword_tree($unit) {
+  $global_categories = midtlink_get_global_keywords();
+  $local_categories = midtlink_get_keywords_by_unit($unit);
+  $tree = array();
+  $tree['Global'] = $global_categories;
+  $tree[$unit] = $local_categories;
+  return $tree;
+}
+
 function midtlink_get_global_keywords() {
   $terms = taxonomy_get_term_by_name("Global", "category");
   if (!empty($terms) && count($terms) == 1) {
