@@ -1,8 +1,5 @@
 <?php
-
-//error_reporting(E_ALL);
-//ini_set('display_errors', TRUE);
-//ini_set('display_startup_errors', TRUE);
+set_time_limit(0);
 /**
  * @file
  * The PHP page that serves all page requests on a Drupal installation.
@@ -17,10 +14,17 @@
 /**
  * Root directory of Drupal installation.
  */
-
 define('DRUPAL_ROOT', getcwd());
 
 require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-menu_execute_active_handler();
- 
+
+
+$sql = "SELECT u.uid, u.name FROM users u, bsk_user_data b WHERE 
+	b.user_id = u.name AND u.status = 0 AND b.institutionCode = 'sghAAUH'";
+$res = db_query($sql);
+foreach($res as $r) {
+	echo "Enabling ".$r->uid.": ".$r->name."";
+	db_query("UPDATE users SET status = 1 WHERE uid = :uid",array(':uid'=>$r->uid));
+	echo " DONE \n";
+}
