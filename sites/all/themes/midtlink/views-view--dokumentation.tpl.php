@@ -8,7 +8,7 @@
                   continue;
               }
         ?>
-        <li<?php if(arg(1) == $tid) { echo ' class="active"'; } ?>><a href="<?php echo url('dokumentation/' . $tid); ?>"><?php echo $unit['name']; ?></a></li>
+        <li<?php if(arg(1) == $tid) { echo ' class="active"'; } ?>><a href="<?php echo url('dokumentation/' . $tid . '/' . arg(2)); ?>"><?php echo $unit['name']; ?></a></li>
         <?php endforeach; ?>
 			</ul>
     </div>
