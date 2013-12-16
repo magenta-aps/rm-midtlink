@@ -8,4 +8,4 @@ dependencies[] = ctools
 
 files[] = plugins/selection/fullname.inc
 files[] = plugins/selection/EntityReferenceSelectFullname.class.php
-files[] = plugins/selection/EntityReferenceSelectTopLevelAfdeling.class.php
+files[] = plugins/selection/EntityReferenceSelectTopLevelTerms.class.php

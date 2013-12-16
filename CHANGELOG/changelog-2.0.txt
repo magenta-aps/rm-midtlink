@@ -1,3 +1,12 @@
+/admin/structure/types/manage/knowlegde/fields => 
+	Add field "Vejledning gyldig for", field_knowlegde_unit_ref, Entity Reference, Check boxes/radio buttons
+	Target type = Taxonomy term
+	Number of values = Unlimited
+	Entity selection = "Top-level"
+	Target bundles = 'Afdelinger'
+
+Run `php migrate_vejledning.php`
+
 /admin/structure/flags/manage/obssheet_unit => Ændre til oversigt
 /admin/structure/flags/manage/obssheet_global => Ændre til oversigt
 /admin/structure/flags/manage/approve_answer => Ændre til "Markér som løsning" og "Fjern markering som løsning"

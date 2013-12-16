@@ -7,7 +7,7 @@ $plugin = array(
 );
 
 $plugin = array(
-  'title' => t('Top-level Afdeling'),
-  'class' => 'EntityReferenceSelectTopLevelAfdeling',
+  'title' => t('Top-level terms'),
+  'class' => 'EntityReferenceSelectTopLevelTerms',
   'weight' => 10,
 );

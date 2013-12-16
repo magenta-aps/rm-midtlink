@@ -1,6 +1,6 @@
 <?php
 
-class EntityReferenceSelectTopLevelAfdeling extends EntityReference_SelectionHandler_Generic {
+class EntityReferenceSelectTopLevelTerms extends EntityReference_SelectionHandler_Generic {
 
   /**
    * Implements EntityReferenceHandler::getInstance().
@@ -14,11 +14,11 @@ class EntityReferenceSelectTopLevelAfdeling extends EntityReference_SelectionHan
       return EntityReference_SelectionHandler_Broken::getInstance($field, $instance);
     }
 
-    if (class_exists($class_name = 'EntityReferenceSelectTopLevelAfdeling_' . $target_entity_type)) {
+    if (class_exists($class_name = 'EntityReferenceSelectTopLevelTerms_' . $target_entity_type)) {
       return new $class_name($field, $instance, $entity_type, $entity);
     }
     else {
-      return new EntityReferenceSelectFullname($field, $instance, $entity_type, $entity);
+      return new EntityReferenceSelectTopLevelTerms($field, $instance, $entity_type, $entity);
     }
   }
 }
@@ -26,7 +26,7 @@ class EntityReferenceSelectTopLevelAfdeling extends EntityReference_SelectionHan
 /**
  * Override for the Taxonomy term type.
  */
-class EntityReferenceSelectTopLevelAfdeling_taxonomy_term extends EntityReferenceSelectFullname {
+class EntityReferenceSelectTopLevelTerms_taxonomy_term extends EntityReferenceSelectTopLevelTerms {
   /**
    * Implements EntityReferenceHandler::getReferencableEntities().
    */
