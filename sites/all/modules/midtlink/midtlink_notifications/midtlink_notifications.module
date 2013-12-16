@@ -34,9 +34,9 @@ function midtlink_notifications_drupal_mail($to, $subject, $message) {
     ),
   );
   
-  $system = drupal_mail_system($my_module, $my_mail_token);
-  $message = $system->format($message);
-	$system->mail($message);
+//  $system = drupal_mail_system($my_module, $my_mail_token);
+//  $message = $system->format($message);
+//	$system->mail($message);
 }
 
 function midtlink_notification_send($target_uid,$type,$source_uid=null,$source_nid=null) {
