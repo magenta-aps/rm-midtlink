@@ -2,6 +2,14 @@
   /**
    * block_categories.inc.php
    */
+
+//    if(arg(0) == 'forum') {
+//			$mainTID = arg(1);
+//		}
+//		else {
+			global $user;
+			$mainTID = $user->mainUnitTID;
+//		}
 ?>
 
   <div class="content">
@@ -11,24 +19,24 @@
 	  <?php
 	  $categories = midtlink_get_global_keywords();
 	  $c = 0;
-	  foreach($categories as $i) {
-		  $c++;
-		  echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'forum/'.$i->tid).'</li>'."\n";
-	  }
+    
+    if(arg(0) == 'dokumentation') {
+      foreach($categories as $i) {
+        $c++;
+        echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$mainTID.'/'.$i->tid).'</li>'."\n";
+      }
+    } else {
+      foreach($categories as $i) {
+        $c++;
+        echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'forum/'.$i->tid).'</li>'."\n";
+      }
+    }
 	  ?>
     </ul>
     <?php
     // Don't show in footer
     global $show_only_global_categories;
-    if (!isset($show_only_global_categories)) {
-//    if(arg(0) == 'forum') {
-//			$mainTID = arg(1);
-//		}
-//		else {
-			global $user;
-			$mainTID = $user->mainUnitTID;
-//		}
-      
+    if (!isset($show_only_global_categories)) {      
       $term = taxonomy_term_load($mainTID);
       if ($term):
         $mainUnitName = $term->name;
@@ -40,10 +48,17 @@
     <?php
     
 	  $c = 0;
-	  foreach($local_categories as $i) {
-		  $c++;
-		  echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'forum/'.$i->tid).'</li>'."\n";
-	  }
+    if(arg(0) == 'dokumentation') {
+      foreach($local_categories as $i) {
+        $c++;
+        echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$mainTID.'/'.$i->tid).'</li>'."\n";
+      }
+    } else {
+      foreach($local_categories as $i) {
+        $c++;
+        echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'forum/'.$i->tid).'</li>'."\n";
+      }
+    }
 	  ?>
     </ul>
       <?php

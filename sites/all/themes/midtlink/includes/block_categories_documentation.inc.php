@@ -2,6 +2,17 @@
   /**
    * block_categories.inc.php
    */
+
+      
+  if(arg(0) == 'dokumentation') {
+    $mainTID = arg(1);
+  }
+  else {
+    global $user;
+    $mainTID = $user->mainUnitTID;
+  }
+
+
 ?>
 
   <div class="content">
@@ -22,15 +33,6 @@
     global $show_only_global_categories;
     // Don't show in footer
     if (!isset($show_only_global_categories)) {
-      
-      if(arg(0) == 'dokumentation') {
-        $mainTID = arg(1);
-      }
-      else {
-        global $user;
-        $mainTID = $user->mainUnitTID;
-      }
-      
       $term = taxonomy_term_load($mainTID);
       if ($term):
         $mainUnitName = $term->name;
