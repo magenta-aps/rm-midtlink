@@ -44,7 +44,7 @@
 	  $c = 0;
 	  foreach($local_categories as $i) {
 		  $c++;
-		  echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'forum/'.$i->tid).'</li>'."\n";
+		  echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$mainTID.'/'.$i->tid).'</li>'."\n";
 	  }
 	  ?>
     </ul>
