@@ -12,7 +12,7 @@
     if($user->mainUnitTID == 300) {
 			?>
 			<div id="categories" class="block grid-4">
-				<?php /* Block: Categories */ include('block_categories.inc.php'); ?>
+				<?php /* Block: Categories */ $show_only_global_categories = true; include('block_categories.inc.php'); $show_only_global_categories = false; ?>
 			</div>
 
 			<div class="block grid-4">
@@ -25,7 +25,7 @@
 			
 		<?php } else { ?>
 			<div id="categories" class="block grid-4">
-				<?php /* Block: Categories */ include('block_categories.inc.php'); ?>
+				<?php /* Block: Categories */ $show_only_global_categories = true; include('block_categories.inc.php'); $show_only_global_categories = false; ?>
 			</div>
       <?php print render($page['footer_block']); ?>
 		<?php } ?>

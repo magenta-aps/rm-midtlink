@@ -100,6 +100,17 @@
   background: transparent url(../images/sprite_v2.png) no-repeat 0 -317px;
 }
 
+/* Categories in sidebar - Local */
+#sidebar #categories.block ul.local-categories li a{
+  background: transparent url(../images/sprite_v2.png) no-repeat 0 -230px;
+  color:#25598D;
+}
+
+#sidebar #categories.block ul.local-categories li a:hover{
+  background: transparent url(../images/sprite_v2.png) no-repeat 0 -259px;
+  color:#fff;
+}
+
 /*----------------------------------------------------------------------
   Dokumentation
 ----------------------------------------------------------------------*/

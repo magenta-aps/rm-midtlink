@@ -57,9 +57,18 @@ function midtlink_get_global_keywords() {
   }
 }
 
+function midtlink_get_keywords_by_unit_id($unit) {
+  $term = taxonomy_term_load($unit);
+  if ($term) {
+    return midtlink_get_keywords_by_unit($term->name);
+  } else {
+    return array();
+  }
+}
+
 /**
  * 
- * @param string $unit
+ * @param string $unit Name of unit
  * @return array
  */
 function midtlink_get_keywords_by_unit($unit) {
