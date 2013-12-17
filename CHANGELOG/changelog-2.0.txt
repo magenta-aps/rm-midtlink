@@ -1,3 +1,12 @@
+
+
+/admin/structure/types/manage/link/fields
+	Add field 'Afdeling', field_link_unit, Entity Reference, Check boxes/radio buttons
+	Target type = Taxonomy term
+	Number of values = Unlimited
+	Entity selection = "Top-level"
+	Target bundles = 'Afdelinger'
+	
 /admin/structure/taxonomy/category
 	Create 'Global' category
 	Reparent all current categories to 'Global'

@@ -106,6 +106,39 @@ function midtlink_get_unit_tree($getChildren = TRUE) {
 	return $out;
 }
 
+function midtlink_utils_get_links($unitTid) {
+  $sql = "SELECT fl.field_link_url as url, fl.field_link_title title, fld.field_link_desc_value as link_desc
+    FROM node n
+    INNER JOIN field_data_field_link fl ON fl.entity_type = 'node' AND fl.bundle = 'link' AND fl.entity_id = n.nid
+    LEFT JOIN field_data_field_link_desc fld ON fld.entity_type = 'node' AND fld.bundle = 'link' AND fld.entity_id = n.nid
+    LEFT JOIN field_data_field_link_unit flu ON flu.entity_type = 'node' AND flu.bundle = 'link' AND flu.entity_id = n.nid
+    WHERE n.type = 'link' AND n.status = 1  AND flu.field_link_unit_target_id IS NULL
+    ORDER BY n.created DESC";
+
+  $res_global = array();
+  $res = db_query($sql);
+  if ($res) {
+    $res_global = $res->fetchAll();
+  }
+
+  $sql = "SELECT fl.field_link_url as url, fl.field_link_title title, fld.field_link_desc_value as link_desc
+    FROM node n
+    INNER JOIN field_data_field_link fl ON fl.entity_type = 'node' AND fl.bundle = 'link' AND fl.entity_id = n.nid
+    LEFT JOIN field_data_field_link_desc fld ON fld.entity_type = 'node' AND fld.bundle = 'link' AND fld.entity_id = n.nid
+    LEFT JOIN field_data_field_link_unit flu ON flu.entity_type = 'node' AND flu.bundle = 'link' AND flu.entity_id = n.nid
+    WHERE n.type = 'link' AND n.status = 1 AND flu.field_link_unit_target_id = :unit
+    ORDER BY n.created DESC";
+
+  global $user;
+
+  $res_local = array();
+  $res = db_query($sql, array(':unit' => $unitTid));
+  if ($res) {
+    $res_local = $res->fetchAll();
+  }
+
+  return array_merge($res_local, $res_global);
+}
 
 function midtlink_get_approved_answer($nid) {
 	$sql = "SELECT c.cid

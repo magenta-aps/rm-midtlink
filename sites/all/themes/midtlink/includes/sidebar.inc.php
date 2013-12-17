@@ -10,23 +10,7 @@ if(arg(0) == 'dokumentation' || (isset($node) && ($node->type == 'news' || $node
 	<h2>Nyttige links</h2>
 	<div class="content">
 		<ul class="reset">
-			<?php
-			$sql = "SELECT fl.field_link_url as url, fl.field_link_title title, fld.field_link_desc_value as link_desc
-				FROM node n
-				INNER JOIN field_data_field_link fl ON fl.entity_type = 'node' AND fl.bundle = 'link' AND fl.entity_id = n.nid
-				LEFT JOIN field_data_field_link_desc fld ON fld.entity_type = 'node' AND fld.bundle = 'link' AND fld.entity_id = n.nid 
-				WHERE n.type = 'link' AND n.status = 1";
-			$res = db_query($sql);
-			foreach($res as $r) {
-				?>
-				<li>
-					<a href="<?php echo $r->url; ?>"><?php echo $r->title; ?></a>
-					<p class="small"><?php echo $r->link_desc; ?></p>
-				</li>
-				<?php
-			}
-			?>
-			
+      <?php include('block_links.inc.php'); ?>
 	</div>
 </div>
 <!--
@@ -62,22 +46,8 @@ else {
 		<h2>Nyttige links</h2>
 		<div class="content">
 			<ul class="reset">
-				<?php
-				$sql = "SELECT fl.field_link_url as url, fl.field_link_title title, fld.field_link_desc_value as link_desc
-					FROM node n
-					INNER JOIN field_data_field_link fl ON fl.entity_type = 'node' AND fl.bundle = 'link' AND fl.entity_id = n.nid
-					LEFT JOIN field_data_field_link_desc fld ON fld.entity_type = 'node' AND fld.bundle = 'link' AND fld.entity_id = n.nid 
-					WHERE n.type = 'link' AND n.status = 1";
-				$res = db_query($sql);
-				foreach($res as $r) {
-					?>
-					<li>
-						<a href="<?php echo $r->url; ?>"><?php echo $r->title; ?></a>
-						<p class="small"><?php echo $r->link_desc; ?></p>
-					</li>
-					<?php
-				}
-				?>
+
+      <?php include('block_links.inc.php'); ?>
 				
 		</div>
 	</div>
