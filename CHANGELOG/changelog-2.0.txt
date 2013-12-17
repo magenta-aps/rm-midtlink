@@ -30,6 +30,15 @@ Run `php migrate_vejledning.php`
 
 	Change field_category's widget to Check boxes/radio buttons
 
+/admin/structure/types/manage/post/fields/field_responsible
+	Autocomplete matching -> Contains
+	
+/admin/structure/types/manage/post/fields/field_responsible/widget-type
+	Change to Autocomplete (Tokeninput)
+	Entity selection mode = Use full name
+
+Enable tokeninput_entityreference module
+
 /admin/structure/flags/manage/obssheet_unit => Ændre til oversigt
 /admin/structure/flags/manage/obssheet_global => Ændre til oversigt
 /admin/structure/flags/manage/approve_answer => Ændre til "Markér som løsning" og "Fjern markering som løsning"

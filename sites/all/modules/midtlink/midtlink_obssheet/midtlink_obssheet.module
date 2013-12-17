@@ -343,6 +343,9 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 	
 	$units = midtlink_get_unit_tree();
 	foreach($units as $mtid=>$mainUnit) {
+    if ($mainUnit['name'] == 'Andre') {
+      continue;
+    }
 		$o.= '<optgroup label="'.$mainUnit['name'].'">';
 		if($mtid == 301) {
 			$o.= '<option value="'.url('obssheet/global/'.$mtid).'"'.(arg(1) == 'global' && arg(2) == $mtid ? ' selected="selected"' : '').'>Generel oversigt - HEH</option>';
@@ -1060,6 +1063,9 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
       $categoryOptions[$i->tid] = $name;
     }
   }
+  
+//  $form['field_category']['und']['#type'] = 'markup';
+//  $form['field_category']['und']['#markup'] = '<b>Test</b>';
   $form['field_category']['und']['#options'] = $categoryOptions;
 		
 	
