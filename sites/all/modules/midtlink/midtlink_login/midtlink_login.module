@@ -100,12 +100,18 @@ function midtlink_login_create_user_from_bsk($regid,$status=0) {
 
 function midtlink_login_check_ldap($regid,$pwd) {
 	if(trim($pwd) == '') { return false; }
-	return true;
-
+  // START - Check passwords in Drupal, for testing
+  if ($account = user_load_by_name($regid)) {
+    require_once DRUPAL_ROOT . '/includes/password.inc';
+    return user_check_password($pwd, $account);
+  }
+  return false;
+  // END - Check passwords in Drupal, for testing
+	
 
 	$regid = drupal_strtoupper(trim($regid));
-	$ds = ldap_connect('ldaps://LDAPSERVER/',636); // single connection
-	$ldapBind = ldap_bind($ds,'cn='.$regid.',ou=OU,o=O',$pwd);
+	$ds = ldap_connect('ldaps://authidmsrv001.bsk.rm.dk/',636); // single connection
+	$ldapBind = ldap_bind($ds,'cn='.$regid.',ou=RM,o=BSK',$pwd);
 	if($ldapBind == false) {
 		return false;
 	}
