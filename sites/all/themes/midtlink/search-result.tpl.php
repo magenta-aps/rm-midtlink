@@ -79,7 +79,7 @@ if($result['bundle'] == 'post') {
 				<div class="item-content">
 					<div class="content-wrapper">
 						<div class="user-pointer image-replacement">Pointer</div>
-						<div class="node-type forum">Forum-indlæg</div>
+            <div class="node-type forum"><a href="<?php echo $url; ?>">Forum-indlæg</a></div>
 						
 						<div class="submitted">
 							<div class="name"><?php echo $info_split['user']; ?> <span><?php echo $userinfo['info']; ?></span></div>
@@ -109,7 +109,7 @@ else {
 	<div class="list-item">
 	<div class="item-content documentation">  
 		<div class="content-wrapper">
-			<div class="node-type documentation">Vejledning</div>
+      <div class="node-type documentation"><a href="<?php echo $url; ?>">Vejledning</a></div>
     
     	<div class="title"><h2><a href="<?php echo $url; ?>"><?php echo $title; ?></a></h2></div>
     	<div class="body">

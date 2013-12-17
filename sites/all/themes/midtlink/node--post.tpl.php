@@ -24,7 +24,7 @@ if(!$page) {
 			<div class="item-content">
 				<div class="content-wrapper">
 					<div class="user-pointer image-replacement">Pointer</div>
-					<?php if(!$miniTeaser) { ?><div class="node-type forum">Forum-indlæg</div><?php } ?>
+					<?php if(!$miniTeaser) { ?><div class="node-type forum"><a href="<?php echo $node_url; ?>">Forum-indlæg</a></div><?php } ?>
 					
 					<div class="submitted">
 						<div class="name"><?php echo $name; ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo; ?>)</span><?php } ?></div>
