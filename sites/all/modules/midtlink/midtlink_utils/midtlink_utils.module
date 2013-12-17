@@ -138,12 +138,15 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
 		$form['picture']['#access'] = false;
 		$form['field_position']['#access'] = false; //Updated through the BSK integration
 	}
-	elseif($form_id == 'knowlegde_node_form' && arg(1) == 'add') {
-    // Hide choice of unit on Create Vejledning form
-		$form['field_knowlegde_unit_ref']['#access'] = false;
-    // Hide old field also, just in case we don't actually decide to remove it
-		$form['field_knowlegde_unit']['#access'] = false;
+	elseif($form_id == 'knowlegde_node_form') {
+    // Only hide on add form, not on edit
+    if (arg(1) == 'add') {
+      // Hide choice of unit on Create Vejledning form
+      $form['field_knowlegde_unit_ref']['#access'] = false;
+    }
     
+    // Hide old field, in case we haven't removed it
+    $form['field_knowlegde_unit']['#access'] = false;
     
     global $user;
     $categoryOptions = array();

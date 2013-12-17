@@ -1,4 +1,7 @@
 	<div class="documentation actions" style="height:80px;">
+    <?php //if (user_access('create knowlegde content')) {
+        //echo '<p><a href="' . url('node/add/knowlegde/') . '">Opret Vejledning</a></p>';
+      //}; ?>
 		<div class="mini-tabs">
 			<ul>
         <?php
