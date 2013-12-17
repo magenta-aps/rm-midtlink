@@ -39,7 +39,7 @@
         $local_categories = midtlink_get_keywords_by_unit($mainUnitName);
         if (!empty($local_categories)):
     ?>
-    <h2 style="clear: both;"><?php echo $mainUnitName; ?> Emner</h2>
+    <h2 style="clear: both;">Lokale emner</h2>
     <ul class="reset local-categories">
     <?php
     
