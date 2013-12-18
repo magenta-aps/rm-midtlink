@@ -57,6 +57,10 @@ function midtlink_get_global_keywords() {
   }
 }
 
+function midtlink_get_keyword_tree() {
+  return taxonomy_get_tree(3);
+}
+
 function midtlink_get_keywords_by_unit_id($unit) {
   $term = taxonomy_term_load($unit);
   if ($term) {
