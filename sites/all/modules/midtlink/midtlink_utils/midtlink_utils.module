@@ -211,10 +211,28 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     
     $categoryOptions = array();
     
-    $categories = midtlink_get_keywords_by_unit($mainUnitName);
-    foreach($categories as $i) {
-      $categoryOptions[$i->tid] = $i->name;
+    if (arg(1) == 'add') {
+      $categories = midtlink_get_keywords_by_unit($mainUnitName);
+      foreach($categories as $i) {
+        $categoryOptions[$i->tid] = $i->name;
+      }
+    } else {
+      $categoryTree = midtlink_get_keyword_tree();
+      foreach($categoryTree as $category) {
+        if ($category->parents[0] == 0) {
+          continue;
+        }
+        $parent = taxonomy_term_load($category->parents[0]);
+        if ($parent->name == 'Global') {
+          continue;
+        } else {
+          $prefix = $parent->name . ' - ';
+        }
+        $categoryOptions[$category->tid] = $prefix . $category->name;
+      }
     }
+    
+    
     
     $form['field_category_local']['und']['#options'] = $categoryOptions;
 	}
