@@ -1,0 +1,128 @@
+git clone seth@platon.magenta-aps.dk:/home/git/midtlink midtlink_rollout_git
+cd midtlink_rollout_git
+git checkout livemerge
+cd ..
+cp -R midtlink_rollout_git/* midtlink_rollout/
+
+cd midtlink_rollout
+
+Apply _appropriate_ group/permissions:
+	sudo chown -R www-data:www-data *
+	sudo chmod -R gu+rw *
+
+
+mysql -u root -p
+grant all privileges on midtlink_bsk.* to midtlink_u@localhost identified by 'Mandag11';
+
+sudo nano site/default/settings.php:
+  Add BSK db config:
+
+$databases['midtlink_bsk']['default'] = array(
+    'database' => 'midtlink_bsk',
+    'username' => 'midtlink_u', 
+    'password' => 'Mandag11',
+    'host' => 'localhost',
+    'driver' => 'mysql',
+);
+
+Login
+
+/admin/config/regional/language
+	Change language to English
+
+/admin/config/development/performance
+	Clear all caches
+
+/admin/modules
+	Enable 'Token Input Entity Reference' module
+	Enable 'Features', 'FE Block' modules
+	Save!
+
+/admin/structure/types/manage/post/fields/field_responsible/widget-type
+	Change to Autocomplete (Tokeninput)
+
+/admin/structure/types/manage/post/fields/field_responsible
+	Autocomplete matching -> Contains
+	Entity selection mode = Use full name
+
+/node/862
+	Test that it appears.
+
+/admin/structure/types/manage/knowlegde/fields 
+	Add field "Vejledning gyldig for", field_knowlegde_unit_ref, Entity Reference, Check boxes/radio buttons
+	Target type = Taxonomy term
+	Target bundles = 'Afdelinger'
+
+/admin/structure/types/manage/knowlegde/fields/field_knowlegde_unit_ref
+	Number of values = Unlimited
+	Entity selection = "Top-level"
+
+	Rearrange fields so it is directly below Emne
+	Save
+
+	Change field_category's widget to Check boxes/radio buttons
+
+Run `php migrate_vejledning.php`
+
+/node/858
+	Ctrl+Refresh
+	Check that the field appears.
+
+/admin/structure/views/view/dokumentation/edit
+	Advanced -> Contextual Filters -> Remove 'Broken/missing handler'
+	Add Contextual filter on field_knowlegde_unit_ref
+	Rearrange it so it is before the filter on Emne
+	Save the View!
+
+/dokumentation/
+	Test clicking each unit's tab shows a different list
+
+/admin/structure/taxonomy/category
+	Create 'Global' category
+	Reparent all current categories to 'Global'
+	Create empty per-hospital categories for:
+		Aarhus Universitetshospital
+		Hospitalsenhed Horsens
+
+	Create test term under Aarhus Universitetshospital.
+	See that it shows up in the / sidebar.
+
+/admin/structure/types/manage/link/fields
+	Add field 'Afdeling', field_link_unit, Entity Reference, Check boxes/radio buttons
+	Target type = Taxonomy term
+	Number of values = Unlimited
+	Entity selection = "Top-level"
+	Target bundles = 'Afdelinger'
+
+/
+	Test that links are showing
+/node/add/link
+	Create a local link to test - Test AUH, choose AUH as Afdeling
+
+In mysql shell:
+	use midtlink_rollout;
+	update field_data_field_unit set field_unit_tid = 301 where entity_id = 1;
+
+	Check site to see that link disappears.
+
+	update field_data_field_unit set field_unit_tid = 284 where entity_id = 1;
+
+	Delete test link
+
+Copy midtlink_features.tar (scp):
+	Example: [cp ../midtlink_live/sites/all/modules/midtlink/midtlink_features.tar ./sites/all/modules/midtlink/]
+
+	cd sites/all/modules/midtlink/
+	tar xvf midtlink_features.tar 
+
+/admin/structure/features
+	Check checkbox next to "MidtLink Features"
+	Save settings!
+
+Test that all blocks are showing up
+
+
+Test more!! Relax.
+
+Remove old "Vejledning gyldig for field"
+Change language back to Danish

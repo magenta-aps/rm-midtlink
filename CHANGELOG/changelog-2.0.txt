@@ -23,21 +23,26 @@ Run `php migrate_vejledning.php`
 /admin/structure/types/manage/knowlegde/fields 
 	Add field "Vejledning gyldig for", field_knowlegde_unit_ref, Entity Reference, Check boxes/radio buttons
 	Target type = Taxonomy term
+	Target bundles = 'Afdelinger'
+
+/admin/structure/types/manage/knowlegde/fields/field_knowlegde_unit_ref
 	Number of values = Unlimited
 	Entity selection = "Top-level"
-	Target bundles = 'Afdelinger'
+
 	Rearrange fields so it is directly below Emne
+	Save
 
 	Change field_category's widget to Check boxes/radio buttons
 
 /admin/structure/types/manage/post/fields/field_responsible
 	Autocomplete matching -> Contains
+	Entity selection mode = Use full name
 	
 /admin/structure/types/manage/post/fields/field_responsible/widget-type
 	Change to Autocomplete (Tokeninput)
-	Entity selection mode = Use full name
 
-Enable tokeninput_entityreference module
+/admin/modules
+	Enable tokeninput_entityreference module
 
 /admin/structure/flags/manage/obssheet_unit => Ændre til oversigt
 /admin/structure/flags/manage/obssheet_global => Ændre til oversigt

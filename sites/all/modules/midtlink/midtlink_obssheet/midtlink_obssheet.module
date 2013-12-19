@@ -401,7 +401,8 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 		$o.= '<div class="form-item"><label for="filter_category">Emne</label> ';
 		$o.= '<select name="filter_category" id="filter_category" class="form-select">';
 			$o.= '<option value="">Alle</option>';
-      $unit_name = taxonomy_term_load($unit_id)->name;
+      $unit = midtlink_get_main_unit($unit_id);
+      $unit_name = $unit->name;
 			$category_tree = midtlink_get_local_and_global_keyword_tree($unit_name);
       foreach ($category_tree as $category_name => $categories) {
         if (empty($categories)) {
