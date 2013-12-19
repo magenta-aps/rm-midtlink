@@ -32,6 +32,21 @@ function midtlink_utils_terms() {
   return midtlink_utils_render_blocks("betingelser");
 }
 
+/**
+ * Get the main unit (Afdeling)'s term, given the local keyword's tid.
+ * @param type $tid local keyword tid
+ */
+function midtlink_get_main_unit_from_local_keyword($tid) {
+  $parents = taxonomy_get_parents($tid);
+  if (!empty($parents)) {
+    $first = array_shift($parents);
+    if ($first->name == 'Global') {
+      return null;
+    }
+    return array_shift(taxonomy_get_term_by_name($first->name, "units"));
+  }
+}
+
 function midtlink_get_local_and_global_keywords($unit) {
   $global_categories = midtlink_get_global_keywords();
   $local_categories = midtlink_get_keywords_by_unit($unit);

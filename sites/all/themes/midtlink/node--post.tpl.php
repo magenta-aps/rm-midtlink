@@ -3,7 +3,12 @@ $categories = array();
 if(isset($node->field_category['und'])) {
 	foreach($node->field_category['und'] as $kw) {
 		if(empty($kw['taxonomy_term']->name)) { continue; }
-		$categories[] = array('tid'=>$kw['taxonomy_term']->tid,'name'=>$kw['taxonomy_term']->name);
+    $urlSuffix = '';
+    $parentUnitTerm = midtlink_get_main_unit_from_local_keyword($kw['taxonomy_term']->tid);                
+    if ($parentUnitTerm) {
+      $urlSuffix = '?tid=' . $parentUnitTerm->tid;
+    }
+		$categories[] = array('tid'=>$kw['taxonomy_term']->tid,'name'=>$kw['taxonomy_term']->name, 'urlSuffix' => $urlSuffix);
 	}
 }
 //$approvedThread = midtlink_utils_post_approved_answer($node->nid);
@@ -40,7 +45,7 @@ if(!$page) {
 				
 						<ul class="categories reset">
 							<?php foreach($categories as $c) { ?>
-							<li><a href="<?php echo url('forum/'.$c['tid']); ?>"><?php echo $c['name']; ?></a></li>
+							<li><a href="<?php echo url('forum/'.$c['tid']).$c['urlSuffix']; ?>"><?php echo $c['name']; ?></a></li>
 							<?php } ?>
 						</ul>
 					<?php } ?>
@@ -101,7 +106,7 @@ if(isset($node->field_keywords['und'])) {
           <ul class="reset">
 						<?php
 						foreach($categories as $c) {
-							echo '<li><a href="'.url('forum/'.$c['tid']).'">'.$c['name'].'<span>&nbsp;</span></a></li>';
+							echo '<li><a href="'.url('forum/'.$c['tid']).$c['urlSuffix'].'">'.$c['name'].'<span>&nbsp;</span></a></li>';
 						}
 						?>
           </ul>
