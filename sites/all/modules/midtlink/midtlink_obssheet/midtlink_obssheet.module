@@ -347,14 +347,11 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
       continue;
     }
 		$o.= '<optgroup label="'.$mainUnit['name'].'">';
-		if($mtid == 301) {
-			$o.= '<option value="'.url('obssheet/global/'.$mtid).'"'.(arg(1) == 'global' && arg(2) == $mtid ? ' selected="selected"' : '').'>Generel oversigt - HEH</option>';
-			$o.= '<option value="'.url('obssheet/allunits/'.$mtid).'"'.(arg(1) == 'allunits' && arg(2) == $mtid ? ' selected="selected"' : '').'>Alle afdelings oversigter samlet - HEH</option>';
-		}
-		else {
-			$o.= '<option value="'.url('obssheet/global/'.$mtid).'"'.(arg(1) == 'global' && arg(2) == $mtid ? ' selected="selected"' : '').'>Generel oversigt</option>';
-		}
-		foreach($mainUnit['units'] as $tid=>$u) {
+		
+    $o.= '<option value="'.url('obssheet/global/'.$mtid).'"'.(arg(1) == 'global' && arg(2) == $mtid ? ' selected="selected"' : '').'>Generel oversigt</option>';
+    $o.= '<option value="'.url('obssheet/allunits/'.$mtid).'"'.(arg(1) == 'allunits' && arg(2) == $mtid ? ' selected="selected"' : '').'>Alle afdelings oversigter samlet</option>';
+		
+    foreach($mainUnit['units'] as $tid=>$u) {
 			$o.= '<option value="'.url('obssheet/unit/'.$tid).'"';
 			if($unit_id == $tid) { $o.= ' selected="selected"'; }
 			$o.= '>'.$u.'</option>';
