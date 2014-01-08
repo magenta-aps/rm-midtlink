@@ -150,7 +150,7 @@ Tryk på linket for at se det fulde indlæg og deltag endelig i dialogen - også
 
 ";
       ?>
-      <a target="_blank" href="/mailto.php?s=<?php echo rawurlencode('Se dette indlæg fra MidtLink: '.$node->title); ?>&b=<?php echo rawurlencode($fwdMailMsg); ?>" class="post-indicator email image-replacement" title="Del dette indl&aelig;g via email"></a>
+      <a target="_blank" href="/mailto.php?s=<?php echo rawurlencode(utf8_encode('Se dette indlæg fra MidtLink: '.$node->title)); ?>&b=<?php echo rawurlencode(utf8_encode($fwdMailMsg)); ?>" class="post-indicator email image-replacement" title="Del dette indl&aelig;g via email"></a>
       <?php if((integer)$node->comment_count > 0) { ?>
 				<div class="post-indicator comments image-replacement tooltip" original-title="Indlægget er blevet besvaret <?php echo $node->comment_count.' '.($node->comment_count == 1 ? 'gang' : 'gange'); ?>"><?php echo $node->comment_count; ?></div>
       <?php } ?>
