@@ -1,3 +1,5 @@
+Re-export features (including blocks) from midtlink.test.magenta-aps.dk site
+
 Make backup of code
 Make backup of database
 
