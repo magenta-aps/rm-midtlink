@@ -1,0 +1,4 @@
+/admin/people/permissions
+        Under 'Block - Administer Blocks'
+                Check box for Administrator
+

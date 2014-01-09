@@ -157,6 +157,10 @@ Copy midtlink_features.tar (scp):
 
 Test that all blocks are showing up
 
+/admin/people/permissions
+	Under 'Block - Administer Blocks'
+		Check box for Administrator
+	Save permissions.
 
 Test more!! Relax.
 
