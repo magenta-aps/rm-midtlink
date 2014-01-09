@@ -47,7 +47,7 @@ else {
 				<ul class="reset">
 					<?php
 					foreach($categories as $c) {
-						echo '<li><a href="'.url('forum/'.$c['tid']).'">'.$c['name'].'<span>&nbsp;</span></a></li>';
+						echo '<li><a href="'.url('dokumentation/'.$node->field_knowlegde_unit_ref['und'][0]['target_id'].'/'.$c['tid']).'">'.$c['name'].'<span>&nbsp;</span></a></li>';
 					}
 					?>
 				</ul>
