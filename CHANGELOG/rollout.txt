@@ -1,3 +1,6 @@
+Make backup of code
+Make backup of database
+
 git clone seth@platon.magenta-aps.dk:/home/git/midtlink midtlink_rollout_git
 cd midtlink_rollout_git
 git checkout livemerge
