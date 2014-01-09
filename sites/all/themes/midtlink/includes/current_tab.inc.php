@@ -8,7 +8,7 @@
   }
   else if (arg(0) == 'dokumentation') {
     $activeMainTID = arg(1);
-    $activeTermTID = arg(0);
+    $activeTermTID = arg(2);
   }
   else {
     global $user;

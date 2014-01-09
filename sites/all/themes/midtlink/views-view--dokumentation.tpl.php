@@ -2,20 +2,8 @@
     <?php //if (user_access('create knowlegde content')) {
         //echo '<p><a href="' . url('node/add/knowlegde/') . '">Opret Vejledning</a></p>';
       //}; ?>
-		<div class="mini-tabs">
-			<ul>
-        <?php
-          $units = midtlink_get_unit_tree(FALSE);
-          foreach ($units as $tid => $unit):
-              if ($unit['name'] == 'Andre') {
-                  continue;
-              }
-        ?>
-        <li<?php if(arg(1) == $tid) { echo ' class="active"'; } ?>><a href="<?php echo url('dokumentation/' . $tid . '/' . arg(2)); ?>"><?php echo $unit['name']; ?></a></li>
-        <?php endforeach; ?>
-			</ul>
-    </div>
-    		
+    
+    <?php include('includes/unit_tabs.inc.php'); ?>		
 		<div class="sort">
 			<form action="#">
 			<label for="select-choice">Vis kun</label>

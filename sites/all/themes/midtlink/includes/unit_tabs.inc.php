@@ -24,13 +24,21 @@
           }
 
           if ($active || $differentUnitLocalKeywordActive) {
-            $url = url('forum/');
+            if (arg(0) == 'forum') {
+              $url = url('forum/') . '?tid='.$tid;
+            } else {
+              $url = url('dokumentation/' . $tid);
+            }
           } else {
-            $url = url('forum/' . arg(1));
+            if (arg(0) == 'forum') {
+              $url = url('forum/' . arg(1)) . '?tid='.$tid;;
+            } else {
+              $url = url('dokumentation/' . $tid . '/' . arg(2));
+            }
           }
       ?>
 			<li<?php if ($active) { echo ' class="active"'; } ?>>
-        <a href="<?php echo $url; ?>?tid=<?php echo $tid; ?>"><?php echo $unit['name']; ?></a>
+        <a href="<?php echo $url; ?>"><?php echo $unit['name']; ?></a>
       </li>
       <?php endforeach; ?>
 		</ul>
