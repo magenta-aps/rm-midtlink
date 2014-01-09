@@ -4,7 +4,7 @@
    */
 
       
-  if(arg(0) == 'dokumentation') {
+  if (arg(0) == 'dokumentation') {
     $mainTID = arg(1);
   }
   else {

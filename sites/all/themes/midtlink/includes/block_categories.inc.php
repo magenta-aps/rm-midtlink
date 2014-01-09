@@ -3,13 +3,13 @@
    * block_categories.inc.php
    */
 
-//    if(arg(0) == 'forum') {
-//			$mainTID = arg(1);
-//		}
-//		else {
+    if (arg(0) == 'forum') {
+      $mainTID = $_GET['tid'];
+		}
+		else {
 			global $user;
 			$mainTID = $user->mainUnitTID;
-//		}
+		}
 ?>
 
   <div class="content">

@@ -17,11 +17,44 @@ Apply _appropriate_ group/permissions:
 mysql -u root -p
 grant all privileges on midtlink_bsk.* to midtlink_u@localhost identified by 'Mandag11';
 
-sudo nano site/default/settings.php:
+sudo nano sites/default/settings.php:
   Add BSK db config:
 
 $databases['midtlink_bsk']['default'] = array(
-    'database' => 'midtlink_bsk',
+    'database' => 'midtlink',
+    'username' => 'midtlink_u', 
+    'password' => 'Mandag11',
+    'host' => 'localhost',
+    'driver' => 'mysql',
+);
+
+mkdir site/arbejdsmiljo.midtlink.rm.dk/
+cp site/default/settings.php site/arbejdsmiljo.midtlink.rm.dk
+
+sudo nano sites/arbejdsmiljo.midtlink.rm.dk/settings.php:
+  Change first DB config to point to subsite's DB:
+
+$databases = array (
+  'default' => 
+  array (
+    'default' => 
+    array (
+      'database' => 'midtlink_arbejdsmiljo',
+      'username' => 'midtlink_u', 
+      'password' => 'Mandag11',
+      'host' => 'localhost',
+      'port' => '',
+      'driver' => 'mysql',
+      'prefix' => '',
+    ),
+  ),
+);
+
+
+  Add entry:
+
+$databases['midtlink_bsk']['default'] = array(
+    'database' => 'midtlink',
     'username' => 'midtlink_u', 
     'password' => 'Mandag11',
     'host' => 'localhost',
