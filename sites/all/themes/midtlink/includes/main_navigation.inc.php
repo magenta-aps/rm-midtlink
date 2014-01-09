@@ -14,6 +14,8 @@
   if(arg(0) == 'forum' || arg(0) == 'browse_categories' || arg(0) == 'taxonomy') { $forumActive = ' active'; }
   if(arg(0) == 'dokumentation') { $docuActive = ' active'; }
   if(isset($node) && $node->type == 'knowlegde') { $docuActive = ' active'; }
+
+ include_once 'current_tab.inc.php';
 ?>
 
   <ul class="reset">

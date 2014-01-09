@@ -1,6 +1,8 @@
 <?php
-  global $user;
-  $links = midtlink_utils_get_links($user->mainUnitTID);
+
+  global $activeMainTID;
+
+  $links = midtlink_utils_get_links($activeMainTID);
 
   foreach($links as $r) {
     ?>

@@ -3,16 +3,7 @@
    * block_categories.inc.php
    */
 
-      
-  if (arg(0) == 'dokumentation') {
-    $mainTID = arg(1);
-  }
-  else {
-    global $user;
-    $mainTID = $user->mainUnitTID;
-  }
-
-
+   global $activeMainTID;
 ?>
 
   <div class="content">
@@ -24,7 +15,7 @@
 	  $c = 0;
 	  foreach($categories as $i) {
 		  $c++;
-		  echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$mainTID.'/'.$i->tid).'</li>'."\n";
+		  echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$activeMainTID.'/'.$i->tid).'</li>'."\n";
 	  }
 	  ?>
     </ul>
@@ -33,7 +24,7 @@
     global $show_only_global_categories;
     // Don't show in footer
     if (!isset($show_only_global_categories)) {
-      $term = taxonomy_term_load($mainTID);
+      $term = taxonomy_term_load($activeMainTID);
       if ($term):
         $mainUnitName = $term->name;
         $local_categories = midtlink_get_keywords_by_unit($mainUnitName);
@@ -46,7 +37,7 @@
 	  $c = 0;
 	  foreach($local_categories as $i) {
 		  $c++;
-		  echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$mainTID.'/'.$i->tid).'</li>'."\n";
+		  echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$activeMainTID.'/'.$i->tid).'</li>'."\n";
 	  }
 	  ?>
     </ul>

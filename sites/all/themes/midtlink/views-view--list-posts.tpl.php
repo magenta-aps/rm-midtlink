@@ -1,18 +1,5 @@
 <div class="<?php print $classes; ?>">
-  <div class="mini-tabs">
-		<ul>
-                    <?php
-                    $units = midtlink_get_unit_tree(FALSE);
-                    foreach ($units as $tid => $unit):
-                        if ($unit['name'] == 'Andre') {
-                            continue;
-                        }
-                    ?>
-			<li<?php if($_GET['tid'] == $tid) { echo ' class="active"'; } ?>><a href="<?php echo url($_GET['q']); ?>?tid=<?php echo $tid; ?>"><?php echo $unit['name']; ?></a></li>
-                    <?php endforeach; ?>
-		</ul>
-  </div>
-    
+  <?php include('includes/unit_tabs.inc.php'); ?>
   <?php print render($title_prefix); ?>
   <?php
   if(arg(1) != '') {
