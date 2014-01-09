@@ -44,12 +44,14 @@
           </div>
         <?php endif; ?>
       
+        <?php print render($action_links); ?>
+        
         <?php print render($page['content']); ?>
       </div><!-- /#content -->
       
       <?php
-      /* Hide the sidebar on the Obsark page */
-        if(arg(0) != 'obssheet'): ?>
+      /* Hide the sidebar on the Obsark page and admin permissions page */
+        if(arg(0) != 'obssheet' && $_GET['q'] != 'admin/people/permissions'): ?>
           <div id="sidebar" class="grid-4 omega">
             <div class="section">
 							<?php if(arg(0) == 'search') {
