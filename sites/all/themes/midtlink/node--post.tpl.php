@@ -134,7 +134,6 @@ if(isset($node->field_keywords['und'])) {
         ?>
 			</div>
 			<div class="post-body">
-					<h2>Oversigtsark specifikke felter</h2>
 					<?php echo render($content['field_responsible']); ?>
 					<?php /*echo render($content['field_sdnumber']);*/ ?>
       </div><!--/.post-body-->

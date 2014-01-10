@@ -1,5 +1,10 @@
 <?php
 
+function midtlink_form_comment_form_alter(&$form, &$form_state) {
+  // Hide 'Your Name' in comment's form
+  $form['author']['#access'] = false;
+}
+
 /* Changes the output of the breadcrumb */
 function midtlink_breadcrumb($variables) {
   $breadcrumb = $variables['breadcrumb'];
