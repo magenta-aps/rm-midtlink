@@ -234,10 +234,6 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     $form['field_category']['und']['#options'] = $categoryOptions;
     
     $form['field_category_local'] = $form['field_category'];
-    $form['field_category_local']['und']['#title'] = 'Lokale Emne';
-    
-    global $user;
-    $mainUnitName = $user->mainUnitName;
     
     $categoryOptions = array();
        
@@ -249,10 +245,15 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     } else {
       // On Edit form, show only the post's unit's local keywords
       $postUnitTID = (int)$form['#node']->field_knowlegde_unit_ref['und'][0]['target_id'];
-      $postMainUnitTID = midtlink_get_main_unit_from_subunit($postUnitTID)->tid;
+      $mainUnitTerm = midtlink_get_main_unit_from_subunit($postUnitTID);
+      $postMainUnitTID = $mainUnitTerm->tid;
+      $mainUnitName = $mainUnitTerm->name;
       $categories = midtlink_get_keywords_by_unit_id($postMainUnitTID);
     }
   
+    $form['field_category_local']['und']['#title'] = 'Lokale Emne for ' . $mainUnitName;
+    
+    
     foreach($categories as $i) {
       $categoryOptions[$i->tid] = $i->name;
     }
