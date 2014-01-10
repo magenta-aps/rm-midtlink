@@ -80,6 +80,7 @@ Login
 	Change to Autocomplete (Tokeninput)
 
 /admin/structure/types/manage/post/fields/field_responsible
+	Remove description
 	Autocomplete matching -> Contains
 	Entity selection mode = Use full name
 
