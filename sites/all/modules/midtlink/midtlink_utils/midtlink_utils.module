@@ -49,6 +49,7 @@ function midtlink_get_main_unit_from_local_keyword($tid) {
 
 /**
  * Get the main unit (Afdeling)'s term object, given the subunit's tid.
+ * Returns the same unit id if it has no parents.
  * @param type $tid subunit's tid
  */
 function midtlink_get_main_unit_from_subunit($tid) {
@@ -56,6 +57,8 @@ function midtlink_get_main_unit_from_subunit($tid) {
   if (!empty($parents)) {
     $first = array_shift($parents);
     return $first;
+  } else {
+    return taxonomy_term_load($tid);
   }
 }
 
@@ -237,29 +240,22 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     $mainUnitName = $user->mainUnitName;
     
     $categoryOptions = array();
-    
+       
     if (arg(1) == 'add') {
+      // On Create form, show the user's main unit's local keywords
+      global $user;
+      $mainUnitName = $user->mainUnitName;
       $categories = midtlink_get_keywords_by_unit($mainUnitName);
-      foreach($categories as $i) {
-        $categoryOptions[$i->tid] = $i->name;
-      }
     } else {
-      $categoryTree = midtlink_get_keyword_tree();
-      foreach($categoryTree as $category) {
-        if ($category->parents[0] == 0) {
-          continue;
-        }
-        $parent = taxonomy_term_load($category->parents[0]);
-        if ($parent->name == 'Global') {
-          continue;
-        } else {
-          $prefix = $parent->name . ' - ';
-        }
-        $categoryOptions[$category->tid] = $prefix . $category->name;
-      }
+      // On Edit form, show only the post's unit's local keywords
+      $postUnitTID = (int)$form['#node']->field_knowlegde_unit_ref['und'][0]['target_id'];
+      $postMainUnitTID = midtlink_get_main_unit_from_subunit($postUnitTID)->tid;
+      $categories = midtlink_get_keywords_by_unit_id($postMainUnitTID);
     }
-    
-    
+  
+    foreach($categories as $i) {
+      $categoryOptions[$i->tid] = $i->name;
+    }
     
     $form['field_category_local']['und']['#options'] = $categoryOptions;
 	}
