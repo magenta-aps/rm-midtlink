@@ -1082,30 +1082,22 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
   $form['field_category']['und']['#required'] = false;
   $form['field_category']['und']['#title'] .= ' ' . theme_form_required_marker();
 
-  global $user;
-  $mainUnitName = $user->mainUnitName;
-
   $categoryOptions = array();
 
   if (arg(0) == 'create_observation') {
+    // On Create form, show the user's main unit's local keywords
+    global $user;
+    $mainUnitName = $user->mainUnitName;
     $categories = midtlink_get_keywords_by_unit($mainUnitName);
-    foreach($categories as $i) {
-      $categoryOptions[$i->tid] = $i->name;
-    }
   } else {
-    $categoryTree = midtlink_get_keyword_tree();
-    foreach($categoryTree as $category) {
-      if ($category->parents[0] == 0) {
-        continue;
-      }
-      $parent = taxonomy_term_load($category->parents[0]);
-      if ($parent->name == 'Global') {
-        continue;
-      } else {
-        $prefix = $parent->name . ' - ';
-      }
-      $categoryOptions[$category->tid] = $prefix . $category->name;
-    }
+    // On Edit form, show only the post's unit's local keywords
+    $postUnitTID = (int)$form['#node']->field_unit['und'][0]['tid'];
+    $postMainUnitTID = midtlink_get_main_unit_from_subunit($postUnitTID)->tid;
+    $categories = midtlink_get_keywords_by_unit_id($postMainUnitTID);
+  }
+  
+  foreach($categories as $i) {
+    $categoryOptions[$i->tid] = $i->name;
   }
   
   $form['field_category_local']['und']['#options'] = $categoryOptions;

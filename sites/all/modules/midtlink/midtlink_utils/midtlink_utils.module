@@ -47,6 +47,18 @@ function midtlink_get_main_unit_from_local_keyword($tid) {
   }
 }
 
+/**
+ * Get the main unit (Afdeling)'s term object, given the subunit's tid.
+ * @param type $tid subunit's tid
+ */
+function midtlink_get_main_unit_from_subunit($tid) {
+  $parents = taxonomy_get_parents($tid);
+  if (!empty($parents)) {
+    $first = array_shift($parents);
+    return $first;
+  }
+}
+
 function midtlink_get_local_and_global_keywords($unit) {
   $global_categories = midtlink_get_global_keywords();
   $local_categories = midtlink_get_keywords_by_unit($unit);
