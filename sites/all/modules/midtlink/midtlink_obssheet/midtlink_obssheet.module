@@ -1097,7 +1097,7 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
     $categories = midtlink_get_keywords_by_unit_id($postMainUnitTID);
   }
 
-  $form['field_category_local']['und']['#title'] = 'Lokale Emne for ' . $mainUnitName;
+  $form['field_category_local']['und']['#title'] = 'Lokale Emner for ' . $mainUnitName;
   
   foreach($categories as $i) {
     $categoryOptions[$i->tid] = $i->name;
