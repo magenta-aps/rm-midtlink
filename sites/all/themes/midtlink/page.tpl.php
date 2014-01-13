@@ -24,7 +24,7 @@
     </div><!-- /.grid-12 -->
   
     <div class="grid-12">
-      <div id="content" class="<?php /* Expand content width on the Obsark page */ if(arg(0) != 'obssheet') echo 'grid-8 alpha'; ?>">
+      <div id="content" class="grid-8 alpha">
 
         <!-- Messages -->
         <?php if ($messages): ?>
@@ -51,7 +51,7 @@
       
       <?php
       /* Hide the sidebar on the Obsark page and admin permissions page */
-        if(arg(0) != 'obssheet' && $_GET['q'] != 'admin/people/permissions'): ?>
+        if($_GET['q'] != 'admin/people/permissions'): ?>
           <div id="sidebar" class="grid-4 omega">
             <div class="section">
 							<?php if(arg(0) == 'search') {

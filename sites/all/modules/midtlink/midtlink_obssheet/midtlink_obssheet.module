@@ -434,15 +434,13 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 	
 	
 	$o.= '<table id="obsark"><thead><tr>';
-	$o.= '<th><a href="">ID</a></th>';
+	$o.= '<th>Emne</th>';
 	$o.= '<th>Ophøjet</th>';
-	$o.= '<th>SD #</th>';
 	$o.= '<th'.$sortC['created'].'><a href="'.$sortU['created'].'">Opdateret</a></th>';
 	$o.= '<th>Svar</a></th>';
 	$o.= '<th style="width:300px;">Problem</th>';
 	//$o.= '<th style="width:210px;">L&oslash;sning (kun svar markeret som løsning)</th>';
 	//$o.= '<th>Ansvarlig</th>';
-	$o.= '<th>Emne</th>';
 	$o.= '<th><nobr>Indberettet af</nobr></th>';
 	$o.= '</tr></thead>';
 	
@@ -467,13 +465,14 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 		foreach($observations as $obs) {
 			$c = ($obs['approved']) ? 'solved' : 'unsolved';
 			$o.= '<tr class="'.$c.'" onclick="location.href=\''.url('node/'.$obs['nid']).'\'" style="cursor:pointer;">';
-				$o.= '<td>'.l(sprintf('%05s',$obs['nid']),'node/'.$obs['nid']).'</td>';
+//				$o.= '<td>'.l(sprintf('%05s',$obs['nid']),'node/'.$obs['nid']).'</td>';
+        $o.= '<td>'.implode(', ',$obs['categories']).'</td>';
 				$o.= '<td class="status">&nbsp;';
 					if($obs['raised_issue']) {
 						$o.= '<span class="general-obsark image-replacement tooltip" original-title="Ophøjet fra Afdelingens til Generel Oversigt"></span>';
 					}
 				$o.= '</td>';
-				$o.= '<td>'.$obs['sdno'].'</td>';
+//				$o.= '<td>'.$obs['sdno'].'</td>';
 				$o.= '<td>'.format_date($obs['last_update'],'short').'</td>';
 				$o.= '<td>'.$obs['comment_no'].'</td>';
 				$o.= '<td>';
@@ -495,7 +494,6 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 				}*/
 				//$o.= '</td>';
 				//$o.= '<td>'.$obs['responsible'].'</td>';
-				$o.= '<td>'.implode(', ',$obs['categories']).'</td>';
 				$o.= '<td>'.$obs['observed_by'].'</td>';
 			$o.= '</tr>';
 		}
@@ -582,7 +580,7 @@ function midtlink_obssheet_get_list_global($filters=array(),$sort='created_asc',
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
 		}
 		
 		$raised = false;
@@ -685,7 +683,7 @@ function midtlink_obssheet_get_list_allunits($filters=array(),$sort='created_asc
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
 		}
 		
 		$raised = false;
@@ -783,7 +781,7 @@ function midtlink_obssheet_get_list_unit($unitid,$filters=array(),$sort='created
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
 		}
 		
 		
@@ -883,7 +881,7 @@ function midtlink_obssheet_get_list_observed_by_me($filters=array(),$sort='creat
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
 		}
 		
 		$raised = false;
@@ -984,7 +982,7 @@ function midtlink_obssheet_get_list_responsible($filters=array(),$sort='created_
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.$r->title.'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
 		}
 		
 		$raised = false;
