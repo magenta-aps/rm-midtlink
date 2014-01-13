@@ -26,7 +26,8 @@
     width: 200px;
     padding: 20px 22px 12px;
     margin-bottom: 20px;
-    background: rgb(225, 236, 247);
+    background: #25598c;
+    color:#fff;
     border-radius: 20px;
 }
 
@@ -38,7 +39,7 @@
     right: -15px;
     border-style: solid;
     border-width: 15px 0 15px 15px;
-    border-color: transparent rgb(225, 236, 247);
+    border-color: transparent #25598c;
     display: block;
     width: 0;
     z-index: 1;
