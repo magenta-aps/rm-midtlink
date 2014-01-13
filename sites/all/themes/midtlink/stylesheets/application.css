@@ -16,6 +16,34 @@
         line-height:32px;
 }
 
+.ask-balloon-parent {
+    position: relative;
+    left: -275px;
+    top: -26px;
+}
+.ask-balloon {
+    position: absolute;
+    width: 200px;
+    padding: 20px 22px 12px;
+    margin-bottom: 20px;
+    background: rgb(225, 236, 247);
+    border-radius: 20px;
+}
+
+.ask-balloon:after 
+{
+    content: "";
+    position: absolute;
+    top: 45px;
+    right: -15px;
+    border-style: solid;
+    border-width: 15px 0 15px 15px;
+    border-color: transparent rgb(225, 236, 247);
+    display: block;
+    width: 0;
+    z-index: 1;
+}
+
 
 /**
  * Filename: application.css
@@ -400,7 +428,7 @@ body{
   padding:14px 0 10px;
 }
 
-/* Hint: Find svar på dine spørgsmål */
+/* Hint: Find svar pï¿½ dine spï¿½rgsmï¿½l */
 #subfooter .search-form .hint {
   background-image:url(../images/sprite_v2.png);
   background-position:-271px -104px;

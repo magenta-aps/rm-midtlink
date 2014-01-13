@@ -1040,7 +1040,27 @@ function _midtlink_obssheet_category_validate($element, &$form_state) {
 } 
 
 function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form_id) {
-	
+//	drupal_add_css(drupal_get_path('module', 'midtlink_obssheet') . '/tooltipster.css', 'file');
+//	drupal_add_js(drupal_get_path('module', 'midtlink_obssheet') . '/jquery.tooltipster.min.js', 'file');
+  drupal_add_js("jQuery(document).ready(function (){
+    setInterval(function () {
+      var f = jQuery('.tokeninputfield');
+      var l = jQuery(f).tokenInput('get').length;
+      if (l == 0) {
+        if (jQuery('.ask-balloon').length > 0) {
+          jQuery('.ask-balloon').show();
+        } else {
+          jQuery('.form-item-field-responsible-und').prepend('<div class=\\'ask-balloon-parent\\'><div class=\\'ask-balloon\\'><p>Spørg en kollega i Region Midt! Her har du mulighed for at tilføje navnet, på den du gerne vil spørge.</p></div>');
+//          var position = jQuery(f).offset();
+//          jQuery('.ask-balloon').css('top', position.top-100);
+        }
+      } else {
+        jQuery('.ask-balloon').hide();
+      }
+//      console.log(l);
+    }, 333);
+  });", 'inline');
+  
 	$unitDeps = array();
 	$unitList = array();
 	$units = taxonomy_get_tree(4);
