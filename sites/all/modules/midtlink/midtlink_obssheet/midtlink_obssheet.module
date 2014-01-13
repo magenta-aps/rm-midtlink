@@ -332,10 +332,10 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 	
 	
 	$o.= '<div class="obsark actions">';
-	$o.= '<div class="grid-6 alpha">';
+	$o.= '<div class="grid-4 alpha">';
 	$o.= '<a class="download" href="'.url($_GET['q'].'/pdf').'?'.$_SERVER['QUERY_STRING'].'" target="_blank">Download (pdf)</a> ';
 	$o.= '<a class="new-node" href="'.url('create_observation',array('query'=>$query)).'">Opret indlæg</a></div>';
-	$o.= '<div class="grid-6 omega"><form action="#" method="get"><div class="sort">';   
+	$o.= '<div class="grid-4 omega"><form action="#" method="get"><div class="sort">';   
 	$o.= '<label for="select-choice">Vis oversigt</label>';
 	$o.= '<select class="form-select" name="select-choice" id="select-choice" onchange="location.href=this.options[this.selectedIndex].value">';
   $o.= '<option value="'.url('obssheet/observed_by_me').'"'.(arg(1) == 'observed_by_me' ? ' selected="selected"' : '').'>Mine indlæg</option>';
@@ -378,10 +378,27 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 	}
 	*/
 
-	$o.= '</select></div></form></div></div>';
+	$o.= '</select></div></form></div></div><br/>';
 	
 	$o.= '<h2>'.midtlink_obssheet_get_title($type,$unit_id).'</h2>';
 	
+  // Show the current Emne in a green box
+  if($filter['category']) {
+		$term = taxonomy_term_load($filter['category']);
+		$o .= '<h1 class="greenbuttonstyle">'.$term->name.' <a class="resetemne" href="'.url($_GET['q']).'">(Nulstil valg)</a></h1>';
+		if($term->description!='') {
+			$o .= '<div class="categorydescription">';
+			if(strpos($term->description,'<p>')===false) {
+				$o .= '<p>'.$term->description.'</p>';	
+			}
+			else {
+				$o .= $term->description;
+			}
+			$o .= '</div>';
+		}
+	}
+  
+  if (FALSE) { // disable the Emne filter dropdown
 	$o.= '<div class="box-light filters-wrapper clearfix">';
 		$o.= '<form action="'.url($_GET['q']).'" method="get">';
 		/*$o.= '<div class="grid-3">';
@@ -431,6 +448,7 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 		$o.= '</div>';
 		$o.= '</form>';
 	$o.= '</div>';
+  }
 	
 	
 	$o.= '<table id="obsark"><thead><tr>';

@@ -19,6 +19,11 @@
         $c++;
         echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$activeMainTID.'/'.$i->tid).'</li>'."\n";
       }
+    } else if(arg(0) == 'obssheet') {
+      foreach($categories as $i) {
+        $c++;
+        echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,$_GET['q'], array('query' => array('filter_category' => $i->tid))).'</li>'."\n";
+      }
     } else {
       foreach($categories as $i) {
         $c++;
@@ -46,6 +51,11 @@
       foreach($local_categories as $i) {
         $c++;
         echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$activeMainTID.'/'.$i->tid).'</li>'."\n";
+      }
+    } else if(arg(0) == 'obssheet') {
+      foreach($local_categories as $i) {
+        $c++;
+        echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,$_GET['q'], array('query' => array('filter_category' => $i->tid))).'</li>'."\n";
       }
     } else {
       foreach($local_categories as $i) {
