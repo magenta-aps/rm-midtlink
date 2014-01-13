@@ -456,7 +456,7 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 	$o.= '<th>Ophøjet</th>';
 	$o.= '<th'.$sortC['created'].'><a href="'.$sortU['created'].'">Opdateret</a></th>';
 	$o.= '<th>Svar</a></th>';
-	$o.= '<th style="width:300px;">Problem</th>';
+	$o.= '<th style="width:200px;">Problem</th>';
 	//$o.= '<th style="width:210px;">L&oslash;sning (kun svar markeret som løsning)</th>';
 	//$o.= '<th>Ansvarlig</th>';
 	$o.= '<th><nobr>Indberettet af</nobr></th>';
@@ -493,7 +493,7 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 //				$o.= '<td>'.$obs['sdno'].'</td>';
 				$o.= '<td>'.format_date($obs['last_update'],'short').'</td>';
 				$o.= '<td>'.$obs['comment_no'].'</td>';
-				$o.= '<td>';
+				$o.= '<td><div style="width: 200px;">';
 				/*if(strlen($obs['problem'])>300) {
 					$o.= drupal_substr($obs['problem'],0,250).'<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().next(\'.restOfEntry\').show()">Læs mere</a></span>';
 					$o.= '<span class="restOfEntry">'.drupal_substr($obs['problem'],250).'</span>';
@@ -501,7 +501,7 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 				else {*/
 					$o.= $obs['problem'];
 				/*}*/
-				$o.= '</td>';
+				$o.= '</div></td>';
 				//$o.= '<td>';
 				/*if(strlen($obs['solution'])>300) {
 					$o.= drupal_substr($obs['solution'],0,250).'<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().next(\'.restOfEntry\').show()">Læs mere</a></span>';
