@@ -342,7 +342,11 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 //	$o.= '<option value="'.url('obssheet/responsible').'"'.(arg(1) == 'responsible' ? ' selected="selected"' : '').'>Observationer jeg er ansvarlig for</option>';
 	
 	$units = midtlink_get_unit_tree();
-  $query_string = '?filter_category=' . $filter['category'];
+  if ($filter['category']) {
+    $query_string = '?filter_category=' . $filter['category'];
+  } else {
+    $query_string = '';
+  }
 	foreach($units as $mtid=>$mainUnit) {
     if ($mainUnit['name'] == 'Andre') {
       continue;
