@@ -116,6 +116,18 @@ Run `php migrate_vejledning.php`
 /dokumentation/
 	Test clicking each unit's tab shows a different list
 
+/admin/structure/views/view/list_posts/edit
+	Add Filter criteria: Taxonomy term: Term ID
+	Expose this filter
+	Operator: Is equal to
+	Relationship: Overordnet element
+	More -> Filter identifier: tid
+
+	Remove old filter on taxonomy term with depth
+
+	Apply, Save
+
+
 /admin/structure/taxonomy/category
 	Create 'Global' category
 	Reparent all current categories to 'Global'
