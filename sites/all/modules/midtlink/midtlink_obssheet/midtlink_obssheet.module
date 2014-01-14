@@ -536,6 +536,10 @@ function midtlink_obssheet_get_list_global($filters=array(),$sort='created_asc',
 	foreach($terms as $tid=>$term) {
 		$tids[] = $tid;
 	}
+  
+  if (empty($tids)) {
+    $tids[] = $parent_unit_id;
+  }
 	
 	$sql = "SELECT n.nid, n.created, n.uid, 
 			n.title, fd.field_description_value as problem,
@@ -640,6 +644,11 @@ function midtlink_obssheet_get_list_allunits($filters=array(),$sort='created_asc
 	foreach($terms as $tid=>$term) {
 		$tids[] = $tid;
 	}
+  
+  if (empty($tids)) {
+    $tids[] = $parent_unit_id;
+  }
+	
 	
 	$sql = "SELECT n.nid, n.created, n.uid, 
 			n.title, fd.field_description_value as problem,
