@@ -107,12 +107,17 @@ function midtlink_get_keywords_by_unit_id($unit) {
  */
 function midtlink_get_keywords_by_unit($unit) {
   $terms = taxonomy_get_term_by_name($unit, "category");
-  if (!empty($terms) && count($terms) == 1) {
-    $local_term = array_shift($terms);
-    return taxonomy_get_tree($local_term->vid, $local_term->tid);
+  if (!empty($terms)) {
+    foreach ($terms as $local_term) {
+      $parents = taxonomy_get_parents($local_term->tid);
+      if (empty($parents)) {
+        return taxonomy_get_tree($local_term->vid, $local_term->tid);
+      }
+    }
   } else {
     return array();
   }
+  return array();
 }
 
 function midtlink_get_unit_tree($getChildren = TRUE) {
@@ -259,6 +264,11 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     }
     
     $form['field_category_local']['und']['#options'] = $categoryOptions;
+    
+    // Hide local emner field if it's empty
+    if (empty($categoryOptions)) {
+      $form['field_category_local']['und']['#access'] = false;
+    }
 	}
 }
 
