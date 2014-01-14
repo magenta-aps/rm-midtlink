@@ -34,9 +34,9 @@ function midtlink_notifications_drupal_mail($to, $subject, $message) {
     ),
   );
   
-//  $system = drupal_mail_system($my_module, $my_mail_token);
-//  $message = $system->format($message);
-//	$system->mail($message);
+  $system = drupal_mail_system($my_module, $my_mail_token);
+  $message = $system->format($message);
+	$system->mail($message);
   watchdog('mail', "Sent mail (from %from to %to).",  array('%from' => $message['from'], '%to' => $message['to']), WATCHDOG_DEBUG);
 }
 
