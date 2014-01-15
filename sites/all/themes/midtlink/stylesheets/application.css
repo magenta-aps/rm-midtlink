@@ -18,12 +18,12 @@
 
 .ask-balloon-parent {
     position: relative;
-    left: -275px;
-    top: -26px;
+    left: 430px;
+    top: -45px;
 }
 .ask-balloon {
     position: absolute;
-    width: 200px;
+    width: 170px;
     padding: 20px 22px 12px;
     margin-bottom: 20px;
     background: #25598c;
@@ -35,10 +35,39 @@
 {
     content: "";
     position: absolute;
-    top: 45px;
-    right: -15px;
+    top: 65px;
+    left: -15px;
     border-style: solid;
-    border-width: 15px 0 15px 15px;
+    border-width: 15px 15px 15px 0px;
+    border-color: transparent #25598c;
+    display: block;
+    width: 0;
+    z-index: 1;
+}
+
+.ask-balloon-create-parent {
+    position: relative;
+    left: 430px;
+    top: 0px;
+}
+.ask-balloon-create {
+    position: absolute;
+    width: 170px;
+    padding: 20px 22px 12px;
+    margin-bottom: 20px;
+    background: #25598c;
+    color:#fff;
+    border-radius: 20px;
+}
+
+.ask-balloon-create:after 
+{
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: -15px;
+    border-style: solid;
+    border-width: 15px 15px 15px 0px;
     border-color: transparent #25598c;
     display: block;
     width: 0;
