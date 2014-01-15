@@ -105,11 +105,18 @@ if($result['bundle'] == 'post') {
 <?php
 }
 else {
+  $icon_url = $url;
+  // Icon should directly link to first file attachment if it exists.
+  if (isset($result['node']->field_knowlegde_file['und'][0])) {
+    $url = file_create_url($result['node']->field_knowlegde_file['und'][0]['uri']);
+    $url = parse_url($url);
+    $icon_url = $url['path'];
+  }
 	?>
 	<div class="list-item">
 	<div class="item-content documentation">  
 		<div class="content-wrapper">
-      <div class="node-type documentation"><a href="<?php echo $url; ?>">Vejledning</a></div>
+      <div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
     
     	<div class="title"><h2><a href="<?php echo $url; ?>"><?php echo $title; ?></a></h2></div>
     	<div class="body">
