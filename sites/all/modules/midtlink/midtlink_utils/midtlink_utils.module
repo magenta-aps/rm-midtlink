@@ -21,6 +21,17 @@ function midtlink_utils_menu() {
 	return $items;
 }
 
+
+/**
+ * Implements hook_menu_alter().
+ */
+function midtlink_utils_menu_alter(&$items) {
+//  var_dump($items);
+  // Disable 'Tag' tab
+  unset($items['node/%node/tag']);
+}
+
+
 function midtlink_utils_render_blocks($region) {
   if ($list = block_list($region)) {
     $build = _block_get_renderable_array($list);
