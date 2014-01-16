@@ -183,6 +183,7 @@ Test that all blocks are showing up
 	Index all queued content
 /admin/config/search/facetapi/apachesolr%40solr/block/created/edit
 	Display widget -> Links with checkboxes
+	Global settings -> Granularity -> Year
 	Save
 /admin/config/search/facetapi/apachesolr%40solr/block/bundle/edit
 	Display widget -> Links with checkboxes
