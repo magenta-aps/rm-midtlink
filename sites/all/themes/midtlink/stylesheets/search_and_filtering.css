@@ -206,7 +206,7 @@
   padding:2px 0;
   max-height:196px;
   position:relative;
-  overflow-y:scroll;
+  overflow-y:auto;
   overflow-x:hidden;
 }
 
