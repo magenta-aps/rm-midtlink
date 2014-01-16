@@ -45,7 +45,6 @@
  */
 
 if($block->module == 'facetapi' && $block->region == 'searchfilters') {
-	if($block_id == 2) { echo '<div id="filters" class="clearfix">'; }
 	if($block_id == 1) { echo '<div id="hospital-filter">'; }
 	?>
 		<div class="filter">
@@ -53,7 +52,7 @@ if($block->module == 'facetapi' && $block->region == 'searchfilters') {
 			<div class="filterlist"><?php echo $content; ?></div>
 		</div>
 	<?php
-	if($block_id == 4 || $block_id == 1) { echo '</div>'; }
+	if($block_id == 1) { echo '</div>'; }
 }
 else {
 ?>
