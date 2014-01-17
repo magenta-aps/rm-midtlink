@@ -83,17 +83,17 @@ function midtlink_features_default_fe_block_settings() {
     'css_class' => 'documentation',
     'custom' => 0,
     'machine_name' => 'midtlink_footer_block_1',
-    'midtlink_unit' => 301,
+    'midtlink_unit' => '',
     'module' => 'block',
     'node_types' => array(),
     'pages' => '',
     'roles' => array(),
     'themes' => array(
       'midtlink' => array(
-        'region' => 'footer_block',
+        'region' => 'footer_block_center',
         'status' => 1,
         'theme' => 'midtlink',
-        'weight' => -19,
+        'weight' => -18,
       ),
     ),
     'title' => 'Vejledninger',
@@ -105,14 +105,14 @@ function midtlink_features_default_fe_block_settings() {
     'css_class' => 'hotline',
     'custom' => 0,
     'machine_name' => 'midtlink_footer_block_3',
-    'midtlink_unit' => 301,
+    'midtlink_unit' => '',
     'module' => 'block',
     'node_types' => array(),
     'pages' => '',
     'roles' => array(),
     'themes' => array(
       'midtlink' => array(
-        'region' => 'footer_block',
+        'region' => 'footer_block_right',
         'status' => 1,
         'theme' => 'midtlink',
         'weight' => -18,
@@ -134,10 +134,10 @@ function midtlink_features_default_fe_block_settings() {
     'roles' => array(),
     'themes' => array(
       'midtlink' => array(
-        'region' => 'footer_block',
+        'region' => 'footer_block_center',
         'status' => 1,
         'theme' => 'midtlink',
-        'weight' => -17,
+        'weight' => -19,
       ),
     ),
     'title' => '',
@@ -156,10 +156,10 @@ function midtlink_features_default_fe_block_settings() {
     'roles' => array(),
     'themes' => array(
       'midtlink' => array(
-        'region' => 'footer_block',
+        'region' => 'footer_block_right',
         'status' => 1,
         'theme' => 'midtlink',
-        'weight' => -16,
+        'weight' => -19,
       ),
     ),
     'title' => 'Om MidtLink',

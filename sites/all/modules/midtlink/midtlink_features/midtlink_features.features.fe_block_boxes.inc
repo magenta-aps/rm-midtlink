@@ -35,7 +35,7 @@ function midtlink_features_default_fe_block_boxes() {
   $export['midtlink_betingelser'] = $fe_block_boxes;
 
   $fe_block_boxes = new stdClass();
-  $fe_block_boxes->info = 'Footer - Vejledninger';
+  $fe_block_boxes->info = 'Footer - Default - Vejledninger';
   $fe_block_boxes->format = 'html_wysiwyg';
   $fe_block_boxes->machine_name = 'midtlink_footer_block_1';
   $fe_block_boxes->body = '<p class="description">Se oversigten over tilgængelige EPJ-guides, -manualer og -instruktionsvideoer</p><p><span class="illustration image-replacement"> <span class="button"><a class="button" href="#">Lad mig se</a></span> </span></p>';
@@ -43,7 +43,7 @@ function midtlink_features_default_fe_block_boxes() {
   $export['midtlink_footer_block_1'] = $fe_block_boxes;
 
   $fe_block_boxes = new stdClass();
-  $fe_block_boxes->info = 'Footer - Service Desk';
+  $fe_block_boxes->info = 'Footer - Default - Service Desk';
   $fe_block_boxes->format = 'html_wysiwyg';
   $fe_block_boxes->machine_name = 'midtlink_footer_block_3';
   $fe_block_boxes->body = '<p class="description">Regionens Service Desk kan kontaktes døgnet rundt. Vi anbefaler, at man henvender sig via <a href="http://horapp104.onerm.dk/CAisd/pdmweb2.exe" target="_blank">den elektroniske Service Desk</a> i stedet for at ringe, medmindre situationen er akut.</p><div class="phone"><div class="image-replacement">Telefon</div>784 12345</div>';
