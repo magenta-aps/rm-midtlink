@@ -189,10 +189,6 @@ Test that all blocks are showing up
 	Display widget -> Links with checkboxes
 	Save
 
-/admin/config/search/facetapi/apachesolr%40solr/block/im_field_category/edit
-/admin/config/search/facetapi/apachesolr%40solr/block/im_field_unit/edit
-	Uncheck Sort by: Facet active
-
 Test more!! Relax.
 
 Remove old "Vejledning gyldig for field"
