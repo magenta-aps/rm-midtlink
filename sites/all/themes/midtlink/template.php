@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Implements theme_preprocess_block().
+ */
+function midtlink_preprocess_block(&$vars) {
+  $block = $vars['block'];
+  // Add "grid-4" class to footer blocks
+  if ($block->region == 'footer_block') {
+    $vars['classes_array'] = array_merge($vars['classes_array'], array('grid-4'));
+  }
+}
+
+
 function midtlink_form_comment_form_alter(&$form, &$form_state) {
   // Hide 'Your Name' in comment's form
   $form['author']['#access'] = false;

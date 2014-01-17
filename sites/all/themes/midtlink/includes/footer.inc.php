@@ -6,30 +6,16 @@
 
 <div id="footer" class="clearfix">
   <div class="container">
-    
-    <?php 
-    global $user;
-    if($user->mainUnitTID == 300) {
-			?>
-			<div id="categories" class="block grid-4">
-				<?php /* Block: Categories */ $show_only_global_categories = true; include('block_categories.inc.php'); $show_only_global_categories = false; ?>
-			</div>
-
-			<div class="block grid-4">
+<!--
+      <div class="block grid-4">
 				<img src="/sites/all/themes/midtlink/images/auh_support_model.png" alt="" />
 			</div>
-			
-    
-      <?php print render($page['footer_block_auh']); ?>
-			
-			
-		<?php } else { ?>
+-->    
 			<div id="categories" class="block grid-4">
 				<?php /* Block: Categories */ $show_only_global_categories = true; include('block_categories.inc.php'); $show_only_global_categories = false; ?>
 			</div>
       <?php print render($page['footer_block']); ?>
-		<?php } ?>
-  
+ 
   </div><!-- /.section -->
 </div><!-- /#footer -->
 

@@ -1,0 +1,4 @@
+name = MidtLink Unit Block Visibility
+description = Visibility for blocks based on User's MidtLink Unit
+core = 7.x
+dependencies[] = midtlink_utils

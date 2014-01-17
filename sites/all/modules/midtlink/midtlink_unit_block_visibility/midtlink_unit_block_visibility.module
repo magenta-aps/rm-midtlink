@@ -1,0 +1,105 @@
+<?php 
+/**
+ * @file
+ * This file is responsible for everything the module does. 
+ */
+
+function _midtlink_unit_block_visibility_context_load() {
+  $contexts = array();
+  $units = midtlink_get_unit_tree(FALSE);
+  foreach ($units as $tid => $unit) {
+    if ($unit['name'] == 'Andre') {
+      continue;
+    }
+    $contexts[$tid] = $unit['name'];
+  }
+  return $contexts;
+}
+
+function _midtlink_unit_block_visibility_context_get() {
+  global $user;
+  $contextTID = $user->mainUnitTID;
+  $contextName = $user->mainUnitName;
+  return array($contextTID => $contextName);
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function midtlink_unit_block_visibility_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'block_admin_configure' || $form_id == 'block_add_block_form') {
+    $form['visibility']['contexts'] = array(
+      '#type' => 'fieldset',
+      '#title' => 'Context',
+      '#group' => 'visibility',
+      '#weight' => 99,
+      '#attached' => array(
+        'js' => array(
+          'vertical-tabs' => drupal_get_path('module', 'midtlink_unit_block_visibility') . "/midtlink_unit_block_visibility_vtabs.js",
+        ),
+      ),
+    );
+    $contexts = _midtlink_unit_block_visibility_context_load();
+    $options = array();
+    foreach ($contexts as $cid => $context) {
+      $options[$cid] = $context;
+    }
+    $default_context_options = db_query("SELECT context FROM {midtlink_unit_block_visibility} WHERE module = :module AND delta = :delta", array(
+      ':module' => $form['module']['#value'],
+      ':delta' => $form['delta']['#value'],
+    ))->fetchCol();
+    $form['visibility']['contexts']['context'] = array(
+      '#type' => 'checkboxes',
+      '#title' => 'Contexts:',
+      '#options' => $options,
+      '#default_value' => $default_context_options,
+    );
+    $form['#submit'][] = 'midtlink_unit_block_visibility_save_contexts';
+  }
+}
+
+/**
+ * Our submit handler for blocks.
+ */
+function midtlink_unit_block_visibility_save_contexts($form, $form_state) {
+  $contexts = $form_state['values']['context'];
+  db_delete('midtlink_unit_block_visibility')
+    ->condition('module', $form_state['values']['module'])
+    ->condition('delta', $form_state['values']['delta'])
+    ->execute();
+  foreach ($contexts as $context => $selected) {
+    $record = array(
+      'module' => $form_state['values']['module'],
+      'delta' => $form_state['values']['delta'],
+      'context' => $selected,
+    );
+    if ($selected !== 0) {
+      drupal_write_record('midtlink_unit_block_visibility', $record);
+    }
+  }
+}
+
+/**
+ * Implements hook_block_list_alter().
+ */
+function midtlink_unit_block_visibility_block_list_alter(&$blocks) {
+  $context = _midtlink_unit_block_visibility_context_get();
+  
+  // Build an array of roles for each block.
+  $block_contexts = array();
+  $result = db_query('SELECT module, delta, context FROM {midtlink_unit_block_visibility}');
+  foreach ($result as $record) {
+    $block_contexts[$record->module][$record->delta][] = $record->context;
+  }
+
+  foreach ($blocks as $key => $block) {
+    // If a block has no contexts associated, it is displayed for every role.
+    // For blocks with contexts associated, if none of the contexts matches
+    // the settings from this block, remove it from the block list.
+    if (isset($block_contexts[$block->module][$block->delta]) && !array_intersect($block_contexts[$block->module][$block->delta], array_keys($context))) {
+      // No match.
+      unset($blocks[$key]);
+      continue;
+    }
+  }
+}
