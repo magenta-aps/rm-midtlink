@@ -11,19 +11,23 @@ cp -R midtlink_rollout_git/* midtlink_rollout/
 
 cd midtlink_rollout
 
+[Needs to be root:root
 Apply _appropriate_ group/permissions:
 	sudo chown -R www-data:www-data *
 	sudo chmod -R gu+rw *
+	]
 
 
 mysql -u root -p
-grant all privileges on midtlink_bsk.* to midtlink_u@localhost identified by 'Mandag11';
+grant all privileges on midtlink_arbejdsmiljo.* to midtlink_u@localhost identified by 'Mandag11';
+
+Can't create a database.. Need root permission.
 
 sudo nano sites/default/settings.php:
   Add BSK db config:
 
 $databases['midtlink_bsk']['default'] = array(
-    'database' => 'midtlink',
+    'database' => 'midtlink_live',
     'username' => 'midtlink_u', 
     'password' => 'Mandag11',
     'host' => 'localhost',
@@ -56,12 +60,17 @@ $databases = array (
   Add entry:
 
 $databases['midtlink_bsk']['default'] = array(
-    'database' => 'midtlink',
+    'database' => 'midtlink_live',
     'username' => 'midtlink_u', 
     'password' => 'Mandag11',
     'host' => 'localhost',
     'driver' => 'mysql',
 );
+
+To remove all .svn dirs:
+find . -type d -name .svn -exec rm -rf {} +
+or:
+find . -type d -name .svn -exec rm -rf {} \;
 
 Login
 
@@ -74,6 +83,8 @@ Login
 /admin/modules
 	Enable 'Token Input Entity Reference' module
 	Enable 'Features', 'FE Block' modules
+	Enable 'MidtLink Features'
+	Enable 'Contextual links'
 	Save!
 
 /admin/structure/types/manage/post/fields/field_responsible/widget-type
@@ -118,9 +129,9 @@ Run `php migrate_vejledning.php`
 
 /admin/structure/views/view/list_posts/edit
 	Add Filter criteria: Taxonomy term: Term ID
+	Relationship: Overordnet element
 	Expose this filter
 	Operator: Is equal to
-	Relationship: Overordnet element
 	More -> Filter identifier: tid
 
 	Remove old filter on taxonomy term with depth
@@ -150,21 +161,8 @@ Run `php migrate_vejledning.php`
 /node/add/link
 	Create a local link to test - Test AUH, choose AUH as Afdeling
 
-In mysql shell:
-	use midtlink_rollout;
-	update field_data_field_unit set field_unit_tid = 301 where entity_id = 1;
-
-	Check site to see that link disappears.
-
-	update field_data_field_unit set field_unit_tid = 284 where entity_id = 1;
-
-	Delete test link
-
-Copy midtlink_features.tar (scp):
-	Example: [cp ../midtlink_live/sites/all/modules/midtlink/midtlink_features.tar ./sites/all/modules/midtlink/]
-
-	cd sites/all/modules/midtlink/
-	tar xvf midtlink_features.tar 
+/admin/content
+	Delete test links
 
 /admin/structure/features
 	Check checkbox next to "MidtLink Features"
@@ -191,5 +189,11 @@ Test that all blocks are showing up
 
 Test more!! Relax.
 
-Remove old "Vejledning gyldig for field"
-Change language back to Danish
+/admin/structure/types/manage/knowlegde/fields
+	Remove old "Vejledning gyldig for field"
+
+/admin/config/regional/language
+	Change language back to Danish
+
+/admin/config/development/performance
+	Clear all caches
