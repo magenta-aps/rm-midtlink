@@ -17,6 +17,7 @@ function _midtlink_unit_block_visibility_context_load() {
 }
 
 function _midtlink_unit_block_visibility_context_get() {
+  midtlink_utils_init();
   global $user;
   $contextTID = $user->mainUnitTID;
   $contextName = $user->mainUnitName;
@@ -30,9 +31,9 @@ function midtlink_unit_block_visibility_form_alter(&$form, &$form_state, $form_i
   if ($form_id == 'block_admin_configure' || $form_id == 'block_add_block_form') {
     $form['visibility']['contexts'] = array(
       '#type' => 'fieldset',
-      '#title' => 'Context',
+      '#title' => 'Unit',
       '#group' => 'visibility',
-      '#weight' => 99,
+      '#weight' => 0,
       '#attached' => array(
         'js' => array(
           'vertical-tabs' => drupal_get_path('module', 'midtlink_unit_block_visibility') . "/midtlink_unit_block_visibility_vtabs.js",
@@ -50,7 +51,7 @@ function midtlink_unit_block_visibility_form_alter(&$form, &$form_state, $form_i
     ))->fetchCol();
     $form['visibility']['contexts']['context'] = array(
       '#type' => 'checkboxes',
-      '#title' => 'Contexts:',
+      '#title' => 'Units:',
       '#options' => $options,
       '#default_value' => $default_context_options,
     );
@@ -92,14 +93,37 @@ function midtlink_unit_block_visibility_block_list_alter(&$blocks) {
     $block_contexts[$record->module][$record->delta][] = $record->context;
   }
 
+  // Generate associative array of blocks by region
+  $regions = array();
   foreach ($blocks as $key => $block) {
-    // If a block has no contexts associated, it is displayed for every role.
-    // For blocks with contexts associated, if none of the contexts matches
-    // the settings from this block, remove it from the block list.
-    if (isset($block_contexts[$block->module][$block->delta]) && !array_intersect($block_contexts[$block->module][$block->delta], array_keys($context))) {
-      // No match.
-      unset($blocks[$key]);
-      continue;
+    $block->midtlink_unit = $block_contexts[$block->module][$block->delta];
+    $regions[$block->region][$key] = $block;
+  }
+  
+  foreach ($regions as $region => $region_blocks) {
+    $match_in_region = FALSE;
+    foreach ($region_blocks as $key => $block) {
+      // If a block has no contexts associated, it is only shown if no other blocks
+      // in the region matched the context.
+      // For blocks with contexts associated, if none of the contexts matches
+      // the settings from this block, remove it from the block list.
+      if (isset($block->midtlink_unit)) {
+        if (!array_intersect($block->midtlink_unit, array_keys($context))) {
+          // No match.
+          unset($blocks[$key]);
+          continue;
+        } else {
+          $match_in_region = TRUE;
+        }
+      }
+    }
+    if ($match_in_region) {
+      foreach ($region_blocks as $key => $block) {
+        if (!isset($block->midtlink_unit)) {
+          unset($blocks[$key]);
+          continue;
+        }
+      }
     }
   }
 }

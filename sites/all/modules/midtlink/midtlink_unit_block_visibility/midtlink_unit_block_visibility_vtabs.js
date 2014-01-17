@@ -9,10 +9,10 @@ Drupal.behaviors.scheduler_settings = {
   $('fieldset#edit-contexts', context).drupalSetSummary(function(context) {
       var vals = [];
       if ($("fieldset#edit-contexts input:checkbox:checked").length > 0) {
-        vals.push(Drupal.t('Restricted by Context'));
+        vals.push(Drupal.t('Restricted by Unit'));
       }
       if (!vals.length) {
-        vals.push(Drupal.t('Not restricted'));
+        vals.push(Drupal.t('Not restricted by unit (Default block)'));
       }
       return vals.join('<br/>');
     });

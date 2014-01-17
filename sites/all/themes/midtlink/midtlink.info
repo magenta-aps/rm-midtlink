@@ -27,16 +27,17 @@ scripts[] = javascripts/application.js
 scripts[] = javascripts/modal.js
 scripts[] = javascripts/tooltip.js
 
-regions[content] = Content
-regions[searchfilters] = Search Filters
+
 regions[front_text] = Frontpage - Main Text
 regions[front_sidebar] = Frontpage - Sidebar
 regions[front_sidebar_about] = Frontpage - Sidebar About
 regions[loginpage_above_form] = Loginpage - Above Form
 regions[loginpage_below_form] = Loginpage - Below Form
-regions[footer_block] = Footer - Block
+regions[footer_block_center] = Footer - Center Block
+regions[footer_block_right] = Footer - Right Block
 regions[betingelser] = Betingelser Page
-
+regions[content] = Content
+regions[searchfilters] = Search Filters
 
 features[] = node_user_picture
 features[] = comment_user_picture

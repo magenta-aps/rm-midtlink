@@ -6,7 +6,7 @@
 function midtlink_preprocess_block(&$vars) {
   $block = $vars['block'];
   // Add "grid-4" class to footer blocks
-  if ($block->region == 'footer_block') {
+  if (strpos($block->region, 'footer_block') === 0) {
     $vars['classes_array'] = array_merge($vars['classes_array'], array('grid-4'));
   }
 }
