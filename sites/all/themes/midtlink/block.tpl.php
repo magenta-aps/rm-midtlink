@@ -45,7 +45,9 @@
  */
 
 if($block->module == 'facetapi' && $block->region == 'searchfilters') {
-	if($block_id == 1) { echo '<div id="hospital-filter">'; }
+  if ($block->subject == 'Afdeling') { $block->subject = 'Enhed'; }
+  if ($block->subject == 'Oprettelsesdato') { $block->subject = 'Oprettelsesår'; }
+  if($block_id == 1) { echo '<div id="hospital-filter">'; }
 	?>
 		<div class="filter">
 			<h2><?php echo $block->subject; ?></h2>

@@ -32,7 +32,7 @@
 }
 
 
-.region-content #search-form label {
+.region-content #search-form .form-item-keys label {
 	display:none;
 }
 .region-content #search-form input.form-text {
