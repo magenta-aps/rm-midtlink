@@ -134,6 +134,10 @@ function fe_block_settings_features_export_render($module_name = '', $data) {
       if (module_exists('block_class')) {
         $export_block['css_class'] = _fe_block_get_block_css_class($block);
       }
+      // Add midtlink_unit_block_visibility support.
+      if (module_exists('midtlink_unit_block_visibility')) {
+        $export_block['midtlink_unit'] = _fe_block_get_block_midtlink_unit($block);
+      }
       // Add i18n_block support.
       if (module_exists('i18n_block')) {
         $export_block['i18n_block_language'] = _fe_block_get_block_i18n_block_language($block);
@@ -442,11 +446,13 @@ function fe_block_settings_features_revert($module_name = NULL) {
     $block_node_types = isset($block['node_types']) ? $block['node_types'] : NULL;
     $block_roles = isset($block['roles']) ? $block['roles'] : NULL;
     $block_css_class = isset($block['css_class']) ? $block['css_class'] : NULL;
+    $block_midtlink_unit = isset($block['midtlink_unit']) ? $block['midtlink_unit'] : NULL;
     $block_i18n_block_language = isset($block['i18n_block_language']) ? $block['i18n_block_language'] : NULL;
     unset($block['themes']);
     unset($block['node_types']);
     unset($block['roles']);
     unset($block['css_class']);
+    unset($block['midtlink_unit']);
     unset($block['i18n_block_language']);
 
     // Restore theme specific settings for every active theme.
@@ -493,6 +499,11 @@ function fe_block_settings_features_revert($module_name = NULL) {
     // Update block CSS classes.
     if (isset($block_css_class) && module_exists('block_class')) {
       _fe_block_settings_update_block_css_class($block, $block_css_class);
+    }
+    
+    // Update MidtLink Unit settings..
+    if (isset($block_midtlink_unit) && module_exists('midtlink_unit_block_visibility')) {
+      _fe_block_settings_update_block_midtlink_unit($block, $block_midtlink_unit);
     }
 
     // Set i18n_block languages.
@@ -645,6 +656,40 @@ function _fe_block_settings_update_block_css_class($block, $block_css_class) {
         ->condition('module', $block['module'])
         ->condition('delta', $block['delta'])
         ->execute();
+    }
+  }
+}
+
+/**
+ * Helper to update the block MidtLink Unit settings for a given block.
+ *
+ * @param array $block
+ *   Block definition of the block to update.
+ * @param string $block_midtlink_unit
+ *   MidtLink Unit to apply to the block.
+ */
+function _fe_block_settings_update_block_midtlink_unit($block, $block_midtlink_unit) {
+  // This functionality is provided by the MidtLink Unit Block Visibility module.
+  if (module_exists('midtlink_unit_block_visibility')) {
+    // MidtLink Unit Block Visibility maintains its own table.
+    if (db_table_exists('midtlink_unit_block_visibility')) {
+      // First delete the old block_class settings, if any.
+      db_delete('midtlink_unit_block_visibility')
+        ->condition('module', $block['module'])
+        ->condition('delta', $block['delta'])
+        ->execute();
+
+      // Then write the new settings, if any are present.
+      if (!empty($block_midtlink_unit)) {
+        db_insert('midtlink_unit_block_visibility')
+          ->fields(array('module', 'delta', 'context'))
+          ->values(array(
+              'module' => $block['module'],
+              'delta' => $block['delta'],
+              'context' => $block_midtlink_unit,
+            ))
+          ->execute();
+      }
     }
   }
 }
@@ -1155,6 +1200,32 @@ function _fe_block_get_block_css_class($block) {
   }
   return !empty($css_class) ? $css_class : '';
 }
+
+/**
+ * Helper function to get block MidtLink Unit settings.
+ *
+ * @param array $block
+ *   The block definition.
+ *
+ * @return string
+ *   MidtLink Unit for the block.
+ */
+function _fe_block_get_block_midtlink_unit($block) {
+  // This functionality depends on the MidtLink Unit Block Visibility module.
+  if (module_exists('midtlink_unit_block_visibility')) {
+    // MidtLink Unit Block Visibility maintains its own table.
+    if (db_table_exists('midtlink_unit_block_visibility')) {
+      $context = db_select('midtlink_unit_block_visibility', 'b')
+        ->fields('b', array('context'))
+        ->condition('module', $block['module'])
+        ->condition('delta', $block['delta'])
+        ->execute()
+        ->fetchField();
+    }
+  }
+  return !empty($context) ? $context : '';
+}
+
 
 /**
  * Get i18n block language from i18n_block.

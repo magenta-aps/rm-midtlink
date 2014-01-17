@@ -8,6 +8,7 @@ dependencies[] = ctools
 dependencies[] = features
 
 test_dependencies[] = block_class
+test_dependencies[] = midtlink_unit_block_visibility
 
 files[] = tests/features_extra_test_case.test
 files[] = tests/fe_block.test

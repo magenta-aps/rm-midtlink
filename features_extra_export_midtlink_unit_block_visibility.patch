@@ -1,0 +1,127 @@
+diff --git a/sites/all/modules/features_extra/fe_block.info b/sites/all/modules/features_extra/fe_block.info
+index f21281b..de3daf6 100644
+--- a/sites/all/modules/features_extra/fe_block.info
++++ b/sites/all/modules/features_extra/fe_block.info
+@@ -8,6 +8,7 @@ dependencies[] = ctools
+ dependencies[] = features
+ 
+ test_dependencies[] = block_class
++test_dependencies[] = midtlink_unit_block_visibility
+ 
+ files[] = tests/features_extra_test_case.test
+ files[] = tests/fe_block.test
+diff --git a/sites/all/modules/features_extra/fe_block.module b/sites/all/modules/features_extra/fe_block.module
+index b335040..80c34e0 100644
+--- a/sites/all/modules/features_extra/fe_block.module
++++ b/sites/all/modules/features_extra/fe_block.module
+@@ -134,6 +134,10 @@ function fe_block_settings_features_export_render($module_name = '', $data) {
+       if (module_exists('block_class')) {
+         $export_block['css_class'] = _fe_block_get_block_css_class($block);
+       }
++      // Add midtlink_unit_block_visibility support.
++      if (module_exists('midtlink_unit_block_visibility')) {
++        $export_block['midtlink_unit'] = _fe_block_get_block_midtlink_unit($block);
++      }
+       // Add i18n_block support.
+       if (module_exists('i18n_block')) {
+         $export_block['i18n_block_language'] = _fe_block_get_block_i18n_block_language($block);
+@@ -442,11 +446,13 @@ function fe_block_settings_features_revert($module_name = NULL) {
+     $block_node_types = isset($block['node_types']) ? $block['node_types'] : NULL;
+     $block_roles = isset($block['roles']) ? $block['roles'] : NULL;
+     $block_css_class = isset($block['css_class']) ? $block['css_class'] : NULL;
++    $block_midtlink_unit = isset($block['midtlink_unit']) ? $block['midtlink_unit'] : NULL;
+     $block_i18n_block_language = isset($block['i18n_block_language']) ? $block['i18n_block_language'] : NULL;
+     unset($block['themes']);
+     unset($block['node_types']);
+     unset($block['roles']);
+     unset($block['css_class']);
++    unset($block['midtlink_unit']);
+     unset($block['i18n_block_language']);
+ 
+     // Restore theme specific settings for every active theme.
+@@ -494,6 +500,11 @@ function fe_block_settings_features_revert($module_name = NULL) {
+     if (isset($block_css_class) && module_exists('block_class')) {
+       _fe_block_settings_update_block_css_class($block, $block_css_class);
+     }
++    
++    // Update MidtLink Unit settings..
++    if (isset($block_midtlink_unit) && module_exists('midtlink_unit_block_visibility')) {
++      _fe_block_settings_update_block_midtlink_unit($block, $block_midtlink_unit);
++    }
+ 
+     // Set i18n_block languages.
+     if (module_exists('i18n_block') && isset($block_i18n_block_language)) {
+@@ -650,6 +661,40 @@ function _fe_block_settings_update_block_css_class($block, $block_css_class) {
+ }
+ 
+ /**
++ * Helper to update the block MidtLink Unit settings for a given block.
++ *
++ * @param array $block
++ *   Block definition of the block to update.
++ * @param string $block_midtlink_unit
++ *   MidtLink Unit to apply to the block.
++ */
++function _fe_block_settings_update_block_midtlink_unit($block, $block_midtlink_unit) {
++  // This functionality is provided by the MidtLink Unit Block Visibility module.
++  if (module_exists('midtlink_unit_block_visibility')) {
++    // MidtLink Unit Block Visibility maintains its own table.
++    if (db_table_exists('midtlink_unit_block_visibility')) {
++      // First delete the old block_class settings, if any.
++      db_delete('midtlink_unit_block_visibility')
++        ->condition('module', $block['module'])
++        ->condition('delta', $block['delta'])
++        ->execute();
++
++      // Then write the new settings, if any are present.
++      if (!empty($block_midtlink_unit)) {
++        db_insert('midtlink_unit_block_visibility')
++          ->fields(array('module', 'delta', 'context'))
++          ->values(array(
++              'module' => $block['module'],
++              'delta' => $block['delta'],
++              'context' => $block_midtlink_unit,
++            ))
++          ->execute();
++      }
++    }
++  }
++}
++
++/**
+  * Helper to update the i18n block language settings for a specific block.
+  *
+  * @param array $block
+@@ -1157,6 +1202,32 @@ function _fe_block_get_block_css_class($block) {
+ }
+ 
+ /**
++ * Helper function to get block MidtLink Unit settings.
++ *
++ * @param array $block
++ *   The block definition.
++ *
++ * @return string
++ *   MidtLink Unit for the block.
++ */
++function _fe_block_get_block_midtlink_unit($block) {
++  // This functionality depends on the MidtLink Unit Block Visibility module.
++  if (module_exists('midtlink_unit_block_visibility')) {
++    // MidtLink Unit Block Visibility maintains its own table.
++    if (db_table_exists('midtlink_unit_block_visibility')) {
++      $context = db_select('midtlink_unit_block_visibility', 'b')
++        ->fields('b', array('context'))
++        ->condition('module', $block['module'])
++        ->condition('delta', $block['delta'])
++        ->execute()
++        ->fetchField();
++    }
++  }
++  return !empty($context) ? $context : '';
++}
++
++
++/**
+  * Get i18n block language from i18n_block.
+  *
+  * @param array $block
