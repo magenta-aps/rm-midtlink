@@ -391,16 +391,6 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
   if($filter['category']) {
 		$term = taxonomy_term_load($filter['category']);
 		$o .= '<h1 class="greenbuttonstyle">'.$term->name.' <a class="resetemne" href="'.url($_GET['q']).'">(Nulstil valg)</a></h1>';
-		if($term->description!='') {
-			$o .= '<div class="categorydescription">';
-			if(strpos($term->description,'<p>')===false) {
-				$o .= '<p>'.$term->description.'</p>';	
-			}
-			else {
-				$o .= $term->description;
-			}
-			$o .= '</div>';
-		}
 	}
   
   if (FALSE) { // disable the Emne filter dropdown
