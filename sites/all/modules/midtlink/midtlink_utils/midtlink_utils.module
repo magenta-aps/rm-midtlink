@@ -11,6 +11,48 @@ function midtlink_utils_ctools_plugin_directory($module, $plugin) {
   }
 }
 
+/**
+* Implements hook_facetapi_filters().
+*/
+function midtlink_utils_facetapi_filters() {
+  return array(
+    'midtlink_hide_global' => array(
+      'handler' => array(
+        'label' => t('Hide/expand global item'),
+        'class' => 'MidtLinkFacetapiFilterHideGlobal',
+        'query types' => array('term'),
+      ),
+    ),
+  );
+}
+
+/**
+* Implements hook_facetapi_sort_info().
+*/
+function midtlink_utils_facetapi_sort_info() {
+  $sorts = array();
+
+  $sorts['global_local'] = array(
+    'label' => t('Global/Local sort order'),
+    'callback' => 'midtlink_utils_facetapi_sort_global_local',
+    'description' => t('Sort global keywords first, followed by local ones.'),
+    'weight' => -50,
+  );
+
+  return $sorts;
+}
+
+/**
+* Sort by the top-level items first.
+*/
+function midtlink_utils_facetapi_sort_global_local(array $a, array $b) {
+  if (!empty($a['#item_children'])) {
+    return -1;
+  } else {
+    return 1;
+  }
+}
+
 function midtlink_utils_menu() {
 	$items['betingelser'] = array(
 		'title' => 'Brugerbetingelser for MidtLink', 

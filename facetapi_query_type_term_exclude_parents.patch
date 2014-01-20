@@ -1,0 +1,64 @@
+diff --git a/sites/all/modules/apachesolr/plugins/facetapi/query_type_term.inc b/sites/all/modules/apachesolr/plugins/facetapi/query_type_term.inc
+index 03f7aa3..d94f45e 100644
+--- a/sites/all/modules/apachesolr/plugins/facetapi/query_type_term.inc
++++ b/sites/all/modules/apachesolr/plugins/facetapi/query_type_term.inc
+@@ -19,7 +19,6 @@ class ApacheSolrFacetapiTerm extends FacetapiQueryType implements FacetapiQueryT
+   static public function getType() {
+     return 'term';
+   }
+-
+   /**
+    * Adds the filter to the query object.
+    *
+@@ -27,6 +26,7 @@ class ApacheSolrFacetapiTerm extends FacetapiQueryType implements FacetapiQueryT
+    *   An object containing the query in the backend's native API.
+    */
+   public function execute($query) {
++
+     $settings = $this->adapter->getFacet($this->facet)->getSettings();
+     // Adds the operator parameter.
+     $operator = $settings->settings['operator'];
+@@ -47,9 +47,12 @@ class ApacheSolrFacetapiTerm extends FacetapiQueryType implements FacetapiQueryT
+     }
+ 
+     $active = $this->adapter->getActiveItems($this->facet);
++    // Remove the all tids that are parents of any tid in the list
++    $this->remove_parents($active);
+ 
+     // Adds filter based on the operator.
+     if (FACETAPI_OPERATOR_OR != $operator) {
++
+       foreach ($active as $value => $item) {
+         // Handle facet missing:
+         if ($value === '_empty_' && !empty($settings->settings['facet_missing'])) {
+@@ -63,6 +66,7 @@ class ApacheSolrFacetapiTerm extends FacetapiQueryType implements FacetapiQueryT
+     else {
+       // OR facet.
+       $local = "tag={$this->facet['field']}";
++      
+       $values = array_keys($active);
+       if ($values) {
+         // Quote any values that have white space or colons.
+@@ -77,6 +81,22 @@ class ApacheSolrFacetapiTerm extends FacetapiQueryType implements FacetapiQueryT
+   }
+ 
+   /**
++   * Removes parents from a list of terms. Only works for a level 1 taxonomy
++   * This is not meant to handle a unlimited depth taxonomy
++   *
++   * @param array $terms
++   */
++  public function remove_parents(&$terms) {
++    $parents = array();
++    foreach ($terms as $term_id => $term) {
++      $parents = taxonomy_get_parents($term_id);
++      foreach ($parents as $parent) {
++        unset($terms[$parent->tid]);
++      }
++    }
++  }
++
++  /**
+    * Initializes the facet's build array.
+    *
+    * @return array

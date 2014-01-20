@@ -184,6 +184,14 @@ Test that all blocks are showing up
 	Display widget -> Links with checkboxes
 	Save
 
+/admin/config/search/facetapi/apachesolr%40solr/block/im_field_category/filters
+	Check: Hide/expand global item
+	Save
+
+/admin/config/search/facetapi/apachesolr%40solr/block/im_field_category/edit
+	Check 'Global/Local sort order', Descending
+	Drag it so it is the second sort after 'Facet active'
+
 Test more!! Relax.
 
 /admin/structure/types/manage/knowlegde/fields
