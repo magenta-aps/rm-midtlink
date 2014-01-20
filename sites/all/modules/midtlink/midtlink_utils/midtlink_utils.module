@@ -234,11 +234,24 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     // Only hide on add form, not on edit
     if (arg(1) == 'add') {
       // Hide choice of unit on Create Vejledning form
-      $form['field_knowlegde_unit_ref']['#access'] = false;
+      $form['field_unit']['#access'] = false;
+    } else {
+      // On Edit form, show only the main units
+      $mainUnits = midtlink_get_unit_tree(FALSE);
+      foreach($mainUnits as $tid => $term) {
+        if ($term['name'] == 'Andre') {
+          continue;
+        }
+        $mainUnitOptions[$tid] = $term['name'];
+      }
+    
+      $form['field_unit']['und']['#options'] = $mainUnitOptions;
     }
     
     // Hide old field, in case we haven't removed it
     $form['field_knowlegde_unit']['#access'] = false;
+    // Hide old field, in case we haven't removed it
+    $form['field_knowlegde_unit_ref']['#access'] = false;
     
     $categoryOptions = array();
     
@@ -260,7 +273,7 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
       $categories = midtlink_get_keywords_by_unit($mainUnitName);
     } else {
       // On Edit form, show only the post's unit's local keywords
-      $postUnitTID = (int)$form['#node']->field_knowlegde_unit_ref['und'][0]['target_id'];
+      $postUnitTID = (int)$form['#node']->field_unit['und'][0]['tid'];
       $mainUnitTerm = midtlink_get_main_unit_from_subunit($postUnitTID);
       $postMainUnitTID = $mainUnitTerm->tid;
       $mainUnitName = $mainUnitTerm->name;
@@ -288,8 +301,8 @@ function midtlink_utils_node_validate($node, $form, &$form_state) {
     if (arg(1) == 'add') {
       global $user;
       // Automatically set the newly created Vejledning to the user's main unit
-      $value[] = array('target_id' => $user->mainUnitTID);
-      form_set_value($form['field_knowlegde_unit_ref']['und'], $value, $form_state);
+      $value[] = array('tid' => $user->mainUnitTID);
+      form_set_value($form['field_unit']['und'], $value, $form_state);
     }
     
     $value = array_merge($form_state['values']['field_category']['und'], $form_state['values']['field_category_local']['und']);

@@ -8,7 +8,7 @@ migrateVejledningUnitToEntityReference();
 
 function migrateVejledningUnitToEntityReference()
 {
-    $sql = "SELECT entity_id FROM field_data_field_knowlegde_unit";
+    $sql = "SELECT entity_id FROM field_data_field_knowlegde_unit_ref";
     $result = db_query($sql);
 
     foreach ($result as $n) {
@@ -19,8 +19,8 @@ function migrateVejledningUnitToEntityReference()
 
     foreach($nodes as $node) {
         $node->field_unit[LANGUAGE_NONE] = array();
-        foreach ($node->field_knowlegde_unit[LANGUAGE_NONE] as $i => $val) {
-          $node->field_unit[LANGUAGE_NONE][]['tid'] = $val['value'];
+        foreach ($node->field_knowlegde_unit_ref[LANGUAGE_NONE] as $i => $val) {
+          $node->field_unit[LANGUAGE_NONE][]['tid'] = $val['target_id'];
         }
 //        $sql = "INSERT INTO field_data_field_knowlegde_unit_ref VALUES (entity_type, bundle, entity_id, revision_id, language, delta, field_data_field_knowlegde_unit_ref_target_id)"
 //          . " (:entity_type, :bundle, :entity_id, :revision_id, :language, :delta, :val)";

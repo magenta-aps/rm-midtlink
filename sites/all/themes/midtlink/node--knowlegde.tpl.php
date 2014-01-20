@@ -54,7 +54,7 @@ else {
 				<ul class="reset">
 					<?php
 					foreach($categories as $c) {
-						echo '<li><a href="'.url('dokumentation/'.$node->field_knowlegde_unit_ref['und'][0]['target_id'].'/'.$c['tid']).'">'.$c['name'].'<span>&nbsp;</span></a></li>';
+						echo '<li><a href="'.url('dokumentation/'.$node->field_unit['und'][0]['tid'].'/'.$c['tid']).'">'.$c['name'].'<span>&nbsp;</span></a></li>';
 					}
 					?>
 				</ul>
@@ -79,7 +79,18 @@ else {
 			hide($content['links']);
 			hide($content['field_category']);
 			hide($content['field_keywords']);
+			hide($content['field_unit']);
 			print render($content);
+      ?>
+      <div class="field field-name-field-unit field-type-list-text field-label-above"><div class="field-label">Vejledning gyldig for:&nbsp;</div><div class="field-items">
+      <?php
+      foreach ($content['field_unit']['#items'] as $i) {
+        $term = taxonomy_term_load($i['tid']);
+        echo '<div class="field-item even">' . l($term->name, 'dokumentation/' . $i['tid']) . '</div>';
+      }
+      ?>
+      </div></div>
+      <?php
 			?>
 		</div>
 	</div></div>
