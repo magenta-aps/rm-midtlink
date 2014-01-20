@@ -477,7 +477,7 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 	if(sizeof($observations)>0) {
 		foreach($observations as $obs) {
 			$c = ($obs['approved']) ? 'solved' : 'unsolved';
-			$o.= '<tr class="'.$c.'" onclick="location.href=\''.url('node/'.$obs['nid']).'\'" style="cursor:pointer;">';
+			$o.= '<tr class="'.$c.'">';
 //				$o.= '<td>'.l(sprintf('%05s',$obs['nid']),'node/'.$obs['nid']).'</td>';
         $o.= '<td>'.implode(', ',$obs['categories']).'</td>';
 				$o.= '<td class="status">&nbsp;';
@@ -489,13 +489,13 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 				$o.= '<td>'.format_date($obs['last_update'],'short').'</td>';
 				$o.= '<td>'.$obs['comment_no'].'</td>';
 				$o.= '<td><div style="width: 200px;">';
-				/*if(strlen($obs['problem'])>300) {
-					$o.= drupal_substr($obs['problem'],0,250).'<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().next(\'.restOfEntry\').show()">Læs mere</a></span>';
+				if(strlen($obs['problem'])>300) {
+					$o.= drupal_substr($obs['problem'],0,250).'<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().next(\'.restOfEntry\').show();">Læs mere</a></span>';
 					$o.= '<span class="restOfEntry">'.drupal_substr($obs['problem'],250).'</span>';
 				}
-				else {*/
+				else {
 					$o.= $obs['problem'];
-				/*}*/
+				}
 				$o.= '</div></td>';
 				//$o.= '<td>';
 				/*if(strlen($obs['solution'])>300) {
