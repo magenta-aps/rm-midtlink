@@ -53,6 +53,14 @@ function midtlink_utils_facetapi_sort_global_local(array $a, array $b) {
   }
 }
 
+function midtlink_utils_form_apachesolr_search_custom_page_search_form_alter(&$form, &$form_state) {
+  if (isset($form['basic']['retain-filters'])) {
+    $form['basic']['retain-filters']['#title'] = 'Behold aktuelt filter ved ny søgning';
+  }
+
+  return $form;
+}
+
 function midtlink_utils_menu() {
 	$items['betingelser'] = array(
 		'title' => 'Brugerbetingelser for MidtLink', 
