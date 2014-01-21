@@ -8,7 +8,7 @@ header('Content-type:text/html;charset=utf-8');
 </head>
 <body>
 <script type="text/javascript">
-location.href='mailto:?<?php echo htmlentities($_GET['e']); ?>&amp;subject=<?php echo htmlentities($_GET['s']); ?>&amp;body=<?php echo htmlentities($_GET['b']); ?>';
+location.href='mailto:?<?php echo htmlentities(utf8_decode($_GET['e'])); ?>&amp;subject=<?php echo htmlentities(utf8_decode($_GET['s'])); ?>&amp;body=<?php echo htmlentities(utf8_decode($_GET['b'])); ?>';
 </script>
 </body>
 </html>
