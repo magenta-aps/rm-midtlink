@@ -10,5 +10,6 @@ header('Content-type:text/html;charset=iso-8859-1');
 <script type="text/javascript">
 location.href='mailto:?<?php echo rawurlencode($_GET['e']); ?>&subject=<?php echo rawurlencode($_GET['s']); ?>&body=<?php echo rawurlencode($_GET['b']); ?>';
 </script>
+  <a href="mailto:?<?php echo $_GET['e']; ?>&subject=<?php echo $_GET['s']; ?>&body=<?php echo $_GET['b']; ?>">test</a>
 </body>
 </html>
