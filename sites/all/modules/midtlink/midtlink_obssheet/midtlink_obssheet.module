@@ -386,7 +386,12 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
   // Show the current Emne in a green box
   if($filter['category']) {
 		$term = taxonomy_term_load($filter['category']);
-		$o .= '<h1 class="greenbuttonstyle">'.$term->name.' <a class="resetemne" href="'.url($_GET['q']).'">(Nulstil valg)</a></h1>';
+    if (midtlink_is_keyword_local($term->tid)) {
+      $class = "darkbluebuttonstyle";
+    } else {
+      $class = "greenbuttonstyle";
+    }
+		$o .= '<h1 class="'.$class.'">'.$term->name.' <a class="resetemne" href="'.url($_GET['q']).'">(Nulstil valg)</a></h1>';
 	}
   
   if (FALSE) { // disable the Emne filter dropdown

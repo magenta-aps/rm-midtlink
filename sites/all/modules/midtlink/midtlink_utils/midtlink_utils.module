@@ -123,6 +123,20 @@ function midtlink_get_main_unit_from_subunit($tid) {
   }
 }
 
+function midtlink_is_keyword_local($tid) {
+  $parents = taxonomy_get_parents($tid);
+  if (!empty($parents)) {
+    $first = array_shift($parents);
+    if ($first->name == 'Global') {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    return false;
+  }
+}
+
 function midtlink_get_local_and_global_keywords($unit) {
   $global_categories = midtlink_get_global_keywords();
   $local_categories = midtlink_get_keywords_by_unit($unit);

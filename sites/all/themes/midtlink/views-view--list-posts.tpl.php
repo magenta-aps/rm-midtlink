@@ -4,9 +4,16 @@
   <?php
   if(arg(1) != '') {
 		$term = taxonomy_term_load(arg(1));
-		echo '<h1 class="greenbuttonstyle">'.$term->name.'</h1>';
-		if($term->description!='') {
-			echo '<div class="categorydescription">';
+    if (midtlink_is_keyword_local($term->tid)) {
+      $class = 'darkbluebuttonstyle';
+      $classDesc = 'darkbluedescription';
+    } else {
+      $class = 'greenbuttonstyle';
+      $classDesc = '';
+    }
+		echo '<h1 class="'.$class.'">'.$term->name.'</h1>';
+    if($term->description!='') {
+			echo '<div class="categorydescription '.$classDesc.'">';
 			if(strpos($term->description,'<p>')===false) {
 				echo '<p>'.$term->description.'</p>';	
 			}
