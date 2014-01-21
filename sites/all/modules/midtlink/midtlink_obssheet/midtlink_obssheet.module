@@ -593,7 +593,7 @@ function midtlink_obssheet_get_list_global($filters=array(),$sort='created_asc',
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
 		}
 		
 		$raised = false;
@@ -701,7 +701,7 @@ function midtlink_obssheet_get_list_allunits($filters=array(),$sort='created_asc
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
 		}
 		
 		$raised = false;
@@ -799,7 +799,7 @@ function midtlink_obssheet_get_list_unit($unitid,$filters=array(),$sort='created
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
 		}
 		
 		
@@ -899,7 +899,7 @@ function midtlink_obssheet_get_list_observed_by_me($filters=array(),$sort='creat
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
 		}
 		
 		$raised = false;
@@ -1000,7 +1000,7 @@ function midtlink_obssheet_get_list_responsible($filters=array(),$sort='created_
 		/* Construct problem string */
 		$problem = strip_tags($r->problem);
 		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid).'</strong><br />'.$problem;
+			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
 		}
 		
 		$raised = false;
