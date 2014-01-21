@@ -1159,7 +1159,8 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
     $mainUnitName = $mainUnitTerm->name;
     $categories = midtlink_get_keywords_by_unit_id($postMainUnitTID);
     unset($form['field_sdnumber']);
-    $form['additional_settings']['#access'] = false;
+    $form['additional_settings']['#access'] = false; // Hide additional settings on edit form
+    $form['field_unit']['#access'] = false; // Hide Afdeling on edit form
   }
 
   $form['field_category_local']['und']['#title'] = 'Lokale Emner for ' . $mainUnitName;

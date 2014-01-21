@@ -19,7 +19,7 @@
 .ask-balloon-parent {
     position: relative;
     left: 430px;
-    top: -45px;
+    top: 0px;
 }
 .ask-balloon {
     position: absolute;
@@ -35,7 +35,7 @@
 {
     content: "";
     position: absolute;
-    top: 65px;
+    top: 20px;
     left: -15px;
     border-style: solid;
     border-width: 15px 15px 15px 0px;
