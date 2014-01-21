@@ -192,6 +192,9 @@ Test that all blocks are showing up
 	Check 'Global/Local sort order', Descending
 	Drag it so it is the second sort after 'Facet active'
 
+/admin/config/content/wysiwyg/profile/html_wysiwyg/edit
+       Buttons and plugins -> Check 'Font size'
+
 Test more!! Relax.
 
 /admin/structure/types/manage/knowlegde/fields
