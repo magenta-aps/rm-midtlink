@@ -108,6 +108,9 @@ Login
 
 	Change field_category's widget to Check boxes/radio buttons
 
+/admin/structure/types/manage/knowlegde/fields
+	Remove old "Vejledning gyldig for field"
+
 Run `php migrate_vejledning.php`
 
 /node/858
@@ -196,9 +199,6 @@ Test that all blocks are showing up
        Buttons and plugins -> Check 'Font size'
 
 Test more!! Relax.
-
-/admin/structure/types/manage/knowlegde/fields
-	Remove old "Vejledning gyldig for field"
 
 /admin/config/regional/language
 	Change language back to Danish
