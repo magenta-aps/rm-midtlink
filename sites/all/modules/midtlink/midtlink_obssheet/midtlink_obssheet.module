@@ -184,7 +184,8 @@ function midtlink_obssheet_download_sheet($type,$unit_id=null) {
 		$filter['responsible'] = $_GET['filter_name'];
 	}
 	
-	$headers = array('ID','Status','SD #','Opdateret','Svar','Problem','Løsning (kun svar markeret som løsning)','Ansvarlig','Emne','Indberettet af');
+  
+//	$headers = array('Emne','Ophøjet','Opdateret','Svar','Problem','Indberettet af');
 	$data = array();
 	
 	$sort = 'answer_desc';
@@ -219,50 +220,45 @@ function midtlink_obssheet_download_sheet($type,$unit_id=null) {
 			if($obs['raised_issue']) {
 					$status .= '<br><b>OPHØJET</b>';
 			}
-			$data[$i][] = sprintf('%05s',$obs['nid']); //ID
-			$data[$i][] = $status; //Status
-			$data[$i][] = $obs['sdno']; //Status
-			$data[$i][] = format_date($obs['last_update'],'short'); //Oprettet
-			$data[$i][] = $obs['comment_no']; //Seneste svar
-			$data[$i][] = $obs['problem']; //Problem
+//			$data[$i][] = sprintf('%05s',$obs['nid']); //ID
+//      	$headers = array('Emne','Ophøjet','Opdateret','Svar','Problem','Indberettet af');
+
+
+			$data[$i]['emne'] = implode(', ',$obs['categories']); //Emne
+			$data[$i]['status'] = $status; //Status
+//			$data[$i][] = $obs['sdno']; //Status
+			$data[$i]['last_update'] = format_date($obs['last_update'],'short'); //Oprettet
+			$data[$i]['svar'] = $obs['comment_no']; //Seneste svar
+			$data[$i]['problem'] = $obs['problem']; //Problem
 			//$data[$i][] = $obs['solution']; //Løsning
 			//$data[$i][] = $obs['responsible']; //Ansvarlige
-			$data[$i][] = implode(', ',$obs['categories']); //Emne
-			$data[$i][] = $obs['observed_by']; //Observeret af
+			$data[$i]['observed_by'] = $obs['observed_by']; //Observeret af
 			
-			$data[$i][] = $obs['approved'];
+//			$data[$i][] = $obs['approved'];
 			$i++;
 		}
 	}
 	
 	$html = '<table border="1" cellpadding="2">';
 	$html.= '<tr style="background-color:#97BBE2;font-weight:bold;">';
-		$html.= '<th width="40">'.$headers[0].'</th>';
-		$html.= '<th width="65">'.$headers[1].'</th>';
-		$html.= '<th width="50">'.$headers[2].'</th>';
-		$html.= '<th width="70">'.$headers[3].'</th>';
-		$html.= '<th width="70">'.$headers[4].'</th>';
-		$html.= '<th width="205">'.$headers[5].'</th>';
-		//$html.= '<th width="205">'.$headers[6].'</th>';
-		//$html.= '<th width="95">'.$headers[7].'</th>';
-		$html.= '<th width="85">'.$headers[8].'</th>';
-		$html.= '<th width="95">'.$headers[9].'</th>';
+		$html.= '<th width="150">'.'Emne'.'</th>';
+		$html.= '<th width="70">'.'Ophøjet'.'</th>';
+		$html.= '<th width="130">'.'Opdateret'.'</th>';
+		$html.= '<th width="50">'.'Svar'.'</th>';
+		$html.= '<th width="350">'.'Problem'.'</th>';
+    $html.= '<th width="150">'.'Indberettet af'.'</th>';
 	$html.= '</tr>';
 	foreach($data as $d) {
 		$s = '';
-		if($d[10]) { $s = 'background-color:#E3FDD9;'; }
+//		if($d[10]) { $s = 'background-color:#E3FDD9;'; }
 		
 		$html.='<tr style="'.$s.'">';
-			$html.= '<td>'.$d[0].'</td>';
-			$html.= '<td>'.$d[1].'</td>';
-			$html.= '<td>'.$d[2].'</td>';
-			$html.= '<td>'.$d[3].'</td>';
-			$html.= '<td>'.$d[4].'</td>';
-			$html.= '<td>'.$d[5].'</td>';
-			//$html.= '<td>'.$d[6].'</td>';
-			//$html.= '<td>'.$d[7].'</td>';
-			$html.= '<td>'.$d[8].'</td>';
-			$html.= '<td>'.$d[9].'</td>';
+      $html.= '<td>'.$d['emne'].'</td>';
+			$html.= '<td>'.$d['status'].'</td>';
+			$html.= '<td>'.$d['last_update'].'</td>';
+			$html.= '<td>'.$d['svar'].'</td>';
+			$html.= '<td>'.$d['problem'].'</td>';
+			$html.= '<td>'.$d['observed_by'].'</td>';
 		$html.='</tr>';
 	}
 	$html.='</table>';
