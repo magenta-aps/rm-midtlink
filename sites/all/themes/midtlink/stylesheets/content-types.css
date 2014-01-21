@@ -5,7 +5,7 @@
 
 
 /*----------------------------------------------------------------------
-  Indlæg (node--post.tpl.php)
+  Indlï¿½g (node--post.tpl.php)
 ----------------------------------------------------------------------*/
 .node-post .content.post{
   width:544px;
@@ -117,6 +117,19 @@ a.edit-node,
 .node-post .taxonomies .categories ul li a.edit-node:hover {
   text-decoration:underline;
   color:#60AEEE;
+}
+
+/* local */
+
+.node-post .taxonomies .categories ul li a.local,
+.node-post .taxonomies .categories ul li a.local span
+{
+  background: transparent url(../images/sprite_v2.png) no-repeat 0 -259px !important;
+  color:#fff !important;
+}
+
+.node-post .taxonomies .categories ul li a.local:hover{
+  background: rgb(41, 97, 153) !important;
 }
 
 /* Tags */

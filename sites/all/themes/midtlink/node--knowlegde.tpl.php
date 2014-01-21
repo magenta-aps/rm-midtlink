@@ -3,7 +3,13 @@ $categories = array();
 if(isset($node->field_category['und'])) {
 	foreach($node->field_category['und'] as $kw) {
 		if(empty($kw['taxonomy_term']->name)) { continue; }
-		$categories[] = array('tid'=>$kw['taxonomy_term']->tid,'name'=>$kw['taxonomy_term']->name);
+    $unit_tid = $node->field_unit['und'][0]['tid']; $class = '';
+    $parentUnitTerm = midtlink_get_main_unit_from_local_keyword($kw['taxonomy_term']->tid);                
+    if ($parentUnitTerm) {
+      $unit_tid = $parentUnitTerm->tid;
+      $class = 'local';
+    }
+		$categories[] = array('tid'=>$kw['taxonomy_term']->tid,'name'=>$kw['taxonomy_term']->name, 'unit_tid' => $unit_tid, 'class' => $class);
 	}
 }
 
@@ -27,7 +33,7 @@ if(!$page) {
 			</div>
 			<ul class="categories reset">
     		<?php foreach($categories as $c) { ?>
-					<li><a href="<?php echo url('dokumentation/'.arg(1).'/'.$c['tid']); ?>"><?php echo $c['name']; ?></a></li>
+					<li><a href="<?php echo url('dokumentation/'.$c['unit_tid'].'/'.$c['tid']); ?>"<?php echo ' class="' . $c['class'] . '"';?>><?php echo $c['name']; ?></a></li>
 				<?php } ?>
     	</ul>
     </div>
@@ -54,7 +60,7 @@ else {
 				<ul class="reset">
 					<?php
 					foreach($categories as $c) {
-						echo '<li><a href="'.url('dokumentation/'.$node->field_unit['und'][0]['tid'].'/'.$c['tid']).'">'.$c['name'].'<span>&nbsp;</span></a></li>';
+						echo '<li><a href="'.url('dokumentation/'.$c['unit_tid'].'/'.$c['tid']).'"'.' class="' . $c['class'] . '"'.'>'.$c['name'].'<span>&nbsp;</span></a></li>';
 					}
 					?>
 				</ul>
