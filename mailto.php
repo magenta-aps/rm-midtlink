@@ -7,8 +7,8 @@ header('Content-type:text/html;charset=utf-8');
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-<script type="text/javascript">
-location.href="mailto:?<?php echo htmlentities(utf8_decode($_GET['e'])); ?>&amp;subject=<?php echo htmlentities(utf8_decode($_GET['s'])); ?>&amp;body=<?php echo htmlentities(utf8_decode($_GET['b'])); ?>";
+  <a href="mailto:?<?php echo htmlentities(utf8_decode($_GET['e'])); ?>&amp;subject=<?php echo htmlentities(utf8_decode($_GET['s'])); ?>&amp;body=<?php echo htmlentities(utf8_decode($_GET['b'])); ?>">test</a>
 </script>
+
 </body>
 </html>
