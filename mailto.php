@@ -11,7 +11,7 @@ function lf2entities($subject) {
 </head>
 
   <body onload="location.href = document.getElementById('l').href;">
-  <a style="display: none;" id="l" href="mailto:?subject=<?php echo htmlentities(utf8_decode($_GET['s'])); ?>&amp;body=<?php echo lf2entities(htmlentities(utf8_decode($_GET['b']))); ?>">test</a>
+  <a style="display: none;" id="l" href="mailto:?body=<?php echo lf2entities(htmlentities(utf8_decode($_GET['b']))); ?>&amp;subject=<?php echo htmlentities(utf8_decode($_GET['s'])); ?>">test</a>
 
 </body>
 </html>
