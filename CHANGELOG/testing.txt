@@ -1,0 +1,75 @@
+Add a new unit:
+	Add a subunit
+	Add an Emne with the new unit's name.
+		Add local Emne for that unit
+	Add a new user assigned to that subunit
+	Make sure all the site's features work with the new unit.
+
+Edit Blocks:
+	Should be able to edit the site's content from Structure -> Blocks.
+	Should be able to edit a block directly from the page if you are an Administrator
+		(by clicking the 'gear' icon in the upper-right corner of the block, and clicking 'Configure block').
+		Test, for example, editing the Betingelser block.
+
+Spørg direkte field (on View/Create/Edit Forum post pages):
+	Test that you can autocomplete users by name or regionsID
+	Test that notifications are sent when a user has been asked directly.
+
+Forum:
+	Make sure all unit's tabs appear as in taxonomy
+	Clicking another unit's tab:
+		Make sure the currently active Emne is retained when clicking on another unit's tab.
+		If the current Emne is a Lokale Emne, make sure it is NOT retained when clicking on another unit's tab.
+	Clicking active unit's tab.
+		Make sure the current Emne is reset and posts with all emner are shown.
+
+Forum post:
+	Make sure Emne buttons link to correct pages.
+	Make sure Nøgleord links go to correct pages.
+	After clicking on a post's Nøgleord, the Forum tab should be active
+	Test that clicking on 'Mail' icon in the upper-right links to sending a mail about that post.
+	There should be less space between the response form and the post text than before.
+	Spørg direkte field: Test that it sends a notification.
+	Test editing a post and saving it.
+	Test responding to a post and make sure the responses appear.
+
+Edit Forum post:
+	Should be able to choose Global Emner and Lokale Emner for that post's unit.
+	Spørg direkte field: Test that balloon appears correctly and only when the field is empty
+
+Opret indlæg:
+	Make sure 'Forum' tab is active.
+	Spørg direkte field: Test that balloon appears correctly and only when the field is empty
+	After creating the post, make sure it appears in the tab of the user's main unit.
+
+Vejledninger:
+	Clicking another unit's tab:
+		Make sure the currently active Emne is retained when clicking on another unit's tab.
+		If the current Emne is a Lokale Emne, make sure it is NOT retained when clicking on another unit's tab.
+	Clicking active unit's tab.
+		Make sure the current Emne is reset and posts with all emner are shown.
+	There should be no dropdown on the right to filter by Emne.
+
+Create Vejledning:
+	After creating Vejledning, make sure it appears under the correct unit
+	(the main unit of the user creating the Vejledning).
+
+Oversigter:
+	Emne should be the first column, ID/SD# columns have been removed.
+	It should be possible to filter by Emne by clicking the green/blue Emne buttons in the sidebar.
+	It should be possible to change unit by using the dropdown.
+	Check that Download PDF output looks OK.
+	Check that active Emne can be reset using '(Nulstil valg)' link next to the active Emne in the green box
+	Check that clicking on a post goes to the correct page.
+	Check that the correct posts are shown for the active filters.
+
+Sidebar - Links:
+	On all pages showing sidebar, make sure that global links are shown.
+	Make sure that the correct local links are shown depending on the page you are on.
+
+Sidebar - Emne:
+	Make sure that the correct local emner are shown depending on the page you are on.
+	Make sure emne buttons link to page within the active tab's unit.
+
+Footer - Emne:
+	Make sure emne buttons link to correct page.
