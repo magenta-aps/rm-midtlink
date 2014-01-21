@@ -9,9 +9,9 @@ function lf2entities($subject) {
 <head profile="http://www.w3.org/1999/xhtml/vocab">	
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 </head>
-<body>
-  <a href="mailto:?<?php echo htmlentities(utf8_decode($_GET['e'])); ?>&amp;subject=<?php echo htmlentities(utf8_decode($_GET['s'])); ?>&amp;body=<?php echo lf2entities(htmlentities(utf8_decode($_GET['b']))); ?>">test</a>
-</script>
+
+  <body onload="location.href = document.getElementById('l').href;">
+  <a style="display: none;" id="l" href="mailto:?<?php echo htmlentities(utf8_decode($_GET['e'])); ?>&amp;subject=<?php echo htmlentities(utf8_decode($_GET['s'])); ?>&amp;body=<?php echo lf2entities(htmlentities(utf8_decode($_GET['b']))); ?>">test</a>
 
 </body>
 </html>
