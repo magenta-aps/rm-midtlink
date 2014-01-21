@@ -371,6 +371,8 @@ function midtlink_utils_node_validate($node, $form, &$form_state) {
       $value[] = array('tid' => $user->mainUnitTID);
       form_set_value($form['field_unit']['und'], $value, $form_state);
     }
+    $form_state['values']['status'] = 1; // always published;
+    
     
     $value = array_merge($form_state['values']['field_category']['und'], $form_state['values']['field_category_local']['und']);
     form_set_value($form['field_category']['und'], $value, $form_state);
