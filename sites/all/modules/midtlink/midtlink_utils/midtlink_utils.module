@@ -61,6 +61,16 @@ function midtlink_utils_form_apachesolr_search_custom_page_search_form_alter(&$f
   return $form;
 }
 
+function midtlink_utils_apachesolr_query_alter(&$query) {
+  // Filter queries by site hash
+  $query->addFilter('hash', apachesolr_site_hash());
+}
+
+function midtlink_utils_apachesolr_delete_by_query(&$query) {
+  // Filter index delete by site hash
+  $query = 'hash:' . apachesolr_site_hash();
+}
+
 function midtlink_utils_menu() {
 	$items['betingelser'] = array(
 		'title' => 'Brugerbetingelser for MidtLink', 
