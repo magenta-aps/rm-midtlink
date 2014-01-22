@@ -8,9 +8,6 @@ function _midtlink_unit_block_visibility_context_load() {
   $contexts = array();
   $units = midtlink_get_unit_tree(FALSE);
   foreach ($units as $tid => $unit) {
-    if ($unit['name'] == 'Andre') {
-      continue;
-    }
     $contexts[$tid] = $unit['name'];
   }
   return $contexts;

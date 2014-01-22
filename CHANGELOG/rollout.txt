@@ -198,6 +198,9 @@ Test that all blocks are showing up
 /admin/config/content/wysiwyg/profile/html_wysiwyg/edit
        Buttons and plugins -> Check 'Font size'
 
+/admin/structure/taxonomy/units
+	Remove 'Andre' unit.
+
 Test more!! Relax.
 
 /admin/config/regional/language

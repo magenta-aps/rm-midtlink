@@ -344,9 +344,6 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
     $query_string = '';
   }
 	foreach($units as $mtid=>$mainUnit) {
-    if ($mainUnit['name'] == 'Andre') {
-      continue;
-    }
 		$o.= '<optgroup label="'.$mainUnit['name'].'">';
 		
     $o.= '<option value="'.url('obssheet/global/'.$mtid).$query_string.'"'.(arg(1) == 'global' && arg(2) == $mtid ? ' selected="selected"' : '').'>Generel oversigt</option>';

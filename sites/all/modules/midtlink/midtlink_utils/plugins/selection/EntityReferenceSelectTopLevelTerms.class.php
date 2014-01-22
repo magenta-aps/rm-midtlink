@@ -47,10 +47,6 @@ class EntityReferenceSelectTopLevelTerms_taxonomy_term extends EntityReferenceSe
         // CHANGE from base implementation: Return only top-level terms!
         if ($terms = taxonomy_get_tree($vocabulary->vid, 0, 1)) {
           foreach ($terms as $term) {
-            // Skip 'Other' unit
-            if ($term->name == 'Andre') {
-              continue;
-            }
             $options[$vocabulary->machine_name][$term->tid] = str_repeat('-', $term->depth) . check_plain($term->name);
           }
         }

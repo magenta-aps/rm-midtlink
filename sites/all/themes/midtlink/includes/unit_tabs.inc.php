@@ -8,9 +8,6 @@
 
       $units = midtlink_get_unit_tree(FALSE);
       foreach ($units as $tid => $unit):
-          if ($unit['name'] == 'Andre') {
-              continue;
-          }
           $active = false;
           if ($activeMainTID == $tid) {
             $active = true;
