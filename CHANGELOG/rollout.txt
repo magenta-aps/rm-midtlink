@@ -185,6 +185,7 @@ Run `php migrate_vejledning.php`
 		HE Horsens
 	Add units:
 		HE Midt
+			Administration
 		Psykiatren
 		RH Randers
 		HE Vest
