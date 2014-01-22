@@ -185,7 +185,7 @@ Run `php migrate_vejledning.php`
 		HE Horsens
 	Add units:
 		HE Midt
-			Administration
+			Administration (Kort navn: ADMIN)
 		Psykiatren
 		RH Randers
 		HE Vest
