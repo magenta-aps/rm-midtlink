@@ -14,9 +14,10 @@ git clone seth@platon.magenta-aps.dk:/home/git/midtlink midtlink_rollout_git
 cd midtlink_rollout_git
 git checkout livemerge
 cd ..
-cp -R midtlink_rollout_git/* midtlink_rollout/
+cp -R midtlink_rollout_git/* htdocs/
+cp -R midtlink_rollout_git/.git htdocs/
 
-cd midtlink_rollout
+cd htdocs
 
 [Needs to be root:root
 Apply _appropriate_ group/permissions:
