@@ -3,7 +3,8 @@ $categories = array();
 if(isset($node->field_category['und'])) {
 	foreach($node->field_category['und'] as $kw) {
 		if(empty($kw['taxonomy_term']->name)) { continue; }
-    $urlSuffix = '?tid=' . $_GET['tid']; $class = '';
+    $mainUnit = midtlink_get_main_unit_from_subunit($node->field_unit['und'][0]['tid'])->tid;
+    $urlSuffix = '?tid=' . $mainUnit; $class = '';
     $parentUnitTerm = midtlink_get_main_unit_from_local_keyword($kw['taxonomy_term']->tid);                
     if ($parentUnitTerm) {
       $urlSuffix = '?tid=' . $parentUnitTerm->tid;
