@@ -8,18 +8,9 @@ Make backup of code:
 Make backup of database:
 	mysqldump -u midtlink_u -p -a -c --add-drop-table midtlink_live > /var/www/midtlink.rm.dk/backup/midtlink_live.sql
 
-Redirect to maintenance page for everyone but me:
-sudo nano htdocs/.htaccess
-<Limit GET POST PUT>
- order deny,allow
- deny from all
- allow from 87.51.7.136
-</LIMIT>
-ErrorDocument 403 /maintenance.html
-<Files maintenance.html>
- order allow,deny
- allow from all
-</Files> 
+
+/admin/config/development/maintenance
+	Put site into maintenance mode
 
 sudo nano /etc/http/conf/httpd.conf
 Uncomment:
@@ -262,6 +253,9 @@ Test that all blocks are showing up
        Buttons and plugins -> Check 'Font size'
 
 Test more!! Relax.
+
+/admin/config/development/maintenance
+        Put site back Online!!
 
 /admin/config/regional/language
 	Change language back to Danish
