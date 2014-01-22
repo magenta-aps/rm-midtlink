@@ -3,7 +3,7 @@
 function midtlink_notifications_drupal_mail($to, $subject, $message) {
   $my_module = 'midtlink_notifications';
   $my_mail_token = microtime();
-  $from = 'MidtLink <no-reply@rm.midtlink.dk>';
+  $from = 'MidtLink <no-reply@'.$_SERVER['HTTP_HOST'].'>';
   
   $allowHTML = variable_get('smtp_allowhtml', 0);
   // Drupal's SMTP system will try to convert HTML to text if HTML is not
