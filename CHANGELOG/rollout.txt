@@ -8,6 +8,42 @@ Make backup of code:
 Make backup of database:
 	mysqldump -u midtlink_u -p -a -c --add-drop-table midtlink_live > /var/www/midtlink.rm.dk/backup/midtlink_live.sql
 
+Redirect to maintenance page for everyone but me:
+sudo nano htdocs/.htaccess
+<Limit GET POST PUT>
+ order deny,allow
+ deny from all
+ allow from 87.51.7.136
+</LIMIT>
+ErrorDocument 403 /maintenance.html
+<Files maintenance.html>
+ order allow,deny
+ allow from all
+</Files> 
+
+sudo nano /etc/http/conf/httpd.conf
+Uncomment:
+NameVirtualHost *:80
+
+Add a VirtualHost:
+<VirtualHost *:80>
+
+ServerName am.midtlink.rm.dk
+
+# do we need this?
+ServerAlias *.midtlink.rm.dk 
+
+DocumentRoot "/var/www/midtlink.rm.dk/htdocs"
+
+<Directory "/var/www/midtlink/">
+  DirectoryIndex index.php
+  Order allow,deny
+  allow from all
+</Directory>
+
+</VirtualHost>
+
+
 Checkout and copy over our code:
 
 git clone seth@platon.magenta-aps.dk:/home/git/midtlink midtlink_rollout_git
@@ -57,10 +93,10 @@ $databases['midtlink_bsk']['default'] = array(
     'driver' => 'mysql',
 );
 
-mkdir site/arbejdsmiljo.midtlink.rm.dk/
-cp site/default/settings.php site/arbejdsmiljo.midtlink.rm.dk
+mkdir site/am.midtlink.rm.dk/
+cp site/default/settings.php site/am.midtlink.rm.dk
 
-sudo nano sites/arbejdsmiljo.midtlink.rm.dk/settings.php:
+sudo nano sites/am.midtlink.rm.dk/settings.php:
   Change first DB config to point to subsite's DB:
 
 $databases = array (
@@ -68,7 +104,7 @@ $databases = array (
   array (
     'default' => 
     array (
-      'database' => 'midtlink_arbejdsmiljo',
+      'database' => 'midtlink_am',
       'username' => 'midtlink_u', 
       'password' => 'Mandag11',
       'host' => 'localhost',
