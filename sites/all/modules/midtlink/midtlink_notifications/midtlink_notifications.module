@@ -38,6 +38,7 @@ function midtlink_notifications_drupal_mail($to, $subject, $message) {
   $message = $system->format($message);
 	$result = $system->mail($message);
   watchdog('mail', "Sent mail (from %from to %to). Result: %result",  array('%from' => $message['from'], '%to' => $message['to'], '%result' => $result), WATCHDOG_DEBUG);
+//  watchdog('mail', "Message: %message",  array('%message' => var_dump($result, $system)), WATCHDOG_DEBUG);
 }
 
 function midtlink_notification_send($target_uid,$type,$source_uid=null,$source_nid=null) {
