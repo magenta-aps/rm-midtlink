@@ -1,4 +1,8 @@
 [Ignore: Re-export features (including blocks) from midtlink.test.magenta-aps.dk site]
+Export features (blocks) from midtlink2.test.magenta-aps.dk
+	Untar it into our source tree: sites/all/modules/midtlink/midtlink_am_features
+	git commit -a
+	git push origin
 
 cd /var/www/midtlink.rm.dk
 
@@ -8,18 +12,9 @@ Make backup of code:
 Make backup of database:
 	mysqldump -u midtlink_u -p -a -c --add-drop-table midtlink_live > /var/www/midtlink.rm.dk/backup/midtlink_live.sql
 
-Redirect to maintenance page for everyone but me:
-sudo nano htdocs/.htaccess
-<Limit GET POST PUT>
- order deny,allow
- deny from all
- allow from 87.51.7.136
-</LIMIT>
-ErrorDocument 403 /maintenance.html
-<Files maintenance.html>
- order allow,deny
- allow from all
-</Files> 
+
+/admin/config/development/maintenance
+	Put site into maintenance mode
 
 sudo nano /etc/http/conf/httpd.conf
 Uncomment:
@@ -35,7 +30,7 @@ ServerAlias *.midtlink.rm.dk
 
 DocumentRoot "/var/www/midtlink.rm.dk/htdocs"
 
-<Directory "/var/www/midtlink/">
+<Directory "/var/www/midtlink.rm.dk/htdocs">
   DirectoryIndex index.php
   Order allow,deny
   allow from all
@@ -43,6 +38,7 @@ DocumentRoot "/var/www/midtlink.rm.dk/htdocs"
 
 </VirtualHost>
 
+sudo /etc/init.d/httpd restart
 
 Checkout and copy over our code:
 
@@ -78,9 +74,8 @@ sudo /etc/init.d/mysqld stop
 sudo /etc/init.d/mysqld start
 
 mysql -u root -p
-grant all privileges on midtlink_arbejdsmiljo.* to midtlink_u@localhost identified by 'Mandag11';
-
-Can't create a database.. Need root permission.
+create database midtlink_am;
+grant all privileges on midtlink_am.* to midtlink_u@localhost identified by 'Mandag11';
 
 sudo nano sites/default/settings.php:
   Add BSK db config:
@@ -93,8 +88,8 @@ $databases['midtlink_bsk']['default'] = array(
     'driver' => 'mysql',
 );
 
-mkdir site/am.midtlink.rm.dk/
-cp site/default/settings.php site/am.midtlink.rm.dk
+mkdir sites/am.midtlink.rm.dk/
+cp sites/default/settings.php sites/am.midtlink.rm.dk/
 
 sudo nano sites/am.midtlink.rm.dk/settings.php:
   Change first DB config to point to subsite's DB:
@@ -183,6 +178,18 @@ Run `php migrate_vejledning.php`
 	Rearrange it so it is before the filter on Emne
 	Save the View!
 
+/admin/structure/taxonomy/units
+	Remove 'Andre'
+	Rename units:
+		AUH
+		HE Horsens
+	Add units:
+		HE Midt
+			Administration (Kort navn: ADMIN)
+		Psykiatren
+		RH Randers
+		HE Vest
+
 /dokumentation/
 	Test clicking each unit's tab shows a different list
 
@@ -202,10 +209,10 @@ Run `php migrate_vejledning.php`
 	Create 'Global' category
 	Reparent all current categories to 'Global'
 	Create empty per-hospital categories for:
-		Aarhus Universitetshospital
-		Hospitalsenhed Horsens
+		AUH
+		HE Horsens
 
-	Create test term under Aarhus Universitetshospital.
+	Create test term under AUH
 	See that it shows up in the / sidebar.
 
 /admin/structure/types/manage/link/fields
@@ -234,9 +241,6 @@ Test that all blocks are showing up
 		Check box for Administrator
 	Save permissions.
 
-/admin/structure/taxonomy/units
-	Remove 'Andre' unit.
-
 
 /admin/config/search/apachesolr/settings/solr/index
 	Delete index
@@ -262,6 +266,9 @@ Test that all blocks are showing up
        Buttons and plugins -> Check 'Font size'
 
 Test more!! Relax.
+
+/admin/config/development/maintenance
+        Put site back Online!!
 
 /admin/config/regional/language
 	Change language back to Danish
