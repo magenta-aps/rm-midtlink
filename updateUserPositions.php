@@ -11,7 +11,10 @@ db_set_active('midtlink_bsk');
 $sql = "SELECT u.name, u.uid, b.position FROM users u
 	INNER JOIN bsk_user_data b ON b.user_id = u.name AND b.position != ''
 	WHERE u.status = 1 AND b.updated >= ".(time()-108000);
-$res = db_query($sql);
+$res = db_query($sql)->fetchAll();
+
+db_set_active();
+
 foreach($res as $r) {
 	$sql = "UPDATE {field_data_field_position} SET field_position_value = :position
 		WHERE entity_id = :uid AND bundle = 'user' AND entity_type = 'user'";
@@ -20,5 +23,3 @@ foreach($res as $r) {
 	echo 'UPDATE '.$r->name.': '.$r->position."\n";
 }
 
-
-db_set_active();
