@@ -1,0 +1,222 @@
+[Ignore: Re-export features (including blocks) from midtlink.test.magenta-aps.dk site]
+Export features (blocks) from midtlink2.test.magenta-aps.dk
+	Save it into our source tree: sites/all/modules/midtlink/features/midtlink_am_features
+	git commit -a
+	git push origin
+
+cd /var/www/midtlink.rm.dk
+
+Make backup of code:
+	mkdir backup
+	cp -R htdocs backup/
+Make backup of database:
+	mysqldump -u midtlink_u -p -a -c --add-drop-table midtlink_live > /var/www/midtlink.rm.dk/backup/midtlink_live.sql
+
+
+/admin/config/development/maintenance
+	Put site into maintenance mode
+
+sudo nano /etc/http/conf/httpd.conf
+Uncomment:
+NameVirtualHost *:80
+
+Add a VirtualHost:
+<VirtualHost *:80>
+
+ServerName am.midtlink.rm.dk
+
+# do we need this?
+ServerAlias *.midtlink.rm.dk 
+
+DocumentRoot "/var/www/midtlink.rm.dk/htdocs"
+
+<Directory "/var/www/midtlink.rm.dk/htdocs">
+  DirectoryIndex index.php
+  Order allow,deny
+  allow from all
+</Directory>
+
+</VirtualHost>
+
+sudo /etc/init.d/httpd restart
+
+Checkout and copy over our code:
+
+git clone seth@platon.magenta-aps.dk:/home/git/midtlink midtlink_rollout_git
+cd midtlink_rollout_git
+git checkout livemerge
+cd ..
+cp -R midtlink_rollout_git/* htdocs/
+cp -R midtlink_rollout_git/.git* htdocs/
+
+cd htdocs
+
+[Needs to be root:root?
+Apply _appropriate_ group/permissions:
+	sudo chown -R www-data:www-data *
+	sudo chmod -R gu+rw *
+	]
+
+Reset MySQL root password (http://dev.mysql.com/doc/refman/5.0/en/resetting-permissions.html):
+
+sudo kill `cat /var/run/mysqld/mysqld.pid`
+nano ~/mysql-init
+
+Put this in the file:
+
+UPDATE mysql.user SET Password=PASSWORD('MyNewPass') WHERE User='root';
+FLUSH PRIVILEGES;
+
+sudo mysqld_safe --init-file=~/mysql-init &
+rm ~/mysql-init
+
+sudo /etc/init.d/mysqld stop
+sudo /etc/init.d/mysqld start
+
+mysql -u root -p
+create database midtlink_am;
+grant all privileges on midtlink_am.* to midtlink_u@localhost identified by 'Mandag11';
+
+Copy over new settings (with BSK db config):
+  cd sites/default
+  sudo cp settings.php settings.bak.php
+  sudo cp settings_new.php settings.php
+  cd ../..
+
+
+[ START IGNORE ]
+
+mkdir sites/am.midtlink.rm.dk/
+cp sites/default/settings.php sites/am.midtlink.rm.dk/
+
+sudo nano sites/am.midtlink.rm.dk/settings.php:
+  Change first DB config to point to subsite's DB:
+
+$databases = array (
+  'default' => 
+  array (
+    'default' => 
+    array (
+      'database' => 'midtlink_am',
+      'username' => 'midtlink_u', 
+      'password' => 'Mandag11',
+      'host' => 'localhost',
+      'port' => '',
+      'driver' => 'mysql',
+      'prefix' => '',
+    ),
+  ),
+);
+
+$databases['midtlink_bsk']['default'] = array(
+    'database' => 'midtlink_live',
+    'username' => 'midtlink_u', 
+    'password' => 'Mandag11',
+    'host' => 'localhost',
+    'driver' => 'mysql',
+);
+
+[ END IGNORE ]
+
+To remove all .svn dirs:
+find . -type d -name .svn -exec rm -rf {} +
+or:
+find . -type d -name .svn -exec rm -rf {} \;
+
+Login
+
+/admin/config/regional/language
+	Change language to English
+
+/admin/config/development/performance
+	Clear all caches
+
+/admin/modules
+	Enable 'Features', 'FE Block' modules
+	Enable 'Contextual links'
+	Save!
+
+/admin/structure/features
+	Check MidtLink Blocks
+	Save
+
+	Check MidtLink Upgrade Jan 2014
+	Save
+
+	Check components to be reverted (Views, Field bases/instances, Facet API)
+	Revert components
+
+/admin/structure/types/manage/knowlegde/fields
+	Remove old "Vejledning gyldig for field" (field_knowlegde_unit)
+
+Run `php migrate_vejledning.php`
+
+/node/858
+	Ctrl+Refresh
+	Check that the field appears.
+
+/admin/structure/views/view/dokumentation/edit
+	Check that it looks correct
+/admin/structure/views/view/list_posts/edit
+	Check that it looks correct
+
+/admin/structure/taxonomy/units
+	Remove 'Andre'
+	Rename units:
+		AUH
+		HE Horsens
+	Add units:
+		HE Midt
+			Administration (Kort navn: ADMIN)
+		Psykiatren
+		RH Randers
+		HE Vest
+
+/dokumentation/
+	Test clicking each unit's tab shows a different list
+
+/admin/structure/taxonomy/category
+	Create 'Global' category
+	Reparent all current categories to 'Global'
+	Create empty per-hospital categories for:
+		AUH
+		HE Horsens
+
+	Create test term under AUH
+	See that they show up in the / sidebar, and clicking on different unit's tabs.
+
+/node/add/link
+	Create a local link to test - Test AUH, choose AUH as Afdeling
+	Create global link to test.
+
+/forum
+	Test that links are showing, and when clicking on different unit's tabs
+
+/admin/content
+	Delete test links
+
+Test that all blocks are showing up
+
+
+/admin/config/search/apachesolr/settings/solr/index
+	Delete index
+	Queue all content for indexing
+	Index all queued content
+
+/admin/config/search/facetapi/apachesolr%40solr/block/created/edit
+	Global settings -> Granularity -> Year
+	Save
+
+/admin/config/content/wysiwyg/profile/html_wysiwyg/edit
+       Buttons and plugins -> Check 'Font size'
+
+Test more!! Relax.
+
+/admin/config/regional/language
+	Change language back to Danish
+
+/admin/config/development/performance
+	Clear all caches
+
+/admin/config/development/maintenance
+        Put site back Online!!
