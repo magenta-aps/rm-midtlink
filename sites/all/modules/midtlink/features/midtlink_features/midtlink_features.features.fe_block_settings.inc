@@ -166,6 +166,28 @@ function midtlink_features_default_fe_block_settings() {
     'visibility' => 0,
   );
 
+  $export['block-midtlink_frontpage_maintext_heh'] = array(
+    'cache' => -1,
+    'css_class' => '',
+    'custom' => 0,
+    'machine_name' => 'midtlink_frontpage_maintext_heh',
+    'midtlink_unit' => 301,
+    'module' => 'block',
+    'node_types' => array(),
+    'pages' => '',
+    'roles' => array(),
+    'themes' => array(
+      'midtlink' => array(
+        'region' => 'front_text',
+        'status' => 1,
+        'theme' => 'midtlink',
+        'weight' => 0,
+      ),
+    ),
+    'title' => 'Om MidtLink',
+    'visibility' => 0,
+  );
+
   $export['block-midtlink_frontpage_sidebar'] = array(
     'cache' => -1,
     'css_class' => '',
@@ -190,7 +212,7 @@ function midtlink_features_default_fe_block_settings() {
 
   $export['block-midtlink_frontpage_sidebar_about'] = array(
     'cache' => -1,
-    'css_class' => '',
+    'css_class' => 'description',
     'custom' => 0,
     'machine_name' => 'midtlink_frontpage_sidebar_about',
     'midtlink_unit' => '',
