@@ -93,7 +93,11 @@ function midtlink_unit_block_visibility_block_list_alter(&$blocks) {
   // Generate associative array of blocks by region
   $regions = array();
   foreach ($blocks as $key => $block) {
-    $block->midtlink_unit = $block_contexts[$block->module][$block->delta];
+    if (!isset($block_contexts[$block->module][$block->delta])) {
+      $block->midtlink_unit = NULL;
+    } else {
+      $block->midtlink_unit = $block_contexts[$block->module][$block->delta];
+    }
     $regions[$block->region][$key] = $block;
   }
   
