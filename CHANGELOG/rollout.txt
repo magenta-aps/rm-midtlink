@@ -1,6 +1,6 @@
 [Ignore: Re-export features (including blocks) from midtlink.test.magenta-aps.dk site]
 Export features (blocks) from midtlink2.test.magenta-aps.dk
-	Untar it into our source tree: sites/all/modules/midtlink/midtlink_am_features
+	Save it into our source tree: sites/all/modules/midtlink/features/midtlink_am_features
 	git commit -a
 	git push origin
 
@@ -47,11 +47,11 @@ cd midtlink_rollout_git
 git checkout livemerge
 cd ..
 cp -R midtlink_rollout_git/* htdocs/
-cp -R midtlink_rollout_git/.git htdocs/
+cp -R midtlink_rollout_git/.git* htdocs/
 
 cd htdocs
 
-[Needs to be root:root
+[Needs to be root:root?
 Apply _appropriate_ group/permissions:
 	sudo chown -R www-data:www-data *
 	sudo chmod -R gu+rw *
@@ -77,16 +77,14 @@ mysql -u root -p
 create database midtlink_am;
 grant all privileges on midtlink_am.* to midtlink_u@localhost identified by 'Mandag11';
 
-sudo nano sites/default/settings.php:
-  Add BSK db config:
+Copy over new settings (with BSK db config):
+  cd sites/default
+  sudo cp settings.php settings.bak.php
+  sudo cp settings_new.php settings.php
+  cd ../..
 
-$databases['midtlink_bsk']['default'] = array(
-    'database' => 'midtlink_live',
-    'username' => 'midtlink_u', 
-    'password' => 'Mandag11',
-    'host' => 'localhost',
-    'driver' => 'mysql',
-);
+
+[ START IGNORE ]
 
 mkdir sites/am.midtlink.rm.dk/
 cp sites/default/settings.php sites/am.midtlink.rm.dk/
@@ -110,9 +108,6 @@ $databases = array (
   ),
 );
 
-
-  Add entry:
-
 $databases['midtlink_bsk']['default'] = array(
     'database' => 'midtlink_live',
     'username' => 'midtlink_u', 
@@ -120,6 +115,8 @@ $databases['midtlink_bsk']['default'] = array(
     'host' => 'localhost',
     'driver' => 'mysql',
 );
+
+[ END IGNORE ]
 
 To remove all .svn dirs:
 find . -type d -name .svn -exec rm -rf {} +
