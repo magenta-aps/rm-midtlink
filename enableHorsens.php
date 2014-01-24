@@ -20,7 +20,7 @@ require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
 drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
 
-$sql = "SELECT u.uid, u.name FROM users u, bsk_user_data b WHERE 
+$sql = "SELECT u.uid, u.name FROM users u, {bsk_user_data} b WHERE 
 	b.user_id = u.name AND u.status = 0 AND b.institutionCode = 'sghAAUH'";
 $res = db_query($sql);
 foreach($res as $r) {

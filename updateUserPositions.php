@@ -6,7 +6,7 @@ drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 //Only updates from the last 30 hours
 
 $sql = "SELECT u.name, u.uid, b.position FROM users u
-	INNER JOIN bsk_user_data b ON b.user_id = u.name AND b.position != ''
+	INNER JOIN {bsk_user_data} b ON b.user_id = u.name AND b.position != ''
 	WHERE u.status = 1 AND b.updated >= ".(time()-108000);
 $res = db_query($sql)->fetchAll();
 
