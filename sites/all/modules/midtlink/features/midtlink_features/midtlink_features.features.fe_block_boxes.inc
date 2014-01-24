@@ -14,7 +14,7 @@ function midtlink_features_default_fe_block_boxes() {
   $fe_block_boxes->info = 'Login page - above login form';
   $fe_block_boxes->format = 'html_wysiwyg';
   $fe_block_boxes->machine_name = 'midtlink_above_login_form';
-  $fe_block_boxes->body = '<h1>Din support til MidtEPJ</h1><p class="large">Test MidtLink er din genvej til hurtige svar på dine EPJ-spørgsmål. Få hjælp og sparring fra dine kollegaer her og nu, og giv tilbage af din egen viden når du kan.</p><p class="large"><span>Test</span></p>';
+  $fe_block_boxes->body = '<h1>Din support til MidtEPJ</h1><p class="large">I MidtLink kan du stille spørgsmål og søge viden om anvendelsen af MidtEPJ og andre kliniske applikationer. Når du har logget ind i MidtLink, vil du have adgang til kollegers spørgsmål og svar samt vejledninger som kan hjælpe dig videre i dit arbejde med MidtEPJ.</p><p class="large">&nbsp;</p>';
 
   $export['midtlink_above_login_form'] = $fe_block_boxes;
 
@@ -22,7 +22,7 @@ function midtlink_features_default_fe_block_boxes() {
   $fe_block_boxes->info = 'Login page - below login form';
   $fe_block_boxes->format = 'html_wysiwyg';
   $fe_block_boxes->machine_name = 'midtlink_below_login_form';
-  $fe_block_boxes->body = '<p>Test Alle ansatte på AUH og HEH er automatisk oprettede i MidtLink. Hvis du har problemer med at logge ind, er du velkommen til at kontakte <a href="mailto:AUHKAS@rm.dk">auhkas@rm.dk</a>.</p><p class="large"><br />Læs om MidtLink og se en video på <a href="http://blog.midtlink.dk" target="_blank">blog.midtlink.dk</a></p>';
+  $fe_block_boxes->body = '<p><span style="font-size: x-small;">Alle ansatte i Region Midtjylland er automatisk oprettede i MidtLink.Når du logger ind i MidtLink første gang, vil du blive bedt om at vælge dit hospital og din afdeling.</span></p><p><span style="font-size: x-small;">Hvis du har problemer med at logge ind, er du velkommen til at kontakte <a href="mailto:AUHKAS@rm.dk">auhkas@rm.dk</a></span></p><p class="large"><br /><span style="font-size: x-small;">Læs om MidtLink og se en video på <a href="http://blog.midtlink.dk" target="_blank">blog.midtlink.dk</a></span></p>';
 
   $export['midtlink_below_login_form'] = $fe_block_boxes;
 
@@ -54,7 +54,7 @@ function midtlink_features_default_fe_block_boxes() {
   $fe_block_boxes->info = 'Footer - AUH - Support Model';
   $fe_block_boxes->format = 'html_wysiwyg';
   $fe_block_boxes->machine_name = 'midtlink_footer_block_auh_1';
-  $fe_block_boxes->body = '<p><img src="/sites/all/themes/midtlink/images/auh_support_model.png" alt="" /></p><p>test</p>';
+  $fe_block_boxes->body = '<p><img src="/sites/all/themes/midtlink/images/auh_support_model.png" alt="" /></p><p>&nbsp;</p>';
 
   $export['midtlink_footer_block_auh_1'] = $fe_block_boxes;
 
@@ -62,7 +62,7 @@ function midtlink_features_default_fe_block_boxes() {
   $fe_block_boxes->info = 'Footer - AUH - Om MidtLink';
   $fe_block_boxes->format = 'html_wysiwyg';
   $fe_block_boxes->machine_name = 'midtlink_footer_main_unit_auh';
-  $fe_block_boxes->body = '<p>Test MidtLink er et sted hvor alle brugere kan hjælpe hinanden med at blive bedre til at bruge MidtEPJ.</p><p>Har du spørgsmål vedrørende brugeroprettelse eller mere teknisk eller driftsmæssig karakter, kan du kontakte <a href="http://horapp104.onerm.dk/CAisd/pdmweb2.exe" target="_blank">den elektroniske Service Desk</a> døgnet rundt. I akutte situationer kan du kontakte Service Desken på tlf. 784 12345.</p><p>Som EPJ-superbruger eller –ansvarlig kan du henvende dig til <a href="http://kas.systemudvikling.it.rm.dk/" target="_blank">KAS (Klinisk Applikations Support)</a>. <span style="font-size: large;">I akutte situationer kan du ringe direkte til <a href="http://kas.systemudvikling.it.rm.dk/" target="_blank">KAS</a> på tlf. 784 58899 på hverdage mellem kl. 8.00 – 15.30 (fredag dog kun til kl. 15.00).</span></p>';
+  $fe_block_boxes->body = '<p><span style="font-size: small;">MidtLink er et sted hvor alle brugere kan hjælpe hinanden med at blive bedre til at bruge MidtEPJ.</span></p><p><span style="font-size: small;">Har du spørgsmål vedrørende brugeroprettelse eller mere teknisk eller driftsmæssig karakter, kan du kontakte <a href="http://horapp104.onerm.dk/CAisd/pdmweb2.exe" target="_blank">den elektroniske Service Desk</a> døgnet rundt. I akutte situationer kan du kontakte Service Desken på tlf. 784 12345.</span></p><p><span style="font-size: small;">Som EPJ-superbruger eller –ansvarlig kan du henvende dig til <a href="http://kas.systemudvikling.it.rm.dk/" target="_blank">KAS (Klinisk Applikations Support)</a>. I akutte situationer kan du ringe direkte til <a href="http://kas.systemudvikling.it.rm.dk/" target="_blank">KAS</a> på tlf. 784 58899 på hverdage mellem kl. 8.00 – 15.30 (fredag dog kun til kl. 15.00).</span></p>';
 
   $export['midtlink_footer_main_unit_auh'] = $fe_block_boxes;
 
@@ -70,7 +70,7 @@ function midtlink_features_default_fe_block_boxes() {
   $fe_block_boxes->info = 'Frontpage_Main text_HEH';
   $fe_block_boxes->format = 'html_wysiwyg';
   $fe_block_boxes->machine_name = 'midtlink_frontpage_maintext_heh';
-  $fe_block_boxes->body = '<p>Dette er en test</p>';
+  $fe_block_boxes->body = '<p>MidtLink er din genvej til hurtige svar på dine EPJ spørgsmål. Få hjælp og sparring fra dine kollegaer her og nu, og giv tilbage af din egen viden når du kan.</p>';
 
   $export['midtlink_frontpage_maintext_heh'] = $fe_block_boxes;
 
