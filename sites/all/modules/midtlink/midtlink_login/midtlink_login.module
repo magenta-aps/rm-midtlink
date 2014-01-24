@@ -95,12 +95,15 @@ function midtlink_login_create_user_from_bsk($regid,$status=0) {
 
 function midtlink_login_check_ldap($regid,$pwd) {
 	if(trim($pwd) == '') { return false; }
+  
   // START - Check passwords in Drupal, for testing
-  if ($account = user_load_by_name($regid)) {
-    require_once DRUPAL_ROOT . '/includes/password.inc';
-    return user_check_password($pwd, $account);
+  if (variable_get('midtlink_testmode_drupal_login', FALSE)) {
+    if ($account = user_load_by_name($regid)) {
+      require_once DRUPAL_ROOT . '/includes/password.inc';
+      return user_check_password($pwd, $account);
+    }
+    return false;
   }
-  return false;
   // END - Check passwords in Drupal, for testing
 	
 
