@@ -53,33 +53,28 @@ function midtlink_login_menu() {
 }
 
 function midtlink_login_bsk_user_exists($regid,$institutionCodes=array()) {
-  db_set_active('midtlink_bsk');
 	$sql = "SELECT COUNT(user_id) FROM {bsk_user_data} WHERE user_id = :userid";
 	//if(sizeof($institutionCodes)>0) {
 	//	$sql.= " AND (institutionCode = '".implode("' OR institutionCode = '",$institutionCodes)."')";
 	//}
 	
 	$r = db_query($sql,array(':userid'=>$regid))->fetchColumn(0);
-  db_set_active();
   
 	if($r > 0) { return true; }
 	return false;
 }
 
 function midtlink_login_create_user_from_bsk($regid,$status=0) {
-  db_set_active('midtlink_bsk');
 	$sql = "SELECT user_id, email, position, display_name 
 		FROM {bsk_user_data} WHERE user_id = :regid";
 	$res = db_query($sql,array(':regid'=>$regid));
 
   if($res->rowCount() <= 0) {
-    db_set_active();
     return false;
   }
 	
   $r = $res->fetchObject();
     
-  db_set_active();
 
 	$status = 1; //always active users - for now!
 	

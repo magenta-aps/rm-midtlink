@@ -103,18 +103,15 @@ $databases = array (
       'host' => 'localhost',
       'port' => '',
       'driver' => 'mysql',
-      'prefix' => '',
+      'prefix' => array(
+          'default' => '',
+          'bsk_user_data' => 'midtlink_live.',
+          'bsk_user_picture' => 'midtlink_live.',
+      ),
     ),
   ),
 );
 
-$databases['midtlink_bsk']['default'] = array(
-    'database' => 'midtlink_live',
-    'username' => 'midtlink_u', 
-    'password' => 'Mandag11',
-    'host' => 'localhost',
-    'driver' => 'mysql',
-);
 
 [ END IGNORE ]
 
@@ -220,3 +217,22 @@ Test more!! Relax.
 
 /admin/config/development/maintenance
         Put site back Online!!
+
+
+
+
+----------------------------------------
+
+Subsite:
+
+
+/admin/config/media/file-system
+	Public file system path:
+	sites/midtlink2.test.magenta-aps.dk/files
+
+	Private file system path:
+	sites/midtlink2.test.magenta-aps.dk/files/private
+
+	Save configuration
+
+
