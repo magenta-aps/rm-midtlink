@@ -168,7 +168,7 @@ function midtlink_features_default_fe_block_settings() {
 
   $export['block-midtlink_frontpage_maintext_heh'] = array(
     'cache' => -1,
-    'css_class' => '',
+    'css_class' => 'description',
     'custom' => 0,
     'machine_name' => 'midtlink_frontpage_maintext_heh',
     'midtlink_unit' => 301,
