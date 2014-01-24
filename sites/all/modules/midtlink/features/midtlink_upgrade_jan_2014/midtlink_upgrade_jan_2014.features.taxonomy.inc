@@ -21,7 +21,7 @@ function midtlink_upgrade_jan_2014_taxonomy_default_vocabularies() {
       'name' => 'Afdelinger',
       'machine_name' => 'units',
       'description' => '',
-      'hierarchy' => 0,
+      'hierarchy' => 1,
       'module' => 'taxonomy',
       'weight' => 0,
     ),
