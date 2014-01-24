@@ -337,6 +337,7 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     $form['field_category']['und']['#options'] = $categoryOptions;
     
     $form['field_category_local'] = $form['field_category'];
+    $form['field_category_local']['#weight'] += 1;
     
     $categoryOptions = array();
        
