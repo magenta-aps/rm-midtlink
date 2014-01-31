@@ -6,12 +6,25 @@ Export features (blocks) from midtlink2.test.magenta-aps.dk
 
 cd /var/www/midtlink.rm.dk
 
+.htaccess:
+
+<Limit GET POST PUT>
+ Order Deny,Allow
+ Deny from all
+ Allow from 87.51.7.136
+</Limit>
+ErrorDocument 403 /maintenance.html
+<Files maintenance.html>
+ Order Allow,Deny
+ Allow from all
+</Files>
+
+
 Make backup of code:
 	mkdir backup
 	cp -R htdocs backup/
 Make backup of database:
 	mysqldump -u midtlink_u -p -a -c --add-drop-table midtlink_live > /var/www/midtlink.rm.dk/backup/midtlink_live.sql
-
 
 /admin/config/development/maintenance
 	Put site into maintenance mode
@@ -209,6 +222,8 @@ Test that all blocks are showing up
 
 Test more!! Relax.
 
+Disable Diff module!
+
 /admin/config/regional/language
 	Change language back to Danish
 
@@ -217,9 +232,6 @@ Test more!! Relax.
 
 /admin/config/development/maintenance
         Put site back Online!!
-
-
-
 
 ----------------------------------------
 
