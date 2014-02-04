@@ -3,7 +3,6 @@
    * page.tpl.php
    */
 ?>
-
 <div id="header">
   <div class="section container">
     <div id="logo" class="grid-2"><a href="<?php global $base_root; print $base_root; ?>" class="image-replacement" alt="MidtLink">MidtLink</a></div>
@@ -67,6 +66,28 @@
       
     </div><!-- /.grid-12 -->
   
+<script type="text/javascript">
+var LHCChatOptions = {};
+LHCChatOptions.attr = new Array();
+//LHCChatOptions.attr.push({'name':'Transaction ID 2','value':'','type':'text','size':12,'show':'on'});
+LHCChatOptions.opt = {widget_height:340,widget_width:300,popup_height:520,popup_width:500};
+LHCChatOptions.attr_prefill = new Array();
+//LHCChatOptions.attr_prefill.push({'name':'email','value':'remdex@gmail.com'});
+//LHCChatOptions.attr_prefill.push({'name':'phone','value':'370454654'});
+LHCChatOptions.attr_prefill.push({'name':'username','value':'<?php 
+global $user;
+$user_fields = user_load($user->uid);
+echo $user_fields->field_fullname[LANGUAGE_NONE][0]['value'] . ' ('. $user->unitName . ')';
+?>'});
+  (function() {
+var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+var refferer = (document.referrer) ? encodeURIComponent(document.referrer) : '';
+var location  = (document.location) ? encodeURIComponent(document.location) : '';
+po.src = '//midtlink-live/lhc_web/index.php/chat/getstatus/(click)/internal/(position)/bottom_right/(top)/350/(units)/pixels?r='+refferer+'&l='+location;
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+</script>
+
 </div><!-- /#page.container -->
 
 <?php /* If the user is logged in */ if($user->uid > 0): ?>
