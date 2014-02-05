@@ -9,12 +9,7 @@
 <div class="row">
     <input type="hidden" class="inputfield" name="Username" value="<?php echo htmlspecialchars($input_data->username);?>" />
 
-    <?php if (isset($start_data_fields['email_visible_in_page_widget']) && $start_data_fields['email_visible_in_page_widget'] == true) : ?>
-    <div class="columns small-6 end">
-        <label><?php echo erTranslationClassLhTranslation::getInstance()->getTranslation('chat/startchat','E-mail');?><?php if (isset($start_data_fields['email_require_option']) && $start_data_fields['email_require_option'] == 'required') : ?>*<?php endif;?></label>
-        <input type="text" class="inputfield" name="Email" value="<?php echo htmlspecialchars($input_data->email);?>" />
-    </div>
-    <?php endif; ?>
+    <input type="hidden" class="inputfield" name="Email" value="<?php echo htmlspecialchars($input_data->email);?>" />
 </div>
 
 <?php if (isset($start_data_fields['phone_visible_in_page_widget']) && $start_data_fields['phone_visible_in_page_widget'] == true) : ?>

@@ -19,6 +19,7 @@
       'default_site_access' => 'eng',
       'extensions' => 
       array (
+		0 => 'unbrand',
       ),
       'available_site_access' => 
       array (

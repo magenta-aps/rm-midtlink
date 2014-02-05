@@ -65,20 +65,26 @@
       <?php endif; ?>
       
     </div><!-- /.grid-12 -->
-  
+
+    <?php 
+global $user;
+$user_fields = user_load($user->uid);
+$chatUsername = $user->name;
+$chatFullname = $user_fields->field_fullname[LANGUAGE_NONE][0]['value'];
+$chatUnitName = $user->unitName;
+$chatEmail = $user->mail;
+?>
+    
 <script type="text/javascript">
 var LHCChatOptions = {};
 LHCChatOptions.attr = new Array();
-//LHCChatOptions.attr.push({'name':'Transaction ID 2','value':'','type':'text','size':12,'show':'on'});
+LHCChatOptions.attr.push({'name':'Afdeling','value':'<?php echo $chatUnitName; ?>','type':'text','size':12,'show':'off'});
+LHCChatOptions.attr.push({'name':'RegionsID','value':'<?php echo $chatUsername; ?>','type':'text','size':12,'show':'off'});
 LHCChatOptions.opt = {widget_height:340,widget_width:300,popup_height:520,popup_width:500};
 LHCChatOptions.attr_prefill = new Array();
-//LHCChatOptions.attr_prefill.push({'name':'email','value':'remdex@gmail.com'});
 //LHCChatOptions.attr_prefill.push({'name':'phone','value':'370454654'});
-LHCChatOptions.attr_prefill.push({'name':'username','value':'<?php 
-global $user;
-$user_fields = user_load($user->uid);
-echo $user_fields->field_fullname[LANGUAGE_NONE][0]['value'] . ' ('. $user->unitName . ')';
-?>'});
+LHCChatOptions.attr_prefill.push({'name':'email','value':'<?php echo $chatEmail; ?>'});
+LHCChatOptions.attr_prefill.push({'name':'username','value':'<?php echo $chatFullname; ?>'});
   (function() {
 var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
 var refferer = (document.referrer) ? encodeURIComponent(document.referrer) : '';
