@@ -123,7 +123,7 @@ LHCChatOptions.attr_prefill.push({'name':'username','value':'<?php echo $chatFul
 var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
 var refferer = (document.referrer) ? encodeURIComponent(document.referrer) : '';
 var location  = (document.location) ? encodeURIComponent(document.location) : '';
-po.src = '//midtlink-live/lhc_web/index.php/chat/getstatus/(click)/internal/(position)/bottom_right/(top)/350/(units)/pixels?r='+refferer+'&l='+location;
+po.src = '/lhc_web/index.php/chat/getstatus/(click)/internal/(position)/bottom_right/(top)/350/(units)/pixels?r='+refferer+'&l='+location;
 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
 })();
 </script>
