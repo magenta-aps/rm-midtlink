@@ -12,5 +12,7 @@
   '8360e5c8cb7b1108285510e195f4bcf4' => 'cache/compiledtemplates/339a9fc3725936490f956f13c913ecdf.php',
   '2718680e1d4d3da98a6e8af574306be9' => 'cache/compiledtemplates/7611a19d0a5a31166c00754f1b5886fb.php',
   'c5fdfb71edd01e7d5dcdf7f89ab82975' => 'cache/compiledtemplates/ba3941829b841ca40530d6acf8da3362.php',
+  '6c1215700f7be307eba248a1c3d992a0' => 'cache/compiledtemplates/b09a70a68bd480c629149d8c5b622c51.php',
+  'e1191cae2e2322d33f4e20383c861d47' => 'cache/compiledtemplates/04c3bf8ccca0cf23f1fcdc55f58fdd1b.php',
 );
 ?>
