@@ -1,5 +1,6 @@
 jQuery(document).ready(function() {
 	jQuery('.tooltip').tipsy({gravity: 's'});
+        jQuery('.flag-answer-helped a').tipsy({gravity: 's', html:true, title: function () { return jQuery(this).parent().next('.flag-tooltip-contents').html(); }});
 
 	jQuery('#modal').jqm({modal: true});
 	jQuery('#modal').jqmShow();

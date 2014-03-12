@@ -11,6 +11,50 @@ function midtlink_preprocess_block(&$vars) {
   }
 }
 
+/**
+ * Returns HTML for who flagged a specific flag.
+ * @param array $flags Result from flag_get_content_flags
+ * @return string
+ */
+function midtlink_get_who_flagged ($flags) {
+  $tooltip = '';
+
+  if (!empty($flags)) {
+    ob_start();
+?>    
+<div>
+<?php
+    $flagsInfo = array();
+    foreach ($flags as $uid => $flag) {
+      $u = user_load($uid);
+
+      $flagInfo = array();
+
+      $flagInfo['name'] = entity_label('user', $u);
+      $flagInfo['authorinfo'] = midtlink_utils_get_author_info($uid);
+      $flagInfo['uid'] = $uid;
+      $flagInfo['user'] = $u;
+
+      $flagsInfo[] = $flagInfo;
+    }
+
+    foreach ($flagsInfo as $flag) { 
+?>
+  <div class="flag-author" style="clear: both;">
+    <div style="float:left; width: 40px;"><?php echo theme('user_picture', array('account' => $flag['user'])); ?></div>
+    <div class="name" style="margin-left: 50px; text-align: left"><?php echo theme('username', array('account' => $flag['user'])); ?><br/><span>(<?php echo $flag['authorinfo']['info']; ?>)</span></div>
+  </div>
+<?php
+    }
+?>
+</div>
+<?php
+    $tooltip = ob_get_clean();
+  }
+
+  return $tooltip;
+}
+
 
 function midtlink_form_comment_form_alter(&$form, &$form_state) {
   // Hide 'Your Name' in comment's form

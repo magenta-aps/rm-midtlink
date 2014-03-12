@@ -30,7 +30,15 @@ $notArchived = midtlink_utils_comment_archived($comment->cid);
       
       <?php print render($content['links']) ?>
       <?php print flag_create_link('answer_helped', $comment->cid); ?>
-      <?php print flag_create_link('archive_comment', $comment->cid); ?>
+      
+        <?php
+        $flags = flag_get_content_flags('comment', $comment->cid, 'answer_helped');
+        $tooltip = midtlink_get_who_flagged($flags);
+        ?>
+        <span class="flag-tooltip-contents" style="display: none;">
+          <?php echo $tooltip; ?>
+        </span>
+        <?php print flag_create_link('archive_comment', $comment->cid); ?>
     </div>
   </div>
 </div>
