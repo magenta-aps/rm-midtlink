@@ -23,6 +23,7 @@ function midtlink_get_who_flagged ($flags) {
     ob_start();
 ?>    
 <div>
+  <div class="flag-tooltip-heading" style="text-align: center; margin-bottom: 8px;">Disse brugere har markeret dette som Godt svar</div>
 <?php
     $flagsInfo = array();
     foreach ($flags as $uid => $flag) {
@@ -41,8 +42,9 @@ function midtlink_get_who_flagged ($flags) {
     foreach ($flagsInfo as $flag) { 
 ?>
   <div class="flag-author" style="clear: both;">
-    <div style="float:left; width: 40px;"><?php echo theme('user_picture', array('account' => $flag['user'])); ?></div>
-    <div class="name" style="margin-left: 50px; text-align: left"><?php echo theme('username', array('account' => $flag['user'])); ?><br/><span>(<?php echo $flag['authorinfo']['info']; ?>)</span></div>
+    <div style="float:left; width: 25px; margin: 2px;"><?php echo theme('user_picture', array('account' => $flag['user'])); ?></div>
+    <div class="name" style="margin-left: 35px; text-align: left"><?php echo theme('username', array('account' => $flag['user'])); ?><br/><span>(<?php echo $flag['authorinfo']['info']; ?>)</span></div>
+    <div style="clear: both;"></div>
   </div>
 <?php
     }

@@ -12,6 +12,10 @@
 .tipsy-inner,
 .tooltip-super > span { background-color: #000; color: #FFF; max-width: 160px; padding: 10px 14px 12px; text-align: center; }
 
+.flag-tooltip .tipsy-inner { max-width: 270px; }
+
+.flag-tooltip .tipsy-inner a { color: #fff; font-weight: bold; }
+
 /* Rounded corners */
 .tipsy-inner,
 .tooltip-super > span { border-radius: 2px; -moz-border-radius: 2px; -webkit-border-radius: 2px; }

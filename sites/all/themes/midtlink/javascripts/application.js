@@ -1,6 +1,13 @@
 jQuery(document).ready(function() {
 	jQuery('.tooltip').tipsy({gravity: 's'});
-        jQuery('.flag-answer-helped a').tipsy({gravity: 's', html:true, title: function () { return jQuery(this).parent().next('.flag-tooltip-contents').html(); }});
+        
+        jQuery('.flag-answer-helped a').tipsy({
+            gravity: 's',
+            html:true,
+            className: 'flag-tooltip',
+            opacity: 0.8,
+            title: function () { return jQuery(this).parent().next('.flag-tooltip-contents').html();
+            }});
 
 	jQuery('#modal').jqm({modal: true});
 	jQuery('#modal').jqmShow();
@@ -39,7 +46,7 @@ jQuery(document).ready(function() {
       // Lets hide the menu when the page is clicked anywhere but the menu.
       var jQueryclicked = jQuery(e.target);
       if (! jQueryclicked.parents().hasClass("dropdown")){
-          jQuery(".dropdown dd ul").hide();0
+          jQuery(".dropdown dd ul").hide();
       jQuery(".dropdown dt a").removeClass("selected");
     }
 
