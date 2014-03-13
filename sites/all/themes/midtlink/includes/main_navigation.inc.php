@@ -15,7 +15,21 @@
     || arg(0) == 'create_observation') { $forumActive = ' active'; }
   if(arg(0) == 'dokumentation') { $docuActive = ' active'; }
   if(isset($node) && $node->type == 'knowlegde') { $docuActive = ' active'; }
-
+  
+  // For searches, set active tab based on current bundle being searched
+  if (arg(0) == 'search') {
+    $filters = $_GET['f'];
+    foreach ($filters as $f) {
+      if (preg_match('/bundle:(.+)/', $f, $matches)) {
+        if ($matches[1] == 'post') {
+          $forumActive = ' active';
+        } else if ($matches[1] == 'knowlegde') {
+          $docuActive = ' active';
+        }
+      }
+    }
+  }
+  
  include_once 'current_tab.inc.php';
 ?>
 

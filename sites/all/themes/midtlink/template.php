@@ -1,5 +1,39 @@
 <?php
 
+function midtlink_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'search_block_form') {
+    // Search only in specific bundle on Forum and Vejledning tabs.
+    if (arg(0) == 'forum') { 
+      $searchBundle = 'post';
+    } else if (arg(0) == 'dokumentation') {
+      $searchBundle = 'knowlegde';
+    } else {
+      return;
+    }
+    
+    //$form['#action'] .= '?f[0]=' . 'bundle' . '%3A' . $searchBundle;
+    $form['f[0]']['#type'] = 'hidden';
+    $form['f[0]']['#value'] = 'bundle:' . $searchBundle;
+
+    // We need to add a submit, because the search form redirects to a specific place
+    $form['#submit'][] = 'midtlink_search_submit';
+  }
+}
+
+function midtlink_search_submit($form, &$form_state) {
+  //$form_id = $form['form_id']['#value'];
+  
+  // Form redirect takes a separate query parameter like drupal_goto.
+  $form_state['redirect'] = array(
+    $form_state['redirect'],
+    array(
+      'query' =>
+      array(
+        'f[0]' => $form_state['values']['f[0]'])
+      )
+    );
+}
+
 /**
  * Implements theme_preprocess_block().
  */
