@@ -23,7 +23,7 @@ function midtlink_get_who_flagged ($flags) {
     ob_start();
 ?>    
 <div>
-  <div class="flag-tooltip-heading" style="text-align: center; margin-bottom: 8px;">Disse brugere har markeret dette som Godt svar</div>
+  <div class="flag-tooltip-heading" style="text-align: center; margin-bottom: 8px;">Brugerne har markeret dette som et godt svar</div>
 <?php
     $flagsInfo = array();
     foreach ($flags as $uid => $flag) {
