@@ -18,7 +18,7 @@
   
   // For searches, set active tab based on current bundle being searched
   if (arg(0) == 'search') {
-    $filters = $_GET['f'];
+    $filters = array_key_exists('f', $_GET) ? $_GET['f'] : array();
     foreach ($filters as $f) {
       if (preg_match('/bundle:(.+)/', $f, $matches)) {
         if ($matches[1] == 'post') {

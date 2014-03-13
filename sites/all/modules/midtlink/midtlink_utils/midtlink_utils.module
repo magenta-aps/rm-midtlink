@@ -64,6 +64,13 @@ function midtlink_utils_form_apachesolr_search_custom_page_search_form_alter(&$f
 function midtlink_utils_apachesolr_query_alter(&$query) {
   // Filter queries by site hash
   $query->addFilter('hash', apachesolr_site_hash());
+
+  // Alter the query for autocomplete when autocompleting from forum or documentation tabs.
+  if (preg_match("!https?://[^/]+/forum!", $_SERVER['HTTP_REFERER'])) {
+    $query->addParam('fq', 'bundle:post');
+  } else if (preg_match("!https?://[^/]+/dokumentation!", $_SERVER['HTTP_REFERER'])) {
+    $query->addParam('fq', 'bundle:knowlegde');
+  }
 }
 
 function midtlink_utils_apachesolr_delete_by_query(&$query) {
