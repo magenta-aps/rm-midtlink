@@ -7,7 +7,7 @@ $notArchived = midtlink_utils_comment_archived($comment->cid);
   <div class="picture-container">
 		<?php print $picture; ?>
 		<div class="unitinfo">
-			<big><?php echo $node->authorunit['shortname']; ?></big>
+			<big><?php echo $comment->authorunit['shortname']; ?></big>
 		</div>
 	</div>
 

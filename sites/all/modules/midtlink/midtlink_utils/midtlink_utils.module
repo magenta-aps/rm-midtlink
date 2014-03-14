@@ -300,8 +300,11 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
 		$form['message']['recipients']['#rows'] = 1;
 		$form['message']['message']['#rows'] = 4;
 	}
-	elseif($form_id == 'comment_node_post_form') {
+        elseif($form_id == 'comment_node_post_form') {
 		$form['actions']['submit']['#value'] = 'Indsend svar';
+	}
+        elseif($form_id == 'comment_node_knowlegde_form') {
+		$form['actions']['submit']['#value'] = 'Indsend kommentar';
 	}
 	elseif($form_id == 'user_profile_form') {
 		$form['account']['mail']['#disabled'] = true;

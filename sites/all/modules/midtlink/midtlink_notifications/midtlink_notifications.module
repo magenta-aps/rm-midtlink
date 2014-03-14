@@ -3,6 +3,9 @@
 function midtlink_notifications_drupal_mail($to, $subject, $message) {
   $my_module = 'midtlink_notifications';
   $my_mail_token = microtime();
+  if ($_SERVER['HTTP_HOST'] == 'midtlink-live') {
+    $_SERVER['HTTP_HOST'] = 'example.com';
+  }
   $from = 'MidtLink <no-reply@'.$_SERVER['HTTP_HOST'].'>';
   
   $allowHTML = variable_get('smtp_allowhtml', 0);
@@ -186,6 +189,21 @@ function midtlink_notification_get_message($obj,$type='text') {
 				$body.= "Der er tilføjet et nyt svar af ".format_username(user_load($obj->source_uid));
 				$body.= " til indlægget ".midtlink_get_node_title($obj->source_nid)."\n\n";
 				$body.= "Du kan klikke ind og se svaret på nedenstående link:\n";
+				$body.= '<a href="'.$url.'">'.$url.'</a>'."\n\n";
+				$body.= "Denne notifikation er automatisk udsendt af MidtLink\n";
+				$msg = array('subj'=>strip_tags($msg), 'body'=>$body);
+			}
+			break;
+			
+    case 'new_comment':
+			$msg = l(format_username(user_load($obj->source_uid)),'user/'.$obj->source_uid).' har kommenteret på vejledningen '.l(midtlink_get_node_title($obj->source_nid),'node/'.$obj->source_nid);
+			if($type == 'mail') {
+				$url = url('node/'.$obj->source_nid,array('absolute'=>true));
+				
+				$body = "Hej ".format_username(user_load($obj->target_uid)).",\n\n";
+				$body.= "Der er tilføjet en nyt kommentar af ".format_username(user_load($obj->source_uid));
+				$body.= " til vejledningen ".midtlink_get_node_title($obj->source_nid)."\n\n";
+				$body.= "Du kan klikke ind og se kommentaren på nedenstående link:\n";
 				$body.= '<a href="'.$url.'">'.$url.'</a>'."\n\n";
 				$body.= "Denne notifikation er automatisk udsendt af MidtLink\n";
 				$msg = array('subj'=>strip_tags($msg), 'body'=>$body);

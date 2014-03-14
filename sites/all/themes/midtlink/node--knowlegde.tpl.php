@@ -99,6 +99,10 @@ else {
       <?php
 			?>
 		</div>
-	</div></div>
+	</div>
+  </div>
+  <div class="clearfix" style="clear:both;">
+    <?php print render($content['comments']); ?>
+  </div>
 </div>
 <?php } ?>
