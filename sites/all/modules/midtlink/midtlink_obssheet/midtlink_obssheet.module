@@ -1156,7 +1156,9 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
     $mainUnitName = $mainUnitTerm->name;
     $categories = midtlink_get_keywords_by_unit_id($postMainUnitTID);
     unset($form['field_sdnumber']);
-    $form['additional_settings']['#access'] = false; // Hide additional settings on edit form
+    if ($user->uid != 1) {
+      $form['additional_settings']['#access'] = false; // Hide additional settings on edit form
+    }
 //    $form['additional_settings']['#type'] = 'hidden';
     $form['field_unit']['#access'] = false; // Hide Afdeling on edit form
   }

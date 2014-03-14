@@ -315,8 +315,12 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
 		$form['field_position']['#access'] = false; //Updated through the BSK integration
 	}
 	elseif($form_id == 'knowlegde_node_form') {
+    global $user;
+    
     // Hide additional settings
-    $form['additional_settings']['#access'] = false;
+    if ($user->uid != 1) {
+      $form['additional_settings']['#access'] = false;
+    }
     
     // Only hide on add form, not on edit
     if (arg(1) == 'add') {
