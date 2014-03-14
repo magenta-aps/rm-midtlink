@@ -49,8 +49,8 @@ else {
 		}
 	}
 ?>
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> node-post clearfix"<?php print $attributes; ?>>
-	<div class="content clearfix"><div class="post-wrapper">
+<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> node-post documentation clearfix"<?php print $attributes; ?>>
+	<div class="content clearfix"><div class="post-wrapper documentation">
 		<div class="submitted">
 			<div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
 		</div>

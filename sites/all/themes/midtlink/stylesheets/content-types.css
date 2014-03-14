@@ -4,6 +4,17 @@
  */
 
 
+.node-post.documentation .post-wrapper {
+  background:#FFFFF2;
+  border:1px solid #EAB76A;
+}
+
+.node-post.documentation .content .post-body, 
+.node-post.documentation .content .file-upload {
+  border-top:1px solid #EAB76A;
+}
+
+
 /*----------------------------------------------------------------------
   Indl�g (node--post.tpl.php)
 ----------------------------------------------------------------------*/
