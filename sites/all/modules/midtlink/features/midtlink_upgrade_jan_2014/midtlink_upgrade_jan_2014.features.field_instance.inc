@@ -10,6 +10,128 @@
 function midtlink_upgrade_jan_2014_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'comment-comment_node_knowlegde-comment_body'
+  $field_instances['comment-comment_node_knowlegde-comment_body'] = array(
+    'bundle' => 'comment_node_knowlegde',
+    'default_value' => array(
+      0 => array(
+        'value' => '',
+        'format' => 'filtered_html',
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'comment',
+    'field_name' => 'comment_body',
+    'label' => 'Kommentar',
+    'required' => 1,
+    'settings' => array(
+      'better_formats' => array(
+        'allowed_formats' => array(
+          'filtered_html' => 0,
+          'html_wysiwyg' => 'html_wysiwyg',
+          'plain_text' => 'plain_text',
+        ),
+        'allowed_formats_toggle' => 0,
+        'default_order_toggle' => 0,
+        'default_order_wrapper' => array(
+          'formats' => array(
+            'filtered_html' => array(
+              'weight' => 0,
+            ),
+            'html_wysiwyg' => array(
+              'weight' => 0,
+            ),
+            'plain_text' => array(
+              'weight' => 10,
+            ),
+          ),
+        ),
+      ),
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 0,
+    ),
+  );
+
+  // Exported field_instance: 'comment-comment_node_post-comment_body'
+  $field_instances['comment-comment_node_post-comment_body'] = array(
+    'bundle' => 'comment_node_post',
+    'default_value' => array(
+      0 => array(
+        'value' => '',
+        'format' => 'filtered_html',
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'comment',
+    'field_name' => 'comment_body',
+    'label' => 'Svar',
+    'required' => 1,
+    'settings' => array(
+      'better_formats' => array(
+        'allowed_formats' => array(
+          'filtered_html' => 'filtered_html',
+          'html_wysiwyg' => 'html_wysiwyg',
+          'plain_text' => 'plain_text',
+        ),
+        'allowed_formats_toggle' => 0,
+        'default_order_toggle' => 0,
+        'default_order_wrapper' => array(
+          'formats' => array(
+            'filtered_html' => array(
+              'weight' => 0,
+            ),
+            'html_wysiwyg' => array(
+              'weight' => 0,
+            ),
+            'plain_text' => array(
+              'weight' => 10,
+            ),
+          ),
+        ),
+      ),
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 0,
+    ),
+  );
+
   // Exported field_instance: 'node-knowlegde-field_category'
   $field_instances['node-knowlegde-field_category'] = array(
     'bundle' => 'knowlegde',
@@ -384,7 +506,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     'default_value' => array(
       0 => array(
         'value' => '',
-        'format' => 'plain_text',
+        'format' => 'filtered_html',
       ),
     ),
     'deleted' => 0,
@@ -412,6 +534,28 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     'label' => 'Beskrivelse',
     'required' => 0,
     'settings' => array(
+      'better_formats' => array(
+        'allowed_formats' => array(
+          'filtered_html' => 'filtered_html',
+          'html_wysiwyg' => 'html_wysiwyg',
+          'plain_text' => 'plain_text',
+        ),
+        'allowed_formats_toggle' => 0,
+        'default_order_toggle' => 0,
+        'default_order_wrapper' => array(
+          'formats' => array(
+            'filtered_html' => array(
+              'weight' => 0,
+            ),
+            'html_wysiwyg' => array(
+              'weight' => 0,
+            ),
+            'plain_text' => array(
+              'weight' => 10,
+            ),
+          ),
+        ),
+      ),
       'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
@@ -673,6 +817,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
   t('Indhold');
   t('Indtast artiklen.');
   t('Indtast nøgleord som dit indlæg omhandler.');
+  t('Kommentar');
   t('Kort beskrivelse');
   t('Kort navn');
   t('Link');
@@ -680,6 +825,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
   t('Nøgleord');
   t('SD nummer');
   t('Spørg direkte');
+  t('Svar');
   t('Vedhæft fil');
   t('Vedhæft pdf, doc, xls, ppt filer der omhandler hjælpeartiklen.');
   t('Vejledning gyldig for');
