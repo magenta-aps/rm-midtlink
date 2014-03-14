@@ -28,5 +28,28 @@ function midtlink_upgrade_jan_2014_user_default_permissions() {
     'module' => 'block',
   );
 
+  // Exported permission: 'use text format filtered_html'.
+  $permissions['use text format filtered_html'] = array(
+    'name' => 'use text format filtered_html',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+      'EPJ-ansvarlig' => 'EPJ-ansvarlig',
+      'EPJ-konsulenter' => 'EPJ-konsulenter',
+      'EPJ-superbruger' => 'EPJ-superbruger',
+      'SundhedsIT' => 'SundhedsIT',
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'filter',
+  );
+
+  // Exported permission: 'use text format html_wysiwyg'.
+  $permissions['use text format html_wysiwyg'] = array(
+    'name' => 'use text format html_wysiwyg',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'filter',
+  );
+
   return $permissions;
 }
