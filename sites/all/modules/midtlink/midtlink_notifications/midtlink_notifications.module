@@ -201,7 +201,7 @@ function midtlink_notification_get_message($obj,$type='text') {
 				$url = url('node/'.$obj->source_nid,array('absolute'=>true));
 				
 				$body = "Hej ".format_username(user_load($obj->target_uid)).",\n\n";
-				$body.= "Der er tilføjet en nyt kommentar af ".format_username(user_load($obj->source_uid));
+				$body.= "Der er tilføjet en ny kommentar af ".format_username(user_load($obj->source_uid));
 				$body.= " til vejledningen ".midtlink_get_node_title($obj->source_nid)."\n\n";
 				$body.= "Du kan klikke ind og se kommentaren på nedenstående link:\n";
 				$body.= '<a href="'.$url.'">'.$url.'</a>'."\n\n";
