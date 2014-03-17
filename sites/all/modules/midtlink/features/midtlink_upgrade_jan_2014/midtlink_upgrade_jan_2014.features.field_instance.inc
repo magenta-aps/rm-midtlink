@@ -227,8 +227,10 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
       'teaser' => array(
         'label' => 'hidden',
         'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_plain',
+        'settings' => array(
+          'trim_length' => 400,
+        ),
+        'type' => 'text_trimmed',
         'weight' => 0,
       ),
     ),
