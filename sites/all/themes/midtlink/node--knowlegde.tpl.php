@@ -20,6 +20,8 @@ if (isset($node->field_owner['und'])) {
   $author = $node->field_owner['und'][0]['target_id'];
 }
 
+$authorUser = user_load($author);
+
 $authorinfo = midtlink_utils_get_author_info($author);
 
 if(!$page) {
@@ -34,8 +36,13 @@ if(!$page) {
 	<div class="item-content documentation">  
 		<div class="content-wrapper">
 			<div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
-    	<div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
-      <div class="name"><?php echo theme('username', array('account' => user_load($author))); ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
+      
+      <div class="submitted">
+        <div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
+        <div class="name small"><?php echo theme('username', array('account' => $authorUser)); ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
+        <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
+      </div>
+      
     	<div class="body">
 				<?php echo render($content['field_knowlegde_content']); ?>
 				<a href="<?php echo $node_url; ?>">Læs mere</a>
@@ -45,6 +52,9 @@ if(!$page) {
 					<li><a href="<?php echo url('dokumentation/'.$c['unit_tid'].'/'.$c['tid']); ?>"<?php echo ' class="' . $c['class'] . '"';?>><?php echo $c['name']; ?></a></li>
 				<?php } ?>
     	</ul>
+      <?php if($node->comment_count > 0) { ?>
+			<div class="post-indicator comments image-replacement tooltip" original-title="Der er blevet kommenteret på vejledningen <?php echo $node->comment_count.' '.($node->comment_count == 1 ? 'gang' : 'gange'); ?>"><?php echo $node->comment_count; ?></div>
+			<?php } ?>
     </div>
   </div>
 	<?php
@@ -59,11 +69,19 @@ else {
 	}
 ?>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> node-post documentation clearfix"<?php print $attributes; ?>>
-	<div class="content clearfix"><div class="post-wrapper documentation">
-		<div class="submitted">
-			<div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
+  <div class="picture-container">
+		<?php print theme('user_picture', array('account' => $authorUser)); ?>
+		<div class="unitinfo">
+			<small>Tilknyttet</small>
+			<big><?php echo $authorinfo['shortname']; ?></big>
 		</div>
-		<h2><?php echo $title; ?></h2>
+  </div>
+	<div class="content post clearfix"><div class="post-wrapper documentation">
+    <h1><?php echo $title; ?></h1>
+    <div class="submitted">
+        <div class="name"><?php echo theme('username', array('account' => user_load($author))); ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
+        <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
+    </div>
 		<div class="taxonomies">
 			<div class="categories">
 				<ul class="reset">
@@ -109,6 +127,9 @@ else {
       <?php
 			?>
 		</div>
+    <?php if((integer)$node->comment_count > 0) { ?>
+				<div class="post-indicator comments image-replacement tooltip" original-title="Der er blevet kommenteret på vejledningen <?php echo $node->comment_count.' '.($node->comment_count == 1 ? 'gang' : 'gange'); ?>"><?php echo $node->comment_count; ?></div>
+    <?php } ?>
 	</div>
   </div>
   <div class="clearfix" style="clear:both;">
