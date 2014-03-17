@@ -1366,10 +1366,12 @@ function midtlink_obssheet_comment_insert($comment) {
   // Commenting works a bit differently on knowlegde content nodes
   $node = node_load($comment->nid);
   if ($node && $node->type === 'knowlegde') {
+    $owner = isset($node->field_owner['und']) ? $node->field_owner['und'][0]['target_id'] : $node->uid;
+    
     // Only send notification if the commenting user is not the owner of the node
-    if($node->uid != $comment->uid) {
-      // Just directly send the notification, no flagging is done
-      midtlink_notification_send($node->uid,'new_comment',$comment->uid,$comment->nid);
+    if($owner != $comment->uid) {
+      // Send a notification to the owner
+      midtlink_notification_send($owner,'new_comment',$comment->uid,$comment->nid);
     }
   }
 }

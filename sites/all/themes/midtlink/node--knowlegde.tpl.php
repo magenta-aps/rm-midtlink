@@ -25,6 +25,7 @@ $authorUser = user_load($author);
 $authorinfo = midtlink_utils_get_author_info($author);
 
 if(!$page) {
+  global $miniTeaser;
   $icon_url = $node_url;
   // Icon should directly link to first file attachment if it exists.
   if (isset($node->field_knowlegde_file['und'][0])) {
