@@ -13,6 +13,15 @@ if(isset($node->field_category['und'])) {
 	}
 }
 
+$author = $node->uid;
+
+// Display author as the Owner field if it is not empty
+if (isset($node->field_owner['und'])) {
+  $author = $node->field_owner['und'][0]['target_id'];
+}
+
+$authorinfo = midtlink_utils_get_author_info($author);
+
 if(!$page) {
   $icon_url = $node_url;
   // Icon should directly link to first file attachment if it exists.
@@ -25,8 +34,8 @@ if(!$page) {
 	<div class="item-content documentation">  
 		<div class="content-wrapper">
 			<div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
-    
     	<div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
+      <div class="name"><?php echo theme('username', array('account' => user_load($author))); ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
     	<div class="body">
 				<?php echo render($content['field_knowlegde_content']); ?>
 				<a href="<?php echo $node_url; ?>">Læs mere</a>
@@ -86,6 +95,7 @@ else {
 			hide($content['field_category']);
 			hide($content['field_keywords']);
 			hide($content['field_unit']);
+      hide($content['field_owner']);
 			print render($content);
       ?>
       <div class="field field-name-field-unit field-type-list-text field-label-above"><div class="field-label">Vejledning gyldig for:&nbsp;</div><div class="field-items">
