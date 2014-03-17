@@ -293,6 +293,84 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-knowlegde-field_owner'
+  $field_instances['node-knowlegde-field_owner'] = array(
+    'bundle' => 'knowlegde',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'entityreference',
+        'settings' => array(
+          'link' => FALSE,
+        ),
+        'type' => 'entityreference_label',
+        'weight' => 7,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_owner',
+    'label' => 'Ejer',
+    'required' => 0,
+    'settings' => array(
+      'nodeaccess_userreference' => array(
+        'all' => array(
+          'view' => 0,
+        ),
+        'all_published' => 0,
+        'author' => array(
+          'delete' => 0,
+          'update' => 0,
+          'view' => 0,
+        ),
+        'author_published' => 0,
+        'create' => array(
+          'knowlegde' => 0,
+          'link' => 0,
+          'news' => 0,
+          'page' => 0,
+          'post' => 0,
+        ),
+        'priority' => 0,
+        'referenced' => array(
+          'delete' => 0,
+          'deny_delete' => 0,
+          'deny_update' => 0,
+          'deny_view' => 0,
+          'update' => 'update',
+          'view' => 'view',
+        ),
+        'referenced_published' => 0,
+        'unused' => 0,
+        'views' => array(
+          'view' => '',
+          'view_args' => '',
+        ),
+      ),
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'tokeninput_entityreference',
+      'settings' => array(
+        'match_operator' => 'CONTAINS',
+        'path' => '',
+        'size' => 60,
+        'theme' => 'facebook',
+      ),
+      'type' => 'tokeninput_entityreference',
+      'weight' => 7,
+    ),
+  );
+
   // Exported field_instance: 'node-knowlegde-field_unit'
   $field_instances['node-knowlegde-field_unit'] = array(
     'bundle' => 'knowlegde',
@@ -813,6 +891,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Afdeling');
   t('Beskrivelse');
+  t('Ejer');
   t('Emne');
   t('Indhold');
   t('Indtast artiklen.');
