@@ -325,13 +325,13 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     'settings' => array(
       'nodeaccess_userreference' => array(
         'all' => array(
-          'view' => 0,
+          'view' => 'view',
         ),
         'all_published' => 0,
         'author' => array(
-          'delete' => 0,
-          'update' => 0,
-          'view' => 0,
+          'delete' => 'delete',
+          'update' => 'update',
+          'view' => 'view',
         ),
         'author_published' => 0,
         'create' => array(
