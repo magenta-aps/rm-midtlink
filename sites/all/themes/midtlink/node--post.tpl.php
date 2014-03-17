@@ -34,11 +34,12 @@ if(!$page) {
 					<?php if(!$miniTeaser) { ?><div class="node-type forum"><a href="<?php echo $node_url; ?>">Forum-indlæg</a></div><?php } ?>
 					
 					<div class="submitted">
-						<div class="name"><?php echo $name; ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo; ?>)</span><?php } ?></div>
+            <div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
+            <div class="name small"><?php echo $name; ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo; ?>)</span><?php } ?></div>
 						<div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
 					</div>
-					
-					<div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
+
+
 					<?php if(!$miniTeaser) { ?>
 						<div class="body">
 							<?php echo render($content['field_description']); ?>
@@ -87,6 +88,9 @@ if(isset($node->field_keywords['und'])) {
   <div class="content post clearfix"<?php print $content_attributes; ?>>
     <div class="post-wrapper">
       <div class="user-pointer image-replacement">Pointer</div>
+      
+      <h1><?php print $title; ?></h1>
+      
       <div class="submitted">
         <div class="name"><?php echo $name; ?> <span>(<?php echo $authorinfo; ?>)</span></div>
         <?php
@@ -100,8 +104,6 @@ if(isset($node->field_keywords['und'])) {
 				</div>
         <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?> &mdash; ID # <?php echo sprintf('%05s',$node->nid); ?></div>
       </div>
-      
-      <h1><?php print $title; ?></h1>
       
       <div class="taxonomies">
         <div class="categories">
