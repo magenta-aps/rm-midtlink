@@ -50,6 +50,15 @@
 
 .submitted .name{
   font-weight:bold;
+  font-size: 11px;
+}
+
+.title {
+  margin-right: 25px;
+}
+
+.title a {
+  color: #0067BB;
 }
 
 .submitted .name span{
@@ -64,11 +73,12 @@
 /* Title */
 .node-post h1 {
   font-size:24px;
-  margin: 10px 0 20px;
+  margin: 0 50px 10px 0;
 }
 
 /* Taxonomies */
 .node-post .taxonomies{
+  padding-top: 12px;
   padding-bottom:12px;
 }
 
