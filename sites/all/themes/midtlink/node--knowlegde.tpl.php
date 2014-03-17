@@ -33,28 +33,40 @@ if(!$page) {
     $icon_url = $url['path'];
   }
 	?>
-	<div class="item-content documentation">  
-		<div class="content-wrapper">
-			<div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
-      
-      <div class="submitted">
-        <div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
-        <div class="name small"><?php echo theme('username', array('account' => $authorUser)); ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
-        <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
+	<div class="list-item documentation">
+    <div class="section">
+      <div class="picture-container">
+        <?php print $user_picture; ?>
+        <div class="unitinfo">
+          <big><?php echo $authorinfo['shortname']; ?></big>
+        </div>
       </div>
-      
-    	<div class="body">
-				<?php echo render($content['field_knowlegde_content']); ?>
-				<a href="<?php echo $node_url; ?>">Læs mere</a>
-			</div>
-			<ul class="categories reset">
-    		<?php foreach($categories as $c) { ?>
-					<li><a href="<?php echo url('dokumentation/'.$c['unit_tid'].'/'.$c['tid']); ?>"<?php echo ' class="' . $c['class'] . '"';?>><?php echo $c['name']; ?></a></li>
-				<?php } ?>
-    	</ul>
-      <?php if($node->comment_count > 0) { ?>
-			<div class="post-indicator comments image-replacement tooltip" original-title="Der er blevet kommenteret på vejledningen <?php echo $node->comment_count.' '.($node->comment_count == 1 ? 'gang' : 'gange'); ?>"><?php echo $node->comment_count; ?></div>
-			<?php } ?>
+
+      <div class="user-pointer image-replacement">Pointer</div>
+      <div class="item-content">
+        <div class="content-wrapper">
+          <div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
+
+          <div class="submitted">
+            <div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
+            <div class="name small"><?php echo theme('username', array('account' => $authorUser)); ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
+            <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
+          </div>
+
+          <div class="body">
+            <?php echo render($content['field_knowlegde_content']); ?>
+            <a href="<?php echo $node_url; ?>">Læs mere</a>
+          </div>
+          <ul class="categories reset">
+            <?php foreach($categories as $c) { ?>
+              <li><a href="<?php echo url('dokumentation/'.$c['unit_tid'].'/'.$c['tid']); ?>"<?php echo ' class="' . $c['class'] . '"';?>><?php echo $c['name']; ?></a></li>
+            <?php } ?>
+          </ul>
+          <?php if($node->comment_count > 0) { ?>
+          <div class="post-indicator comments image-replacement tooltip" original-title="Der er blevet kommenteret på vejledningen <?php echo $node->comment_count.' '.($node->comment_count == 1 ? 'gang' : 'gange'); ?>"><?php echo $node->comment_count; ?></div>
+          <?php } ?>
+        </div>
+      </div>
     </div>
   </div>
 	<?php
@@ -77,6 +89,7 @@ else {
 		</div>
   </div>
 	<div class="content post clearfix"><div class="post-wrapper documentation">
+    <div class="user-pointer image-replacement">Pointer</div>
     <h1><?php echo $title; ?></h1>
     <div class="submitted">
         <div class="name"><?php echo theme('username', array('account' => user_load($author))); ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>

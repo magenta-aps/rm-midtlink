@@ -1081,8 +1081,7 @@ a.new-node {
 }
 
 /* Viden (documentation) */
-.list-item .item-content.documentation .content-wrapper {
-	margin-left:0;
+.list-item.documentation .item-content .content-wrapper {
 	background:#FFFFF2;
 	border-color:#EAB76A;
 }
@@ -1126,6 +1125,10 @@ a.new-node {
   position:absolute;
   top:10px;
   left:-9px;
+}
+
+.documentation .user-pointer{
+  background-position:-491px -262px;
 }
 
 /*----------------------------------------------------------------------

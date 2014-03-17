@@ -38,6 +38,10 @@
   border-radius: 3px;
 }
 
+.documentation #comments .comment-wrapper{
+  border-color:#EAB76A;
+}
+
 #comments .user-picture {
   float:left;
 }
