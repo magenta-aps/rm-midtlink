@@ -15,6 +15,10 @@
     $activeMainTID = midtlink_get_main_unit_from_subunit($activeMainTID)->tid;
     $activeTermTID = intval($_GET['filter_category']);
   }
+  else if (arg(0) == 'reorder-unit-links') {
+    $activeMainTID = arg(1);
+    $activeTermTID = null;
+  }
   else {
     global $user;
     $activeMainTID = $user->mainUnitTID;
