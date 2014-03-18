@@ -11,6 +11,12 @@ function midtlink_utils_ctools_plugin_directory($module, $plugin) {
   }
 }
 
+function midtlink_utils_views_api() {
+  return array(
+    'api' => 3,
+  );
+}
+
 /**
 * Implements hook_facetapi_filters().
 */

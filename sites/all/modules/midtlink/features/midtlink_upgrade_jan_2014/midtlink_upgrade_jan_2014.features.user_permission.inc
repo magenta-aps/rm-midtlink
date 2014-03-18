@@ -10,6 +10,15 @@
 function midtlink_upgrade_jan_2014_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: 'access draggableviews'.
+  $permissions['access draggableviews'] = array(
+    'name' => 'access draggableviews',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'draggableviews',
+  );
+
   // Exported permission: 'administer block classes'.
   $permissions['administer block classes'] = array(
     'name' => 'administer block classes',
