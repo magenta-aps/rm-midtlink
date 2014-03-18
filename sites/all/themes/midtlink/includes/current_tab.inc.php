@@ -3,7 +3,7 @@
   global $activeTermTID;
   
   if (arg(0) == 'forum') {
-    $activeMainTID = intval($_GET['tid']);
+    $activeMainTID = $_GET['tid'];
     $activeTermTID = arg(1);
   }
   else if (arg(0) == 'dokumentation') {
