@@ -8,7 +8,7 @@ if(!$page) {
   }
 	?>
       <?php echo render($content['field_link']); ?>
-      <p class="small"><?php echo $node->field_link_desc[LANGUAGE_NONE][0]['value']; ?></p>
+      <p class="small"><?php echo $desc; ?></p>
 <?php
 }
 else {
