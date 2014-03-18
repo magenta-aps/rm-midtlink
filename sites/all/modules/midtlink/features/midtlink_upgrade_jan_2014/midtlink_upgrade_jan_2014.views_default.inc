@@ -372,6 +372,10 @@ function midtlink_upgrade_jan_2014_views_default_views() {
   $handler->display->display_options['sorts']['weight']['field'] = 'weight';
   $handler->display->display_options['sorts']['weight']['draggableviews_setting_view'] = 'self';
   $handler->display->display_options['sorts']['weight']['draggableviews_setting_new_items_bottom_list'] = 1;
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
   /* Contextual filter: Content: Afdeling (field_link_unit) */
   $handler->display->display_options['arguments']['field_link_unit_target_id']['id'] = 'field_link_unit_target_id';
   $handler->display->display_options['arguments']['field_link_unit_target_id']['table'] = 'field_data_field_link_unit';
@@ -452,6 +456,10 @@ function midtlink_upgrade_jan_2014_views_default_views() {
   $handler->display->display_options['sorts']['weight']['field'] = 'weight';
   $handler->display->display_options['sorts']['weight']['draggableviews_setting_view'] = 'reorder_unit_links:reorder_unit_links';
   $handler->display->display_options['sorts']['weight']['draggableviews_setting_new_items_bottom_list'] = 1;
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
   /* Contextual filter: Content: Afdeling (field_link_unit) */
   $handler->display->display_options['arguments']['field_link_unit_target_id']['id'] = 'field_link_unit_target_id';
   $handler->display->display_options['arguments']['field_link_unit_target_id']['table'] = 'field_data_field_link_unit';
