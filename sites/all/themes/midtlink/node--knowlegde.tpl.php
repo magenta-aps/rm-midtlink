@@ -34,7 +34,7 @@ if(!$page) {
     $icon_url = $url['path'];
   }
 	?>
-	<div class="list-item documentation">
+	<div class="list-item documentation<?php if($miniTeaser) { ?> miniteaser<?php } ?>">
     <div class="section">
       <div class="picture-container">
         <?php print $user_picture; ?>
@@ -46,7 +46,7 @@ if(!$page) {
       <div class="user-pointer image-replacement">Pointer</div>
       <div class="item-content">
         <div class="content-wrapper">
-          <div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
+          <?php if(!$miniTeaser) { ?><div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div><?php } ?>
 
           <div class="submitted">
             <div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
@@ -54,6 +54,7 @@ if(!$page) {
             <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
           </div>
 
+          <?php if(!$miniTeaser) { ?>
           <div class="body">
             <?php echo render($content['field_knowlegde_content']); ?>
             <a href="<?php echo $node_url; ?>">Læs mere</a>
@@ -63,6 +64,7 @@ if(!$page) {
               <li><a href="<?php echo url('dokumentation/'.$c['unit_tid'].'/'.$c['tid']); ?>"<?php echo ' class="' . $c['class'] . '"';?>><?php echo $c['name']; ?></a></li>
             <?php } ?>
           </ul>
+          <?php } ?>
           <?php if($node->comment_count > 0) { ?>
           <div class="post-indicator comments image-replacement tooltip" original-title="Der er blevet kommenteret på vejledningen <?php echo $node->comment_count.' '.($node->comment_count == 1 ? 'gang' : 'gange'); ?>"><?php echo $node->comment_count; ?></div>
           <?php } ?>

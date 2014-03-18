@@ -51,7 +51,7 @@
 					$miniTeaser = true; 
 					?>
 					<div class="grid-4 alpha">
-						<h2>Senest opdaterede indlæg</h2>
+						<h3>Senest opdaterede indlæg og vejledninger</h3>
 						<?php 
 						/* embed view! */
 						if(!empty($user->unitTID)) {
@@ -66,7 +66,7 @@
 						</p>
 					</div>
 					<div class="grid-4 omega">
-						<h2>Seneste om min afdeling</h2>
+						<h3>Seneste fra afd. <?php echo $user->unitName; ?></h3>
 						<?php 
 						/* embed view! */
 						if(!empty($user->unitTID)) {
