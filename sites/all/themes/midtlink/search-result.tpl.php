@@ -105,7 +105,7 @@ if($result['bundle'] == 'post') {
 }
 else {
   
-  $node = $result['node'];
+  $node = node_load($result['fields']['entity_id']);
   
   $author = $node->uid;
   
