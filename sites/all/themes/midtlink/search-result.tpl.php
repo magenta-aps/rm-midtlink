@@ -142,7 +142,7 @@ else {
 
           <div class="submitted">
             <div class="title"><h2><a href="<?php print $url; ?>"><?php echo $title; ?></a></h2></div>
-            <div class="name small"><?php echo $info_split['user']; ?> (<span><?php echo $userinfo['info']; ?></span>)</div>
+            <div class="name small"><?php echo theme('username', array('account' => $authorUser)); ?> (<span><?php echo $userinfo['info']; ?></span>)</div>
             <div class="meta small">Oprettet d. <?php echo format_date($extra_info['created'],'long'); ?></div>
           </div>
 
