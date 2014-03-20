@@ -82,11 +82,10 @@ if($result['bundle'] == 'post') {
             <div class="node-type forum"><a href="<?php echo $url; ?>">Forum-indlæg</a></div>
 						
 						<div class="submitted">
-							<div class="name"><?php echo $info_split['user']; ?> <span><?php echo $userinfo['info']; ?></span></div>
+              <div class="title"><h2><a href="<?php print $url; ?>"><?php echo $title; ?></a></h2></div>
+							<div class="name small"><?php echo $info_split['user']; ?> (<span><?php echo $userinfo['info']; ?></span>)</div>
 							<div class="meta small">Oprettet d. <?php echo format_date($extra_info['created'],'long'); ?></div>
 						</div>
-						
-						<div class="title"><h2><a href="<?php print $url; ?>"><?php echo $title; ?></a></h2></div>
 						<div class="body">
 							<?php print $snippet; ?>
 							<a href="<?php print $url; ?>">Læs mere</a>
@@ -105,6 +104,21 @@ if($result['bundle'] == 'post') {
 <?php
 }
 else {
+  
+  $node = $result['node'];
+  
+  $author = $node->uid;
+  
+  // Display author as the Owner field if it is not empty
+  if (isset($node->field_owner['und'])) {
+    $author = $node->field_owner['und'][0]['target_id'];
+  }
+
+  $authorUser = user_load($author);
+
+  $userinfo = midtlink_utils_get_author_info($author);
+
+    
   $icon_url = $url;
   // Icon should directly link to first file attachment if it exists.
   if (isset($result['node']->field_knowlegde_file['und'][0])) {
@@ -113,21 +127,38 @@ else {
     $icon_url = $url['path'];
   }
 	?>
-	<div class="list-item">
-	<div class="item-content documentation">  
-		<div class="content-wrapper">
-      <div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
-    
-    	<div class="title"><h2><a href="<?php echo $url; ?>"><?php echo $title; ?></a></h2></div>
-    	<div class="body">
-				<?php echo $snippet; ?>
-				<a href="<?php echo $url; ?>">Læs mere</a>
-			</div>
-			<ul class="categories reset">
-    		<li></li>
-    	</ul>
+	<div class="list-item documentation">
+    <div class="section">
+      <div class="picture-container">
+        <?php echo theme('user_picture',array('account'=>$authorUser)); ?>
+        <div class="unitinfo">
+          <big><?php echo $userinfo['shortname']; ?></big>
+        </div>
+      </div>
+      
+      <div class="item-content documentation">  
+        <div class="content-wrapper">
+          <div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
+
+          <div class="submitted">
+            <div class="title"><h2><a href="<?php print $url; ?>"><?php echo $title; ?></a></h2></div>
+            <div class="name small"><?php echo $info_split['user']; ?> (<span><?php echo $userinfo['info']; ?></span>)</div>
+            <div class="meta small">Oprettet d. <?php echo format_date($extra_info['created'],'long'); ?></div>
+          </div>
+
+          <div class="body">
+            <?php echo $snippet; ?>
+            <a href="<?php echo $url; ?>">Læs mere</a>
+          </div>
+          <ul class="categories reset">
+            <li></li>
+          </ul>
+        </div>
+      </div>
+      <?php if($extra_info['comment_count'] > 0) { ?>
+        <div class="post-indicator comments image-replacement"><?php echo $extra_info['comment_count']; ?></div>
+      <?php } ?>
     </div>
-  </div>
   </div>
 	<?php
 }
