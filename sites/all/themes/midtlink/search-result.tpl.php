@@ -137,6 +137,7 @@ else {
       </div>
       
       <div class="item-content documentation">  
+        <div class="user-pointer image-replacement">Pointer</div>
         <div class="content-wrapper">
           <div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
 
