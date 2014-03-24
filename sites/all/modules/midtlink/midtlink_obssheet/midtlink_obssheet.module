@@ -229,7 +229,8 @@ function midtlink_obssheet_download_sheet($type,$unit_id=null) {
 //			$data[$i][] = $obs['sdno']; //Status
 			$data[$i]['last_update'] = format_date($obs['last_update'],'short'); //Oprettet
 			$data[$i]['svar'] = $obs['comment_no']; //Seneste svar
-			$data[$i]['problem'] = $obs['title'] . '<br/>' . $obs['problem']; //Problem
+//      strip_tags($status, array());
+			$data[$i]['problem'] = $obs['title'] . $obs['full_problem']; //Problem
 			//$data[$i][] = $obs['solution']; //Løsning
 			//$data[$i][] = $obs['responsible']; //Ansvarlige
 			$data[$i]['observed_by'] = $obs['observed_by']; //Observeret af
@@ -780,9 +781,13 @@ function midtlink_obssheet_format_results($res, $filters) {
     
     
     $node = node_load($r->nid);
-    $fullProblem = render(field_view_field('node', $node, 'field_description', array(
+    $fullProblem = field_view_field('node', $node, 'field_description', array(
               'label'=>'hidden',
-      )));
+      ));
+    $fullProblem = $fullProblem['#items'][0]['safe_value'];
+//    $fullProblem = render(field_view_field('node', $node, 'field_description', array(
+//              'label'=>'hidden',
+//      )));
     $trimmedProblem = render(field_view_field('node', $node, 'field_description', array(
               'label'=>'hidden',
               'type' => 'text_summary_or_trimmed',
