@@ -229,7 +229,7 @@ function midtlink_obssheet_download_sheet($type,$unit_id=null) {
 //			$data[$i][] = $obs['sdno']; //Status
 			$data[$i]['last_update'] = format_date($obs['last_update'],'short'); //Oprettet
 			$data[$i]['svar'] = $obs['comment_no']; //Seneste svar
-			$data[$i]['problem'] = $obs['problem']; //Problem
+			$data[$i]['problem'] = $obs['title'] . $obs['problem']; //Problem
 			//$data[$i][] = $obs['solution']; //Løsning
 			//$data[$i][] = $obs['responsible']; //Ansvarlige
 			$data[$i]['observed_by'] = $obs['observed_by']; //Observeret af
@@ -487,13 +487,32 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 				$o.= '<td>'.format_date($obs['last_update'],'short').'</td>';
 				$o.= '<td>'.$obs['comment_no'].'</td>';
 				$o.= '<td><div style="width: 200px;">';
-				if(strlen($obs['problem'])>300) {
-					$o.= drupal_substr($obs['problem'],0,250).'<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().next(\'.restOfEntry\').show();">Læs mere</a></span>';
-					$o.= '<span class="restOfEntry">'.drupal_substr($obs['problem'],250).'</span>';
-				}
-				else {
-					$o.= $obs['problem'];
-				}
+        $o.= $obs['title'] . '<br/>';
+        
+        if (strlen($obs['problem']) > 250) {
+          $o.= '<span>';
+          $o.= $obs['trimmed_problem'];
+          $rest = $obs['full_problem'];
+//          $o.= '<span class="">... ' . l('Læs mere', 'node/'.$obs['nid'], array('absolute' => TRUE)) . '</span>';
+          //          $o.= $trimmed;
+//          $o.= '<span class="">... ' . l('Læs mere', 'node/'.$obs['nid'], array('absolute' => TRUE)) . '</span>';
+          $o.= '</span>';
+          $o.= '<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().prev().hide();jQuery(this).parent().next(\'.restOfEntry\').show();">Læs mere</a></span>';
+					$o.= '<span class="restOfEntry">'.$rest.'</span>';
+        } else {
+          $o.= $obs['full_problem'];
+        }
+
+          
+//          $o.= $trimmed;
+//          $o.= '<span class="">... ' . l('Læs mere', 'node/'.$obs['nid'], array('absolute' => TRUE)) . '</span>';
+//          $o.= '<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().next(\'.restOfEntry\').show();">Læs mere</a></span>';
+//					$o.= '<span class="restOfEntry">'.$rest.'</span>';
+
+          
+//					$o.= drupal_substr($obs['problem'],0,250).'<span class="">... <a href="javascript:void(0);" onclick="jQuery(this).parent().hide();jQuery(this).parent().next(\'.restOfEntry\').show();">Læs mere</a></span>';
+//					$o.= '<span class="restOfEntry">'.drupal_substr($obs['problem'],250).'</span>';
+				
 				$o.= '</div></td>';
 				//$o.= '<td>';
 				/*if(strlen($obs['solution'])>300) {
@@ -517,8 +536,6 @@ function midtlink_obssheet_get_sheet($type,$unit_id=null) {
 }
 
 function midtlink_obssheet_get_list_global($filters=array(),$sort='created_asc',$parent_unit_id=null) {
-	$observations = array();
-	
 	$tids = array();
 	$terms = taxonomy_get_children($parent_unit_id);
 	foreach($terms as $tid=>$term) {
@@ -558,75 +575,11 @@ function midtlink_obssheet_get_list_global($filters=array(),$sort='created_asc',
 	$sql .= " ORDER BY ncs.last_comment_timestamp DESC";
 	$res = db_query($sql);
 	
-	
-	foreach($res as $r) {
-		/* Created obsered by string */
-		$observedBy = '';
-		$observedBy = ($r->fullname != '') ? $r->fullname : $r->username;
-		if(!empty($r->unit)) { $observedBy .= ' ('.$r->unit.')'; }
-		
-		/* Lets check if the observation is solved or unsolved */
-		//$approved = midtlink_utils_post_approved_answer($r->nid);
-		if($filters['status'] == 'solved' && $approved === false) { continue; }
-		if($filters['status'] == 'unsolved' && $approved !== false) { continue; }
-		
-		/* Get categories */
-		$categories = midtlink_utils_get_categories_by_nid($r->nid);
-		if(!empty($filters['category'])) {
-			if(empty($categories[trim($filters['category'])])) { continue; }
-		}
-		
-		/* Get responsible */
-		$respStr = array();
-		$resp = midtlink_utils_get_responsible_by_nid($r->nid);
-		if(!empty($filters['responsible'])) {
-			if(empty($resp[drupal_strtolower($filters['responsible'])])) { continue; }
-		}
-		foreach($resp as $rsp) {
-			$tmpR = '';
-			$tmpR = ($rsp['fullname'] != '') ? $rsp['fullname'] : $rsp['username'];
-			if(!empty($rsp['unit'])) { $tmpR .= ' ('.$rsp['unit'].')'; }
-		
-			$respStr[] = $tmpR;
-		}
-		$respStr = implode(', ',$respStr);
-		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
-		
-		/* Construct problem string */
-		$problem = strip_tags($r->problem);
-		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
-		}
-		
-		$raised = false;
-		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 2 AND content_id = :nid";
-		$raisedFlags = db_query($sql,array(':nid'=>$r->nid))->fetchColumn();
-		if($raisedFlags>0) { $raised = true; }
-		
-		$observations[] = array(
-				'nid'=>$r->nid,
-				'approved'=>$approved,
-				'created'=>$r->created,
-				'created_by'=>$r->uid,
-				'observed_by'=>$observedBy,
-				'problem'=>$problem,
-				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
-				'responsible'=>$respStr,
-				'sdno'=>$r->sdnumber,
-				'categories' => $categories,
-				'raised_issue' => $raised,
-				'comment_no'=>$r->comment_count,
-				'last_update'=>$r->last_comment_timestamp,
-			);
-	}
-	//var_dump($observations);
-	return $observations;
+	return midtlink_obssheet_format_results($res, $filters);
 }
 
 
 function midtlink_obssheet_get_list_allunits($filters=array(),$sort='created_asc',$parent_unit_id=null) {
-	$observations = array();
-	
 	$tids = array();
 	$terms = taxonomy_get_children($parent_unit_id);
 	foreach($terms as $tid=>$term) {
@@ -667,74 +620,11 @@ function midtlink_obssheet_get_list_allunits($filters=array(),$sort='created_asc
 	$sql .= " ORDER BY ncs.last_comment_timestamp DESC";
 	$res = db_query($sql);
 	
-	foreach($res as $r) {
-		/* Created obsered by string */
-		$observedBy = '';
-		$observedBy = ($r->fullname != '') ? $r->fullname : $r->username;
-		if(!empty($r->unit)) { $observedBy .= ' ('.$r->unit.')'; }
-		
-		/* Lets check if the observation is solved or unsolved */
-		//$approved = midtlink_utils_post_approved_answer($r->nid);
-		if($filters['status'] == 'solved' && $approved === false) { continue; }
-		if($filters['status'] == 'unsolved' && $approved !== false) { continue; }
-		
-		/* Get categories */
-		$categories = midtlink_utils_get_categories_by_nid($r->nid);
-		if(!empty($filters['category'])) {
-			if(empty($categories[trim($filters['category'])])) { continue; }
-		}
-		
-		/* Get responsible */
-		$respStr = array();
-		$resp = midtlink_utils_get_responsible_by_nid($r->nid);
-		if(!empty($filters['responsible'])) {
-			if(empty($resp[drupal_strtolower($filters['responsible'])])) { continue; }
-		}
-		foreach($resp as $rsp) {
-			$tmpR = '';
-			$tmpR = ($rsp['fullname'] != '') ? $rsp['fullname'] : $rsp['username'];
-			if(!empty($rsp['unit'])) { $tmpR .= ' ('.$rsp['unit'].')'; }
-		
-			$respStr[] = $tmpR;
-		}
-		$respStr = implode(', ',$respStr);
-		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
-		
-		/* Construct problem string */
-		$problem = strip_tags($r->problem);
-		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
-		}
-		
-		$raised = false;
-		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 3 AND content_id = :nid";
-		$raisedFlags = db_query($sql,array(':nid'=>$r->nid))->fetchColumn();
-		if($raisedFlags>0) { $raised = true; }
-		
-		$observations[] = array(
-				'nid'=>$r->nid,
-				'approved'=>$approved,
-				'created'=>$r->created,
-				'created_by'=>$r->uid,
-				'observed_by'=>$observedBy,
-				'problem'=>$problem,
-				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
-				'responsible'=>$respStr,
-				'sdno'=>$r->sdnumber,
-				'categories' => $categories,
-				'raised_issue' => $raised,
-				'comment_no'=>$r->comment_count,
-				'last_update'=>$r->last_comment_timestamp,
-			);
-	}
-	
-	return $observations;
+	return midtlink_obssheet_format_results($res, $filters);
 }
 
 
 function midtlink_obssheet_get_list_unit($unitid,$filters=array(),$sort='created_asc') {
-	$observations = array();
-	
 	$sql = "SELECT n.nid, n.created, n.uid, 
 			n.title,fd.field_description_value as problem,
 			fsd.field_sdnumber_value as sdnumber,
@@ -765,73 +655,10 @@ function midtlink_obssheet_get_list_unit($unitid,$filters=array(),$sort='created
 	$sql .= " ORDER BY ncs.last_comment_timestamp DESC";
 	$res = db_query($sql,array(':tid'=>$unitid));
 	
-	foreach($res as $r) {
-		/* Created obsered by string */
-		$observedBy = '';
-		$observedBy = ($r->fullname != '') ? $r->fullname : $r->username;
-		if(!empty($r->unit)) { $observedBy .= ' ('.$r->unit.')'; }
-		
-		/* Lets check if the observation is solved or unsolved */
-		//$approved = midtlink_utils_post_approved_answer($r->nid);
-		if($filters['status'] == 'solved' && $approved === false) { continue; }
-		if($filters['status'] == 'unsolved' && $approved !== false) { continue; }
-		
-		/* Get categories */
-		$categories = midtlink_utils_get_categories_by_nid($r->nid);
-		if(!empty($filters['category'])) {
-			if(empty($categories[trim($filters['category'])])) { continue; }
-		}
-		
-		/* Get responsible */
-		$respStr = array();
-		$resp = midtlink_utils_get_responsible_by_nid($r->nid);
-		if(!empty($filters['responsible'])) {
-			if(empty($resp[$filters['responsible']])) { continue; }
-		}
-		foreach($resp as $rsp) {
-			$tmpR = '';
-			$tmpR = ($rsp['fullname'] != '') ? $rsp['fullname'] : $rsp['username'];
-			if(!empty($rsp['unit'])) { $tmpR .= ' ('.$rsp['unit'].')'; }
-		
-			$respStr[] = $tmpR;
-		}
-		$respStr = implode(', ',$respStr);
-		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
-		
-		/* Construct problem string */
-		$problem = strip_tags($r->problem);
-		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
-		}
-		
-		
-		$raised = false;
-		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 3 AND content_id = :nid";
-		$raisedFlags = db_query($sql,array(':nid'=>$r->nid))->fetchColumn();
-		if($raisedFlags>0) { $raised = true; }
-		
-		$observations[] = array(
-				'nid'=>$r->nid,
-				'approved'=>$approved,
-				'created'=>$r->created,
-				'created_by'=>$r->uid,
-				'observed_by'=>$observedBy,
-				'problem'=>$problem,
-				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
-				'responsible'=>$respStr,
-				'sdno'=>$r->sdnumber,
-				'categories' => $categories,
-				'raised_issue' => $raised,
-				'comment_no'=>$r->comment_count,
-				'last_update'=>$r->last_comment_timestamp,
-			);
-	}
-	return $observations;
+	return midtlink_obssheet_format_results($res, $filters);
 }
 
 function midtlink_obssheet_get_list_observed_by_me($filters=array(),$sort='created_asc') {
-	$observations = array();
-	
 	$sql = "SELECT n.nid, n.created, n.uid, 
 			n.title,fd.field_description_value as problem,
 			fsd.field_sdnumber_value as sdnumber,
@@ -865,73 +692,10 @@ function midtlink_obssheet_get_list_observed_by_me($filters=array(),$sort='creat
 	global $user;
 	$res = db_query($sql,array(':uid'=>$user->uid));
 	
-	foreach($res as $r) {
-		/* Created obsered by string */
-		$observedBy = '';
-		$observedBy = ($r->fullname != '') ? $r->fullname : $r->username;
-		if(!empty($r->unit)) { $observedBy .= ' ('.$r->unit.')'; }
-		
-		/* Lets check if the observation is solved or unsolved */
-		//$approved = midtlink_utils_post_approved_answer($r->nid);
-		if($filters['status'] == 'solved' && $approved === false) { continue; }
-		if($filters['status'] == 'unsolved' && $approved !== false) { continue; }
-		
-		/* Get categories */
-		$categories = midtlink_utils_get_categories_by_nid($r->nid);
-		if(!empty($filters['category'])) {
-			if(empty($categories[trim($filters['category'])])) { continue; }
-		}
-		
-		/* Get responsible */
-		$respStr = array();
-		$resp = midtlink_utils_get_responsible_by_nid($r->nid);
-		if(!empty($filters['responsible'])) {
-			if(empty($resp[$filters['responsible']])) { continue; }
-		}
-		foreach($resp as $rsp) {
-			$tmpR = '';
-			$tmpR = ($rsp['fullname'] != '') ? $rsp['fullname'] : $rsp['username'];
-			if(!empty($rsp['unit'])) { $tmpR .= ' ('.$rsp['unit'].')'; }
-		
-			$respStr[] = $tmpR;
-		}
-		$respStr = implode(', ',$respStr);
-		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
-		
-		/* Construct problem string */
-		$problem = strip_tags($r->problem);
-		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
-		}
-		
-		$raised = false;
-		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 3 AND content_id = :nid";
-		$raisedFlags = db_query($sql,array(':nid'=>$r->nid))->fetchColumn();
-		if($raisedFlags>0) { $raised = true; }
-		
-		$observations[] = array(
-				'nid'=>$r->nid,
-				'approved'=>$approved,
-				'created'=>$r->created,
-				'created_by'=>$r->uid,
-				'observed_by'=>$observedBy,
-				'problem'=>$problem,
-				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
-				'responsible'=>$respStr,
-				'sdno'=>$r->sdnumber,
-				'categories' => $categories,
-				'raised_issue' => $raised,
-				'comment_no'=>$r->comment_count,
-				'last_update'=>$r->last_comment_timestamp,
-			);
-	}
-	return $observations;
+  return midtlink_obssheet_format_results($res, $filters);
 }
 
-
 function midtlink_obssheet_get_list_responsible($filters=array(),$sort='created_asc') {
-	$observations = array();
-	
 	$sql = "SELECT DISTINCT n.nid, n.created, n.uid, 
 			n.title,fd.field_description_value as problem,
 			fsd.field_sdnumber_value as sdnumber,
@@ -966,6 +730,12 @@ function midtlink_obssheet_get_list_responsible($filters=array(),$sort='created_
 	global $user;
 	$res = db_query($sql,array(':uid'=>$user->uid));
 	
+  return midtlink_obssheet_format_results($res, $filters);
+}
+
+function midtlink_obssheet_format_results($res, $filters) {
+  $observations = array();
+  
 	foreach($res as $r) {
 		/* Created obsered by string */
 		$observedBy = '';
@@ -1000,10 +770,25 @@ function midtlink_obssheet_get_list_responsible($filters=array(),$sort='created_
 		if(empty($respStr)) { $respStr = '<i>Ingen</i>'; }
 		
 		/* Construct problem string */
-		$problem = strip_tags($r->problem);
-		if(!empty($r->title)) {
-			$problem = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong><br />'.$problem;
-		}
+		$problem = $r->problem;
+		
+    if(!empty($r->title)) {
+      $title = '<strong>'.l($r->title, 'node/'.$r->nid, array('absolute' => TRUE)).'</strong>';
+		} else {
+      $title = '';
+    }
+    
+    
+    $node = node_load($r->nid);
+    $fullProblem = render(field_view_field('node', $node, 'field_description', array(
+              'label'=>'hidden',
+      )));
+    $trimmedProblem = render(field_view_field('node', $node, 'field_description', array(
+              'label'=>'hidden',
+              'type' => 'text_summary_or_trimmed',
+              'settings'=>array('trim_length' => 250),
+      )));
+      
 		
 		$raised = false;
 		$sql = "SELECT COUNT(fcid) FROM {flag_content} WHERE fid = 3 AND content_id = :nid";
@@ -1017,6 +802,9 @@ function midtlink_obssheet_get_list_responsible($filters=array(),$sort='created_
 				'created_by'=>$r->uid,
 				'observed_by'=>$observedBy,
 				'problem'=>$problem,
+        'trimmed_problem'=>$trimmedProblem,
+        'full_problem'=>$fullProblem,
+        'title'=>$title,
 				//'solution'=>midtlink_utils_get_approved_solution($r->nid),
 				'responsible'=>$respStr,
 				'sdno'=>$r->sdnumber,
@@ -1028,7 +816,6 @@ function midtlink_obssheet_get_list_responsible($filters=array(),$sort='created_
 	}
 	return $observations;
 }
-
 
 
 
