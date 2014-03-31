@@ -17,6 +17,7 @@ dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = tokeninput_entityreference
 dependencies[] = views
+dependencies[] = wysiwyg_filter
 features[ctools][] = facetapi:facetapi_defaults:1
 features[ctools][] = views:views_default:3.0
 features[facetapi][] = apachesolr@solr:block:bundle
