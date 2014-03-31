@@ -29,15 +29,14 @@ function midtlink_upgrade_jan_2014_filter_default_formats() {
         'weight' => 0,
         'status' => 1,
         'settings' => array(
-          'valid_elements' => 'a[!href|target<_blank|title],
+          'valid_elements' => '@[style],
+a[!href|target<_blank|title],
 div[align<center?justify?left?right],
 p[align<center?justify?left?right],
 br,span,em,strong,cite,code,blockquote,ul,ol,li,dl,dt,dd',
           'allow_comments' => 0,
           'nofollow_policy' => 'whitelist',
-          'nofollow_domains' => array(
-            0 => 'midtlink.test.magenta-aps.dk',
-          ),
+          'nofollow_domains' => array(),
           'style_color' => array(
             'color' => 0,
             'background' => 0,
