@@ -37,7 +37,7 @@ if(!$page) {
 	<div class="list-item documentation<?php if($miniTeaser) { ?> miniteaser<?php } ?>">
     <div class="section">
       <div class="picture-container">
-        <?php print $user_picture; ?>
+        <?php print theme('user_picture', array('account' => $authorUser)); ?>
         <div class="unitinfo">
           <big><?php echo $authorinfo['shortname']; ?></big>
         </div>
