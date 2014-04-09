@@ -52,6 +52,12 @@ jQuery(document).ready(function() {
 
   });
 
+    jQuery(document).ready(function() {
+        // Open Vejledning attachments in new window
+        jQuery('.field-name-field-knowlegde-file a').attr({ target: "_blank" });
+        jQuery('a.open-in-new-window').attr({ target: "_blank" });
+    });
+
   //jQuery('.tooltipped').tooltip();
 
 });

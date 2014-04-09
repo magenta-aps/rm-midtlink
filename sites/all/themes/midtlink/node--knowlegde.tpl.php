@@ -27,11 +27,15 @@ $authorinfo = midtlink_utils_get_author_info($author);
 if(!$page) {
   global $miniTeaser;
   $icon_url = $node_url;
+//  $open_icon_link_in_new_window = false;
+  $open_icon_link_in_new_window = true;
+  
   // Icon should directly link to first file attachment if it exists.
   if (isset($node->field_knowlegde_file['und'][0])) {
     $url = file_create_url($node->field_knowlegde_file['und'][0]['uri']);
     $url = parse_url($url);
     $icon_url = $url['path'];
+    $open_icon_link_in_new_window = true;
   }
 	?>
 	<div class="list-item documentation<?php if($miniTeaser) { ?> miniteaser<?php } ?>">
@@ -46,7 +50,7 @@ if(!$page) {
       <div class="user-pointer image-replacement">Pointer</div>
       <div class="item-content">
         <div class="content-wrapper">
-          <?php if(!$miniTeaser) { ?><div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div><?php } ?>
+          <?php if(!$miniTeaser) { ?><div class="node-type documentation"><a href="<?php echo $icon_url; ?>"<?php if ($open_icon_link_in_new_window) { echo ' class="open-in-new-window"';} ?>>Vejledning</a></div><?php } ?>
 
           <div class="submitted">
             <div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
