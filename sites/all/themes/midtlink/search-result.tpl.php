@@ -120,11 +120,15 @@ else {
 
     
   $icon_url = $url;
+  //  $open_icon_link_in_new_window = false;
+  $open_icon_link_in_new_window = true;
+  
   // Icon should directly link to first file attachment if it exists.
   if (isset($result['node']->field_knowlegde_file['und'][0])) {
     $url = file_create_url($result['node']->field_knowlegde_file['und'][0]['uri']);
     $url = parse_url($url);
     $icon_url = $url['path'];
+    $open_icon_link_in_new_window = true;
   }
 	?>
 	<div class="list-item documentation">
@@ -139,7 +143,7 @@ else {
       <div class="item-content documentation">  
         <div class="user-pointer image-replacement">Pointer</div>
         <div class="content-wrapper">
-          <div class="node-type documentation"><a href="<?php echo $icon_url; ?>">Vejledning</a></div>
+          <div class="node-type documentation"><a href="<?php echo $icon_url; ?>"<?php if ($open_icon_link_in_new_window) { echo ' class="open-in-new-window"';} ?>>Vejledning</a></div>
 
           <div class="submitted">
             <div class="title"><h2><a href="<?php print $url; ?>"><?php echo $title; ?></a></h2></div>
