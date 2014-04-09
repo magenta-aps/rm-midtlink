@@ -124,8 +124,8 @@ else {
   $open_icon_link_in_new_window = true;
   
   // Icon should directly link to first file attachment if it exists.
-  if (isset($result['node']->field_knowlegde_file['und'][0])) {
-    $url = file_create_url($result['node']->field_knowlegde_file['und'][0]['uri']);
+  if (isset($node->field_knowlegde_file['und'][0])) {
+    $url = file_create_url($node->field_knowlegde_file['und'][0]['uri']);
     $url = parse_url($url);
     $icon_url = $url['path'];
     $open_icon_link_in_new_window = true;
