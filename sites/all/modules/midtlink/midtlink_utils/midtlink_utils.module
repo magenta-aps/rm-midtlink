@@ -300,21 +300,6 @@ function midtlink_get_approved_answer($nid) {
 		return false;
 }
 
-/**
- * Our own validation for category which checks if either a local or
- * global category has been set.
- * 
- * @param type $element
- * @param type $form_state
- */
-function midtlink_utils_category_validate($element, &$form_state) {
-  $global_value = $form_state['values']['field_category']['und'];
-  $local_value = $form_state['values']['field_category_local']['und'];
-  if ($global_value[0]['tid'] == NULL && count($local_value) == 1 && $local_value[0]['tid'] == NULL) {
-    form_error($element, t('!name field is required.', array('!name' => 'Emne')));
-  }
-} 
-
 function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
 	if($form_id == 'forward_form') {
 		$form['message']['recipients']['#rows'] = 1;
@@ -369,14 +354,15 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     }
       
     $form['field_category']['und']['#options'] = $categoryOptions;
-    $form['field_category']['#element_validate'] = array('midtlink_utils_category_validate');
 
     $form['field_category_local'] = $form['field_category'];
+
     $form['field_category_local']['#weight'] += 1;
     $form['field_category_local']['und']['#required'] = false;
     
     // Disable the default required validation, and use our own,
     // But still show the required marker on the field
+    $form['field_category']['#element_validate'] = array('_midtlink_obssheet_category_validate');
     $form['field_category']['und']['#required'] = false;
     $form['field_category']['und']['#title'] .= ' ' . theme_form_required_marker();
     

@@ -842,10 +842,21 @@ function midtlink_obssheet_create_observation() {
  * @param type $form_state
  */
 function _midtlink_obssheet_category_validate($element, &$form_state) {
-  watchdog('midtlink_utils', 'form state: ' . var_export($form_state['values'], true));
   $global_value = $form_state['values']['field_category']['und'];
   $local_value = $form_state['values']['field_category_local']['und'];
-  if ($global_value[0]['tid'] == NULL && count($local_value) == 1 && $local_value[0]['tid'] == NULL) {
+  $global_value_present = false;
+  $local_value_present = false;
+  foreach ($global_value as $tid => $val) {
+    if (($val != 0 && $val != NULL) && $val['tid'] != 0 && $val['tid'] != null) {
+      $global_value_present = true;
+    }
+  }
+  foreach ($local_value as $tid => $val) {
+    if (($val != 0 && $val != NULL) && $val['tid'] != 0 && $val['tid'] != null) {
+      $local_value_present = true;
+    }
+  }
+  if (!$global_value_present && !$local_value_present) {
     form_error($element, t('!name field is required.', array('!name' => 'Emne')));
   }
 }
