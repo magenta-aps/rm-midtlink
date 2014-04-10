@@ -307,10 +307,10 @@ function midtlink_get_approved_answer($nid) {
  * @param type $element
  * @param type $form_state
  */
-function _midtlink_utils_category_validate($element, &$form_state) {
+function midtlink_utils_category_validate($element, &$form_state) {
   $global_value = $form_state['values']['field_category']['und'];
   $local_value = $form_state['values']['field_category_local']['und'];
-  if ($global_value[0]['tid'] == NULL && count($local_value) == 1 && array_shift($local_value) == NULL) {
+  if ($global_value[0]['tid'] == NULL && count($local_value) == 1 && $local_value[0]['tid'] == NULL) {
     form_error($element, t('!name field is required.', array('!name' => 'Emne')));
   }
 } 
@@ -369,8 +369,8 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     }
       
     $form['field_category']['und']['#options'] = $categoryOptions;
-    $form['field_category']['#element_validate'] = array('_midtlink_utils_category_validate');
-    
+    $form['field_category']['#element_validate'] = array('midtlink_utils_category_validate');
+
     $form['field_category_local'] = $form['field_category'];
     $form['field_category_local']['#weight'] += 1;
     $form['field_category_local']['und']['#required'] = false;
