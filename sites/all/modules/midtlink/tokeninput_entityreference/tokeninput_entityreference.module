@@ -153,11 +153,13 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
   // Add our JavaScript/CSS libraries.
   $path = libraries_get_path('tokeninput');
   if ($path) {
-    drupal_add_js($path . '/src/jquery.tokeninput.js');
-    drupal_add_css(drupal_get_path('module', 'tokeninput_entityreference') . '/tokeninput_entityreference_custom.css');
-    drupal_add_css($path . '/styles/token-input-facebook.css');
-    drupal_add_css($path . '/styles/token-input-mac.css');
-    drupal_add_css($path . '/styles/token-input.css');
+    $form['#attached']['js'] = array($path . '/src/jquery.tokeninput.js');
+    $form['#attached']['css'] = array(
+      drupal_get_path('module', 'tokeninput_entityreference') . '/tokeninput_entityreference_custom.css',
+      $path . '/styles/token-input-facebook.css',
+      $path . '/styles/token-input-mac.css',
+      $path . '/styles/token-input.css'
+    );
   }
 
   if ($instance['widget']['type'] == 'tokeninput_entityreference') {
