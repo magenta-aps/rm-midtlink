@@ -355,9 +355,16 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
     }
       
     $form['field_category']['und']['#options'] = $categoryOptions;
+    $form['field_category']['#element_validate'] = array('_midtlink_obssheet_category_validate');
     
     $form['field_category_local'] = $form['field_category'];
     $form['field_category_local']['#weight'] += 1;
+    $form['field_category_local']['und']['#required'] = false;
+    
+    // Disable the default required validation, and use our own,
+    // But still show the required marker on the field
+    $form['field_category']['und']['#required'] = false;
+    $form['field_category']['und']['#title'] .= ' ' . theme_form_required_marker();
     
     $categoryOptions = array();
        
