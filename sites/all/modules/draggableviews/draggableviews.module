@@ -37,7 +37,7 @@ function draggableviews_form_alter(&$form, &$form_state, $form_id) {
     // Keep destination and other GET params.
     if (count($_GET) > 1) {
       if (isset($_GET['destination'])) {
-        $form['#action'] .= '?destination=' . $_GET['destination'];
+        $form['#action'] .= '?destination=' . base64_decode($_GET['destination']);
       }
       else {
         $get = $_GET;
@@ -220,7 +220,7 @@ function draggableviews_contextual_links_view_alter(&$element, $items) {
       // Don't strip the query string from the URL when setting the destination
       $get = $_GET;
       unset($get['q']);
-      $query_string = urlencode(current_path() . '?' . http_build_query($get));
+      $query_string = base64_encode(current_path() . '?' . http_build_query($get));
       // END HACK
       
       $element['#links']['draggableviews-order'] = array(
