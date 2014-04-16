@@ -37,6 +37,18 @@ function midtlink_upgrade_jan_2014_user_default_permissions() {
     'module' => 'block',
   );
 
+  // Exported permission: 'delete own post content'.
+  $permissions['delete own post content'] = array(
+    'name' => 'delete own post content',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+      'EPJ-konsulenter' => 'EPJ-konsulenter',
+      'SundhedsIT' => 'SundhedsIT',
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'node',
+  );
+
   // Exported permission: 'use text format filtered_html'.
   $permissions['use text format filtered_html'] = array(
     'name' => 'use text format filtered_html',
