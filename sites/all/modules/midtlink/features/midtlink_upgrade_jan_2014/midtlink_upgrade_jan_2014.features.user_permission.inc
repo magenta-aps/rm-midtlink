@@ -37,6 +37,15 @@ function midtlink_upgrade_jan_2014_user_default_permissions() {
     'module' => 'block',
   );
 
+  // Exported permission: 'change recent posts level'.
+  $permissions['change recent posts level'] = array(
+    'name' => 'change recent posts level',
+    'roles' => array(
+      'Administrator' => 'Administrator',
+    ),
+    'module' => 'midtlink_recent_posts',
+  );
+
   // Exported permission: 'delete own post content'.
   $permissions['delete own post content'] = array(
     'name' => 'delete own post content',
