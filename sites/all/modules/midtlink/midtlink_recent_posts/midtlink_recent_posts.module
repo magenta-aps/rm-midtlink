@@ -1,0 +1,112 @@
+<?php
+
+function midtlink_recent_posts_permission() {
+  return array(
+    'change recent posts level' => array(
+      'title' => t('Change recent posts level'), 
+    ),
+  );
+}
+
+function midtlink_recent_posts_menu() {
+  $items = array();
+  $items['admin/config/midtlink_recent_posts'] = array(
+    'title' => 'MidtLink Recent Posts',
+    'description' => 'Configure MidtLink Recent Posts settings.',
+    'position' => 'left',
+    'weight' => -20,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('change recent posts level'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+
+  $items['admin/config/midtlink_recent_posts/level'] = array(
+    'title' => 'MidtLink Recent Posts Level',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('midtlink_recent_posts_admin_level_form'),
+    'access arguments' => array('change recent posts level'),
+  );
+  return $items;
+}
+
+function midtlink_recent_posts_admin_level_form() {
+  $form = array();
+  
+  $options = array(
+    'unit' => t('User\'s main unit'),
+    'subunit' => t('User\'s sub-unit'),
+    'all' => t('All units')
+  );
+  
+  $form['midtlink_recent_posts_level_left'] = array(
+    '#type' => 'select',
+    '#title' => t('Show posts in left column from'),
+    '#options' => $options,
+    '#default_value' => variable_get('midtlink_recent_posts_level_left', 'unit'),
+  );
+  $form['midtlink_recent_posts_level_right'] = array(
+    '#type' => 'select',
+    '#title' => t('Show posts in right column from'),
+    '#options' => $options,
+    '#default_value' => variable_get('midtlink_recent_posts_level_right', 'subunit'),
+  );
+  return system_settings_form($form);
+}
+
+function midtlink_recent_posts_get_block($column) {
+  global $miniTeaser;
+  global $user;
+  $miniTeaser = true; 
+          
+  ob_start();
+  
+  if ($column == 'left') {
+    $listing = variable_get('midtlink_recent_posts_level_left', 'unit');
+  } else if ($column == 'right') {
+    $listing = variable_get('midtlink_recent_posts_level_right', 'subunit');
+  }
+  
+  // Defaults
+  $requiresUserUnit = false;
+  $link = '<a href="'. url('forum') . '">Se flere indlæg</a>';
+  
+  if ($listing == 'unit') { 
+    $title = 'Nyheder fra ' . $user->mainUnitName;
+    $requiresUserUnit = true;
+    $view = 'recent_posts';
+    $viewArg = $user->mainUnitTID;
+  } else if ($listing == 'subunit') {
+    $title = 'Nyheder fra ' . $user->unitName;
+    $link = '<a href="' . url('obssheet/unit/'.$user->unitTID) . '">Se flere indlæg fra min afdeling</a>';
+    $requiresUserUnit = true;
+    $view = 'recent_unit_posts';
+    $viewArg = $user->unitTID;
+  } else {
+    // Recent posts from all units
+    $title = 'Nyheder fra alle afdelinger';
+    $view = 'recent_posts_all_units';
+    $viewArg = null;
+  }
+  ?>
+						<h3><?php echo $title; ?></h3>
+						<?php 
+            if ($requiresUserUnit) {
+              if(!empty($user->unitTID)) {
+                echo views_embed_view($view,'default', $viewArg);
+              }
+              else {
+                echo '<p>Du skal have valgt afdeling i din profil for at se seneste indlæg</p>';
+              }
+            } else {
+              echo views_embed_view($view,'default', $viewArg);
+            }
+						?> 
+						<p style="font-weight:bold;text-align:right;">
+							<?php echo $link; ?>
+						</p>
+<?php
+  $miniTeaser = false;
+  
+  return ob_get_clean();
+}

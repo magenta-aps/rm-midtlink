@@ -45,42 +45,12 @@
 					</div>
 					
 					
-					<?php
-					global $miniTeaser;
-					global $user;
-					$miniTeaser = true; 
-					?>
 					<div class="grid-4 alpha">
-						<h3>Nyheder fra <?php echo $user->mainUnitName; ?></h3>
-						<?php 
-						/* embed view! */
-						if(!empty($user->unitTID)) {
-								echo views_embed_view('recent_posts','default', $user->mainUnitTID);
-						}
-						else {
-							echo '<p>Du skal have valgt afdeling i din profil for at se seneste indlæg</p>';
-						}
-						?> 
-						<p style="font-weight:bold;text-align:right;">
-							<a href="<?php echo url('forum'); ?>">Se flere indlæg</a>
-						</p>
+					<?php echo midtlink_recent_posts_get_block('left'); ?>
 					</div>
-					<div class="grid-4 omega">
-						<h3>Nyheder fra <?php echo $user->unitName; ?></h3>
-						<?php 
-						/* embed view! */
-						if(!empty($user->unitTID)) {
-								echo views_embed_view('recent_unit_posts','default', $user->unitTID);
-						}
-						else {
-							echo '<p>Du skal have valgt afdeling i din profil for at se seneste indlæg</p>';
-						}
-						?>
-						<p style="font-weight:bold;text-align:right;">
-							<a href="<?php echo url('obssheet/unit/'.$user->unitTID); ?>">Se flere indlæg fra min afdeling</a>
-						</p>
+          <div class="grid-4 alpha">
+					<?php echo midtlink_recent_posts_get_block('right'); ?>
 					</div>
-					<?php $miniTeaser = false; ?>
         </div><!-- /#content -->
 
             <div id="sidebar" class="grid-4 omega solid">

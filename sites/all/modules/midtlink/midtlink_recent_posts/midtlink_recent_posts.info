@@ -1,0 +1,4 @@
+name = MidtLink Recent Posts
+description = Showing and setting level of recent posts
+package = MidtLink
+core=7.x
