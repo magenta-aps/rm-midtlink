@@ -84,7 +84,7 @@ function midtlink_recent_posts_get_block($column) {
     $viewArg = $user->unitTID;
   } else {
     // Recent posts from all units
-    $title = 'Nyheder fra alle afdelinger';
+    $title = 'Nyheder fra Region Midt';
     $view = 'recent_posts_all_units';
     $viewArg = null;
   }
