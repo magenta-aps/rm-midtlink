@@ -6,7 +6,7 @@
 
 <div id="header">
   <div class="section container">
-    <div id="logo" class="grid-2"><a href="<?php global $base_root; print $base_root; ?>" class="image-replacement" alt="MidtLink">MidtLink</a></div>
+    <div id="logo" class="grid-2"><a href="<?php global $base_url; print $base_url; ?>" class="image-replacement" alt="MidtLink">MidtLink</a></div>
     <?php include('includes/user_menu.inc.php'); ?>      
   </div><!-- /.section -->
 </div><!-- /#header -->
