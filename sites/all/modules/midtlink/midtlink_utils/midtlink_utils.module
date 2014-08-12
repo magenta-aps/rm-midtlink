@@ -320,81 +320,82 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
 		$form['field_position']['#access'] = false; //Updated through the BSK integration
 	}
 	elseif($form_id == 'knowlegde_node_form') {
-    global $user;
-    
-    // Hide additional settings
-    if ($user->uid != 1) {
-      $form['additional_settings']['#access'] = false;
-    }
-    
-    // Only hide on add form, not on edit
-    if (arg(1) == 'add') {
-      // Hide choice of unit on Create Vejledning form
-      $form['field_unit']['#access'] = false;
-    } else {
-      // On Edit form, show only the main units
-      $mainUnits = midtlink_get_unit_tree(FALSE);
-      foreach($mainUnits as $tid => $term) {
-        $mainUnitOptions[$tid] = $term['name'];
-      }
-    
-      $form['field_unit']['und']['#options'] = $mainUnitOptions;
-    }
-    
-    // Hide old field, in case we haven't removed it
-    $form['field_knowlegde_unit']['#access'] = false;
-    // Hide old field, in case we haven't removed it
-    $form['field_knowlegde_unit_ref']['#access'] = false;
-    
-    $categoryOptions = array();
-    
-    $categories = midtlink_get_global_keywords();
-    foreach($categories as $i) {
-      $categoryOptions[$i->tid] = $i->name;
-    }
-      
-    $form['field_category']['und']['#options'] = $categoryOptions;
-
-    $form['field_category_local'] = $form['field_category'];
-
-    $form['field_category_local']['#weight'] += 1;
-    $form['field_category_local']['und']['#required'] = false;
-    
-    // Disable the default required validation, and use our own,
-    // But still show the required marker on the field
-    $form['field_category']['#element_validate'] = array('_midtlink_obssheet_category_validate');
-    $form['field_category']['und']['#required'] = false;
-    $form['field_category']['und']['#title'] .= ' ' . theme_form_required_marker();
-    
-    $categoryOptions = array();
-       
-    if (arg(1) == 'add') {
-      // On Create form, show the user's main unit's local keywords
       global $user;
-      $mainUnitName = $user->mainUnitName;
-      $categories = midtlink_get_keywords_by_unit($mainUnitName);
-    } else {
-      // On Edit form, show only the post's unit's local keywords
-      $postUnitTID = (int)$form['#node']->field_unit['und'][0]['tid'];
-      $mainUnitTerm = midtlink_get_main_unit_from_subunit($postUnitTID);
-      $postMainUnitTID = $mainUnitTerm->tid;
-      $mainUnitName = $mainUnitTerm->name;
-      $categories = midtlink_get_keywords_by_unit_id($postMainUnitTID);
-    }
-  
-    $form['field_category_local']['und']['#title'] = 'Lokale Emner for ' . $mainUnitName;
-    
-    
-    foreach($categories as $i) {
-      $categoryOptions[$i->tid] = $i->name;
-    }
-    
-    $form['field_category_local']['und']['#options'] = $categoryOptions;
-    
-    // Hide local emner field if it's empty
-    if (empty($categoryOptions)) {
-      $form['field_category_local']['und']['#access'] = false;
-    }
+
+      // Hide additional settings
+      if ($user->uid != 1) {
+        $form['additional_settings']['#access'] = false;
+      }
+
+      // Only hide on add form, not on edit
+      if (arg(1) == 'add') {
+        // Hide choice of unit on Create Vejledning form
+        $form['field_unit']['#access'] = false;
+      } else {
+        // On Edit form, show only the main units
+        $mainUnits = midtlink_get_unit_tree(FALSE);
+        foreach($mainUnits as $tid => $term) {
+          $mainUnitOptions[$tid] = $term['name'];
+        }
+
+        $form['field_unit']['und']['#options'] = $mainUnitOptions;
+      }
+
+      // Hide old field, in case we haven't removed it
+      $form['field_knowlegde_unit']['#access'] = false;
+      // Hide old field, in case we haven't removed it
+      $form['field_knowlegde_unit_ref']['#access'] = false;
+
+      $categoryOptions = array();
+
+      $categories = midtlink_get_global_keywords();
+      foreach($categories as $i) {
+        $categoryOptions[$i->tid] = $i->name;
+      }
+
+      $form['field_category']['und']['#options'] = $categoryOptions;
+
+      $form['field_category_local'] = $form['field_category'];
+
+      $form['field_category_local']['#weight'] += 1;
+      $form['field_category_local']['und']['#required'] = false;
+
+      // Disable the default required validation, and use our own,
+      // But still show the required marker on the field
+      $form['field_category']['#element_validate'] = array('_midtlink_obssheet_category_validate');
+      $form['field_category']['und']['#required'] = false;
+      $form['field_category']['und']['#title'] .= ' ' . theme_form_required_marker();
+
+      $categoryOptions = array();
+
+      if (arg(1) == 'add') {
+        // On Create form, show the user's main unit's local keywords
+        global $user;
+        $mainUnitName = $user->mainUnitName;
+        $categories = midtlink_get_keywords_by_unit($mainUnitName);
+      } else {
+        // On Edit form, show only the post's unit's local keywords
+        $postUnitTID = (int)$form['#node']->field_unit['und'][0]['tid'];
+        $mainUnitTerm = midtlink_get_main_unit_from_subunit($postUnitTID);
+        $postMainUnitTID = $mainUnitTerm->tid;
+        $mainUnitName = $mainUnitTerm->name;
+        $categories = midtlink_get_keywords_by_unit_id($postMainUnitTID);
+      }
+
+      $form['field_category_local']['und']['#title'] = 'Lokale Emner for ' . $mainUnitName;
+
+
+      foreach($categories as $i) {
+        $categoryOptions[$i->tid] = $i->name;
+      }
+
+      $form['field_category_local']['und']['#options'] = $categoryOptions;
+
+      // Hide local emner field if it's empty
+      if (empty($categoryOptions)) {
+        $form['field_category_local']['und']['#access'] = false;
+        unset($form['field_category_local']);
+      }
 	}
 }
 
@@ -407,10 +408,17 @@ function midtlink_utils_node_validate($node, $form, &$form_state) {
       form_set_value($form['field_unit']['und'], $value, $form_state);
     }
     $form_state['values']['status'] = 1; // always published;
-    
-    
-    $value = array_merge($form_state['values']['field_category']['und'], $form_state['values']['field_category_local']['und']);
-    form_set_value($form['field_category']['und'], $value, $form_state);
+
+    $global_value = $form_state['values']['field_category']['und'];
+    if ($global_value[0]['tid'] == NULL) {
+      $global_value = array();
+    }
+    if (array_key_exists('field_category_local', $form_state['values'])) {
+      $value = array('und' => array_merge($global_value, $form_state['values']['field_category_local']['und']));
+    } else {
+      $value = array('und' => $global_value);
+    }
+    form_set_value($form['field_category'], $value, $form_state);
   }
 }
 

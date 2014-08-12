@@ -851,12 +851,22 @@ function _midtlink_obssheet_category_validate($element, &$form_state) {
       $global_value_present = true;
     }
   }
-  foreach ($local_value as $tid => $val) {
-    if (($val != 0 && $val != NULL) && $val['tid'] != 0 && $val['tid'] != null) {
-      $local_value_present = true;
+  $is_present = true;
+  if ($local_value == null) {
+    if (!$global_value_present) {
+      $is_present = false;
+    }
+  } else {
+    foreach ($local_value as $tid => $val) {
+      if (($val != 0 && $val != NULL) && $val['tid'] != 0 && $val['tid'] != NULL) {
+        $local_value_present = TRUE;
+      }
+    }
+    if (!$global_value_present && !$local_value_present) {
+      $is_present = false;
     }
   }
-  if (!$global_value_present && !$local_value_present) {
+  if (!$is_present) {
     form_error($element, t('!name field is required.', array('!name' => 'Emne')));
   }
 }
@@ -978,6 +988,7 @@ function midtlink_obssheet_form_post_node_form_alter(&$form, &$form_state, $form
   
   if (empty($categoryOptions)) {
     $form['field_category_local']['#access'] = false;
+    unset($form['field_category_local']);
   }
     
   $form['field_keywords']['#weight'] = 3;
@@ -1117,7 +1128,11 @@ function midtlink_obssheet_node_validate($node, $form, &$form_state) {
     if ($global_value[0]['tid'] == NULL) {
       $global_value = array();
     }
-    $value = array('und' => array_merge($global_value, $form_state['values']['field_category_local']['und']));
+    if (array_key_exists('field_category_local', $form_state['values'])) {
+      $value = array('und' => array_merge($global_value, $form_state['values']['field_category_local']['und']));
+    } else {
+      $value = array('und' => $global_value);
+    }
     form_set_value($form['field_category'], $value, $form_state);
   }
 }
