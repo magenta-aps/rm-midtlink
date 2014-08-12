@@ -36,7 +36,12 @@ if(!$page) {
 					<div class="submitted">
             <div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
             <div class="name small"><?php echo $name; ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo; ?>)</span><?php } ?></div>
-						<div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
+                      <?php if ($node->created == $node->changed) { ?>
+					  <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
+                      <?php } else { ?>
+                      <div class="meta small">Opdateret d. <?php echo
+                        format_date($node->changed,'long'); ?></div>
+                      <?php } ?>
 					</div>
 
 
