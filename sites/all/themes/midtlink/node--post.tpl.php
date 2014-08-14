@@ -107,8 +107,7 @@ if(isset($node->field_keywords['und'])) {
         ?>
         <div class="meta small">
 					Indlæg tilknyttet
-					<?php echo l($content['field_unit'][0]['#options']['entity']->name,'obssheet/unit/'.$content['field_unit'][0]['#options']['entity']->tid); ?>,
-					<strong><?php echo $mainUnit->name; ?></strong>
+					<?php echo l($content['field_unit'][0]['#options']['entity']->name,'obssheet/unit/'.$content['field_unit'][0]['#options']['entity']->tid); ?>
 				</div>
         <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?> &mdash; ID # <?php echo sprintf('%05s',$node->nid); ?></div>
       </div>
