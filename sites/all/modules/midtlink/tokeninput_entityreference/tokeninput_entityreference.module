@@ -186,6 +186,15 @@ function tokeninput_entityreference_field_widget_form(&$form, &$form_state, $fie
       '#element_validate' => array('tokeninput_entityreference_validate'),
     );
 
+    // TODO: Hack; This should really be configurable in the field settings.
+    if ($field['field_name'] == 'field_responsible') {
+      $hintText = 'Indtast navnet på den du ønsker at spørge';
+    } else if ($field['field_name'] == 'field_owner') {
+      $hintText = 'Indtast en alternativ ejer';
+    } else {
+      $hintText = '';
+    }
+
     // This function calls the appropriate function to make all the correct
     // fields on the page into tokenInput fields.
     $element['#attached']['js'] = array("(function ($) {
@@ -218,7 +227,7 @@ $.fn.makeFieldTokenInput = function() {
         tokenLimit: tokenLimit,
         theme: theme,
         prePopulate: prePopulate,
-    	hintText: 'Indtast navnet på den du ønsker at spørge',
+    	hintText: '$hintText',
     	noResultsText: 'Ingen resultater',
     	searchingText: 'Søger…',	
       }
