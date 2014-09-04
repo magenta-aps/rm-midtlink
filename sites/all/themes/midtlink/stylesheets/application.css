@@ -1086,6 +1086,11 @@ a.new-node {
 	border-color:#EAB76A;
 }
 
+.list-item .section {
+    overflow: auto;
+    margin-bottom: -10px;
+}
+
 
 /*----------------------------------------------------------------------
   Tooltip
