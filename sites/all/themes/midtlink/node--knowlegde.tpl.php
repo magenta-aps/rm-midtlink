@@ -109,6 +109,12 @@ else {
     <div class="submitted">
         <div class="name"><?php echo theme('username', array('account' => user_load($author))); ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
         <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
+        <?php if (!($node->created == $node->changed &&
+                  $node->last_comment_timestamp <= $node->created)) {
+          $last_updated = max($node->changed, $node->last_comment_timestamp);
+        ?>
+        <div class="meta small">Opdateret d. <?php echo format_date($last_updated,'long'); ?></div>
+        <?php } ?>
     </div>
 		<div class="taxonomies">
 			<div class="categories">
