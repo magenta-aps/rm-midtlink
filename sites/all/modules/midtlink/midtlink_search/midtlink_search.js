@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
 	function makesearchreq() {
 		var input = jQuery('#askquestion_input').val();
 		
-		jQuery.get("/midtlink_suggest_entries?keys="+input,
+		jQuery.get("midtlink_suggest_entries?keys="+input,
 			function(data) {
 					if(data.num > 0) {
 						jQuery('#livelist').empty();

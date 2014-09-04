@@ -31,7 +31,7 @@
 					<div id="add-post" class="block">
             <?php print render($page['front_text']); ?>
 						<div class="content">
-							<form action="/create_observation">
+							<form action="create_observation">
 								<p>
 									<input id="askquestion_input" style="width:400px;" type="text" name="text" placeholder="Skriv dit spørgsmål" value="" />
 									<input type="submit" value="Spørg" class="form-submit" />
