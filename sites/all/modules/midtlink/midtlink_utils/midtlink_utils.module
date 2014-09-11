@@ -549,7 +549,7 @@ function midtlink_utils_get_author_info($uid) {
 	$mainUnit = midtlink_get_main_unit($r->tid);
 	$shortName = '';
 	if($r->tid != $mainUnit->tid) {
-//		$o[] = $mainUnit->shortname;
+		$o[] = $mainUnit->shortname;
 		$shortName = $mainUnit->shortname;
 	}
 	$o = implode(', ',$o);
@@ -574,9 +574,9 @@ function midtlink_utils_node_view($node, $build_mode = 'full') {
     if(trim($r->unit) != '') { $o[] = $r->unit; }
 		
 		$mainUnit = midtlink_get_main_unit($r->tid);
-//		if($r->tid != $mainUnit->tid) {
-//			$o[] = $mainUnit->shortname;
-//		}
+		if($r->tid != $mainUnit->tid) {
+			$o[] = $mainUnit->shortname;
+		}
 		$node->authorunit['name'] = $mainUnit->name;
 		$node->authorunit['shortname'] = $mainUnit->shortname;
 		$node->authorunit['tid'] = $mainUnit->tid;
@@ -599,9 +599,9 @@ function midtlink_utils_comment_view($comment, $view_mode, $langcode) {
     if(trim($r->unit) != '') { $o[] = trim($r->unit); }
     
     $mainUnit = midtlink_get_main_unit($r->tid);
-//		if($r->tid != $mainUnit->tid) {
-//			$o[] = $mainUnit->shortname;
-//		}
+		if($r->tid != $mainUnit->tid) {
+			$o[] = $mainUnit->shortname;
+		}
 		$comment->authorunit['name'] = $mainUnit->name;
 		$comment->authorunit['shortname'] = $mainUnit->shortname;
 		$comment->authorunit['tid'] = $mainUnit->tid;
