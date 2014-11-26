@@ -7,14 +7,21 @@
  */
 
 /**
- * Implementats hook_install().
+ * Implements hook_install().
  */
 function forward_install() {
   variable_set('forward_theme_template', 1);
 
+  // Setup mail system for HTML emails
   $mail_systems = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
   $mail_systems['forward'] = 'ForwardMailSystem';
   variable_set('mail_system', $mail_systems);
+
+  // Warn administrator
+  if (module_exists('mailsystem')) {
+    $link = l(t('Review or change your mail setup.'), 'admin/config/system/mailsystem', array());
+    drupal_set_message(t('The mail system for Forward has been set to enable HTML emails. ') . $link, 'warning');
+  }
 
   // Initialize statistics table
   $query = db_select('node', 'n');
@@ -29,7 +36,7 @@ function forward_install() {
  */
 function forward_uninstall() {
 
-  // Get global variable array
+  // Remove variables
   global $conf;
   foreach (array_keys($conf) as $key) {
     // Find variables that have the module prefix
@@ -38,9 +45,16 @@ function forward_uninstall() {
     }
   }
 
+  // Remove mail system
   $mail_systems = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
   unset($mail_systems['forward']);
   variable_set('mail_system', $mail_systems);
+
+  // Warn administrator
+  if (module_exists('mailsystem')) {
+    $link = l(t('Review or change your mail setup.'), 'admin/config/system/mailsystem', array());
+    drupal_set_message(t('The mail system for Forward has been removed. ').$link, 'warning');
+  }
 }
 
 

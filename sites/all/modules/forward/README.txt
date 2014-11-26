@@ -43,7 +43,7 @@ Step 4)
 
   If you wish to customize the emails, copy 'forward.tpl.php' into your theme
   directory. Then you can customize the function as needed and those changes
-  will only appear went sent by a user using that theme.
+  will only appear when sent by a user using that theme.
 
   If you check the 'custom display' box on the configuration page, the Forward
   view mode which defines the fields that will be sent in Forward emails can
@@ -105,6 +105,20 @@ Step 8)
   View: Most clickthroughs
 
 
+SENDING FORWARD EMAILS AS HTML
+
+  By default, Forward will install a new mail system named ForwardMailSystem
+  that is configured to send email as HTML. If you installed a different
+  mail system module for sending emails, you should visit the Mail System
+  configuration page at "admin/config/system/mailsystem" to change the mail
+  system setup.  For example, if you installed the HTMLMail module, you could
+  change the default site wide mail system to HTMLMailSystem. The Mail System
+  module also allows you to use one mail system as a default but a different
+  mail system on a module by module basis.  This would allow you to use a
+  special mail handler for Forward emails while not affecting emails sent
+  from the rest of your site.
+
+ 
 THEMEING
 
 Sent email   - copy forward.tpl.php into your theme and modify
@@ -115,8 +129,8 @@ Forward links generated using Panels, Display Suite or Views integration
 are fully themeable. Forward links generated into the node inline links
 render array are not directly themeable; to override these links you
 can write a preprocess_node function. However, the ability to provide
-a custom icon and and any text for the links should make this
-unnecessary for most use cases.
+a custom icon and any text for the links via the Forward configuration
+page should make this unnecessary for most use cases.
 
 
 TEMPLATES
