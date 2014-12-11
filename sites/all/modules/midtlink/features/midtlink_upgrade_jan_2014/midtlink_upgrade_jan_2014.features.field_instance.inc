@@ -436,6 +436,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     'label' => 'Link',
     'required' => 1,
     'settings' => array(
+      'absolute_url' => 1,
       'attributes' => array(
         'class' => '',
         'configurable_title' => 0,
@@ -448,6 +449,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
       ),
       'enable_tokens' => 1,
       'title' => 'required',
+      'title_label_use_field_label' => FALSE,
       'title_maxlength' => 128,
       'title_value' => '',
       'url' => 0,
@@ -553,6 +555,13 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
         'type' => 'taxonomy_term_reference_plain',
         'weight' => 1,
       ),
+      'full' => array(
+        'label' => 'hidden',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_plain',
+        'weight' => 1,
+      ),
       'teaser' => array(
         'label' => 'hidden',
         'module' => 'taxonomy',
@@ -590,6 +599,13 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 2,
+      ),
+      'full' => array(
         'label' => 'hidden',
         'module' => 'text',
         'settings' => array(),
@@ -661,6 +677,13 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
         'type' => 'taxonomy_term_reference_plain',
         'weight' => 0,
       ),
+      'full' => array(
+        'label' => 'hidden',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_plain',
+        'weight' => 0,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -698,10 +721,25 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
         'label' => 'above',
         'module' => 'editablefields',
         'settings' => array(
-          'click_to_edit' => FALSE,
+          'click_to_edit' => 0,
+          'click_to_edit_style' => 'button',
+          'empty_text' => 'Ingen',
+          'fallback_format' => 'entityreference_label',
+          'fallback_settings' => array(
+            'link' => 1,
+          ),
+        ),
+        'type' => 'editable',
+        'weight' => 4,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'module' => 'editablefields',
+        'settings' => array(
+          'click_to_edit' => 1,
           'click_to_edit_style' => 'button',
           'empty_text' => '',
-          'fallback_format' => NULL,
+          'fallback_format' => 'entityreference_entity_id',
           'fallback_settings' => array(),
         ),
         'type' => 'editable',
@@ -755,6 +793,19 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
         'type' => 'editable',
         'weight' => 3,
       ),
+      'full' => array(
+        'label' => 'above',
+        'module' => 'editablefields',
+        'settings' => array(
+          'click_to_edit' => FALSE,
+          'click_to_edit_style' => 'button',
+          'empty_text' => '',
+          'fallback_format' => NULL,
+          'fallback_settings' => array(),
+        ),
+        'type' => 'editable',
+        'weight' => 3,
+      ),
       'teaser' => array(
         'label' => 'above',
         'settings' => array(),
@@ -789,6 +840,13 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
+        'label' => 'hidden',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 5,
+      ),
+      'full' => array(
         'label' => 'hidden',
         'module' => 'taxonomy',
         'settings' => array(),

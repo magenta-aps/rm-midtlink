@@ -50,5 +50,6 @@ function midtlink_upgrade_jan_2014_node_info() {
       'help' => '',
     ),
   );
+  drupal_alter('node_info', $items);
   return $items;
 }
