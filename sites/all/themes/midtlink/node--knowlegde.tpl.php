@@ -126,7 +126,7 @@ else {
 					?>
 				</ul>
 			</div>
-			<!--<div class="tags">
+			<div class="tags">
 				<h2>N&oslash;gleord:</h2>
 				<ul class="reset">
 				<?php
@@ -138,7 +138,7 @@ else {
 				}
 				?>
 				</ul>
-			</div>-->
+			</div>
 		</div><!--/.taxonomies-->
 		<div class="post-body">
 			<?php
