@@ -30,18 +30,27 @@
   <?php print render($title_prefix); ?>
   <?php
   if(arg(2) != '') {
-		$term = taxonomy_term_load(arg(2));
-		echo '<h1 class="bluebuttonstyle">'.$term->name.'</h1>';
-		if($term->description!='') {
-			if(strpos($term->description,'<p>')===false) {
-				echo '<p>'.$term->description.'</p>';	
-			}
-			else {
-				echo $term->description;
-			}
-		}
-	}
-	?>
+    $term = taxonomy_term_load(arg(2));
+    if (midtlink_is_keyword_local($term->tid)) {
+      $class = 'darkbluebuttonstyle';
+      $classDesc = 'darkbluedescription';
+    } else {
+      $class = 'greenbuttonstyle';
+      $classDesc = '';
+    }
+    echo '<h1 class="'.$class.'">'.$term->name.'</h1>';
+    if($term->description!='') {
+      echo '<div class="categorydescription '.$classDesc.'">';
+      if(strpos($term->description,'<p>')===false) {
+        echo '<p>'.$term->description.'</p>';
+      }
+      else {
+        echo $term->description;
+      }
+      echo '</div>';
+    }
+  }
+  ?>
   <?php print render($title_suffix); ?>
   <?php if ($header): ?>
     <div class="view-header">

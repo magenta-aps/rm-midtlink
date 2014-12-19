@@ -13,11 +13,12 @@
 	  <?php
 	  $categories = midtlink_get_global_keywords();
 	  $c = 0;
-    
+
     if(arg(0) == 'dokumentation') {
       foreach($categories as $i) {
         $c++;
-        echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,'dokumentation/'.$activeMainTID.'/'.$i->tid).'</li>'."\n";
+        echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,
+            'taxonomy/term/'.$i->tid).'</li>'."\n";
       }
     } else if(arg(0) == 'obssheet') {
       foreach($categories as $i) {
