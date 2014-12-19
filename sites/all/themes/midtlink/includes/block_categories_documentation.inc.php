@@ -8,7 +8,7 @@
 
   <div class="content">
 
-    <h2>Emner</h2>
+    <h2>Regionale emneoversigter</h2>
     <ul class="reset">
 	  <?php
 	  $categories = midtlink_get_global_keywords();
@@ -30,7 +30,7 @@
         $local_categories = midtlink_get_keywords_by_unit($mainUnitName);
         if (!empty($local_categories)):
     ?>
-    <h2 style="clear: both;">Lokale emner for <?php echo $mainUnitName; ?></h2>
+    <h2 style="clear: both;">Lokale emneroversigter for <?php echo $mainUnitName; ?></h2>
     <ul class="reset local-categories">
     <?php
     

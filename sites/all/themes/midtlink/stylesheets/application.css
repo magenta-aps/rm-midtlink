@@ -114,7 +114,7 @@ body{
   height: auto !important;
   margin:0 auto 0;
   padding-top:45px;
-  background:#fff url(../images/search-hint.png) no-repeat 459px 18px;
+  /*background:#fff url(../images/search-hint.png) no-repeat 459px 18px;*/
   z-index:1;
 }
 
