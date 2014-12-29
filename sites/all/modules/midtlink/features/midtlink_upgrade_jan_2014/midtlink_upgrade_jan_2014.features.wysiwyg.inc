@@ -19,7 +19,7 @@ function midtlink_upgrade_jan_2014_wysiwyg_default_profiles() {
       'user_choose' => 0,
       'show_toggle' => 0,
       'theme' => 'advanced',
-      'language' => 'da',
+      'language' => 'en',
       'buttons' => array(
         'default' => array(
           'bold' => 1,
