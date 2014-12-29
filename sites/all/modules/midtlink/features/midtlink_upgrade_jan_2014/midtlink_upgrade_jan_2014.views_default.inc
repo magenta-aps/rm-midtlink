@@ -583,11 +583,11 @@ function midtlink_upgrade_jan_2014_views_default_views() {
   $export['reorder_unit_links'] = $view;
 
   $view = new view();
-  $view->name = 'taxonomy_term_overridden';
+  $view->name = 'taxonomy_keyword';
   $view->description = 'A view to emulate Drupal core\'s handling of taxonomy/term.';
   $view->tag = 'default';
   $view->base_table = 'node';
-  $view->human_name = 'Taxonomy term overridden';
+  $view->human_name = 'Taxonomy Keyword';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
@@ -647,7 +647,7 @@ function midtlink_upgrade_jan_2014_views_default_views() {
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
-  $handler->display->display_options['path'] = 'taxonomy/term/%';
+  $handler->display->display_options['path'] = 'taxonomy/keyword/%';
 
   /* Display: Feed */
   $handler = $view->new_display('feed', 'Feed', 'feed');
@@ -655,12 +655,12 @@ function midtlink_upgrade_jan_2014_views_default_views() {
   $handler->display->display_options['pager']['options']['items_per_page'] = 15;
   $handler->display->display_options['style_plugin'] = 'rss';
   $handler->display->display_options['row_plugin'] = 'node_rss';
-  $handler->display->display_options['path'] = 'taxonomy/term/%/%/feed';
+  $handler->display->display_options['path'] = 'taxonomy/keyword/%/%/feed';
   $handler->display->display_options['displays'] = array(
     'page' => 'page',
     'default' => 0,
   );
-  $translatables['taxonomy_term_overridden'] = array(
+  $translatables['taxonomy_keyword'] = array(
     t('Master'),
     t('more'),
     t('Apply'),
@@ -680,7 +680,7 @@ function midtlink_upgrade_jan_2014_views_default_views() {
     t('Page'),
     t('Feed'),
   );
-  $export['taxonomy_term_overridden'] = $view;
+  $export['taxonomy_keyword'] = $view;
 
   $view = new view();
   $view->name = 'unit_links';

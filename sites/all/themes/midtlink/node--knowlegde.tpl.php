@@ -131,7 +131,7 @@ else {
 				<ul class="reset">
 				<?php
 				foreach($keywords as $k) {
-					echo '<li><a href="'.url('taxonomy/term/'.$k['tid']).'">'.$k['name'].'</a></li>';
+					echo '<li><a href="'.url('taxonomy/keyword/'.$k['tid']).'">'.$k['name'].'</a></li>';
 				}
 				if(sizeof($keywords)<=0) {
 					echo '<li class="empty"><em>Ingen nøgleord tilføjet</em></li>';
