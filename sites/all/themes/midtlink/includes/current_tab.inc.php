@@ -19,6 +19,16 @@
     $activeMainTID = arg(1);
     $activeTermTID = null;
   }
+  else if (arg(0) == 'taxonomy') {
+    $tid = arg(2);
+    if (midtlink_is_keyword_local($tid)) {
+      $term = midtlink_get_main_unit_from_local_keyword($tid);
+      $activeMainTID = $term->tid;
+    } else {
+      $activeMainTID = $user->mainUnitTID;
+    }
+    $activeTermTID = null;
+  }
   else {
     global $user;
     $activeMainTID = $user->mainUnitTID;
