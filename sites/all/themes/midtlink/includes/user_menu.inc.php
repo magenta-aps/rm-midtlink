@@ -21,7 +21,8 @@
         <dt><a id="linkg" style="cursor:pointer;">Mig (<?php echo $user->name; ?>)</a></dt>
         <dd>
           <ul id="ulg" class="reset">
-          <li class="profile"><?php print l("Profil", "user"); ?></li>
+          <li class="profile"><?php print l("Profil og aktivitet", "user");
+            ?></li>
           <!--<li class="settings"><a href="#">Indstillinger</a></li>-->
           <li class="logout"><?php print l("Log ud", "user/logout"); ?></li>
           </ul>
