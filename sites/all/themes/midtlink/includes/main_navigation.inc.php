@@ -11,7 +11,7 @@
   if($is_front) { $homeActive = ' active'; }
   if(arg(0) == 'obssheet') { $obsActive = ' active'; }
   if(isset($node) && $node->type == 'post') { $forumActive = ' active'; }
-  if(arg(0) == 'forum' || arg(0) == 'browse_categories' || arg(0) == 'taxonomy'
+  if(arg(0) == 'forum' || arg(0) == 'browse_categories'
     || arg(0) == 'create_observation') { $forumActive = ' active'; }
   if(arg(0) == 'dokumentation') { $docuActive = ' active'; }
   if(isset($node) && $node->type == 'knowlegde') { $docuActive = ' active'; }
