@@ -73,7 +73,7 @@ if(!$page) {
           </div>
           <ul class="categories reset">
             <?php foreach($categories as $c) { ?>
-              <li><a href="<?php echo url('dokumentation/'.$c['unit_tid'].'/'.$c['tid']); ?>"<?php echo ' class="' . $c['class'] . '"';?>><?php echo $c['name']; ?></a></li>
+              <li><a href="<?php echo url('taxonomy/keyword/'.$c['tid']); ?>"<?php echo ' class="' . $c['class'] . '"';?>><?php echo $c['name']; ?></a></li>
             <?php } ?>
           </ul>
           <?php } ?>
@@ -121,7 +121,7 @@ else {
 				<ul class="reset">
 					<?php
 					foreach($categories as $c) {
-						echo '<li><a href="'.url('dokumentation/'.$c['unit_tid'].'/'.$c['tid']).'"'.' class="' . $c['class'] . '"'.'>'.$c['name'].'<span>&nbsp;</span></a></li>';
+						echo '<li><a href="'.url('taxonomy/keyword/' .$c['tid']).'"'.' class="' . $c['class'] . '"'.'>'.$c['name'].'<span>&nbsp;</span></a></li>';
 					}
 					?>
 				</ul>
@@ -131,7 +131,7 @@ else {
 				<ul class="reset">
 				<?php
 				foreach($keywords as $k) {
-					echo '<li><a href="'.url('taxonomy/term/'.$k['tid']).'">'.$k['name'].'</a></li>';
+					echo '<li><a href="'.url('taxonomy/keyword/'.$k['tid']).'">'.$k['name'].'</a></li>';
 				}
 				if(sizeof($keywords)<=0) {
 					echo '<li class="empty"><em>Ingen nøgleord tilføjet</em></li>';

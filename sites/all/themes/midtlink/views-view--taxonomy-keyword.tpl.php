@@ -31,12 +31,19 @@
   <?php
   if(arg(2) != '') {
     $term = taxonomy_term_load(arg(2));
-    if (midtlink_is_keyword_local($term->tid)) {
-      $class = 'darkbluebuttonstyle';
-      $classDesc = 'darkbluedescription';
-    } else {
-      $class = 'greenbuttonstyle';
+    if ($term->vid != 3) {
+      // Handle keywords (Nøgleord)
+      $class = 'bluebuttonstyle';
       $classDesc = '';
+    } else {
+      if (midtlink_is_keyword_local($term->tid)) {
+        $class = 'darkbluebuttonstyle';
+        $classDesc = 'darkbluedescription';
+      }
+      else {
+        $class = 'greenbuttonstyle';
+        $classDesc = '';
+      }
     }
     echo '<h1 class="'.$class.'">'.$term->name.'</h1>';
     if($term->description!='') {
