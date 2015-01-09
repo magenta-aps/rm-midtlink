@@ -570,7 +570,7 @@ body{
   margin-right:-4px;
   background-color:transparent;
   background-image:url(../images/sprite_v2.png);
-  background-position:-151px -232px;
+  background-position:-151px -263px;
   padding:0 5px 0;
   line-height:30px;
   position:absolute;
@@ -597,11 +597,6 @@ body{
 .search-form form .form-actions input:focus {
   background-position:-412px -263px;
 }
-
-.search-form form .form-item.form-type-textfield input:focus {
-  background-position:-151px -263px;
-}
-
 
 /*----------------------------------------------------------------------
   Breadcrumbs (build in Drupal)
