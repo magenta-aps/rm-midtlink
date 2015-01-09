@@ -512,19 +512,19 @@ function midtlink_upgrade_jan_2014_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Sort criterion: Content: Updated/commented date */
-  $handler->display->display_options['sorts']['last_updated']['id'] = 'last_updated';
-  $handler->display->display_options['sorts']['last_updated']['table'] = 'node_comment_statistics';
-  $handler->display->display_options['sorts']['last_updated']['field'] = 'last_updated';
-  $handler->display->display_options['sorts']['last_updated']['order'] = 'DESC';
-  /* Contextual filter: Content: User posted or commented */
-  $handler->display->display_options['arguments']['uid_touch']['id'] = 'uid_touch';
-  $handler->display->display_options['arguments']['uid_touch']['table'] = 'node';
-  $handler->display->display_options['arguments']['uid_touch']['field'] = 'uid_touch';
-  $handler->display->display_options['arguments']['uid_touch']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['uid_touch']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['uid_touch']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['uid_touch']['summary_options']['items_per_page'] = '25';
+  /* Sort criterion: Content: Updated date */
+  $handler->display->display_options['sorts']['changed']['id'] = 'changed';
+  $handler->display->display_options['sorts']['changed']['table'] = 'node';
+  $handler->display->display_options['sorts']['changed']['field'] = 'changed';
+  $handler->display->display_options['sorts']['changed']['order'] = 'DESC';
+  /* Contextual filter: Content: Author uid */
+  $handler->display->display_options['arguments']['uid']['id'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['table'] = 'node';
+  $handler->display->display_options['arguments']['uid']['field'] = 'uid';
+  $handler->display->display_options['arguments']['uid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['uid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['uid']['summary_options']['items_per_page'] = '25';
   /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
