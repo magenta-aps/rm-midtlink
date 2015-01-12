@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * Implements hook_views_api().
+ */
+function midtlink_owner_views_api() {
+  return array(
+    'api' => 3
+  );
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function midtlink_owner_views_data_alter(&$data) {
+  $data['node']['midtlink_owner'] = array(
+    'group' => t('MidtLink - Owner'),
+    'title' => t('User is owner or author'),
+    'help' => t('Display nodes only if a user is the owner or author.'),
+    'argument' => array(
+      'field' => 'uid',
+      'name table' => 'users',
+      'name field' => 'name',
+      'handler' =>
+        'midtlink_owner_views_handler_argument_owner_uid',
+      'no group by' => TRUE,
+    ),
+//    'filter' => array(
+//      'field' => 'uid',
+//      'name table' => 'users',
+//      'name field' => 'name',
+//      'handler' => 'views_handler_filter_tracker_comment_user_uid'
+//    ),
+  );
+}

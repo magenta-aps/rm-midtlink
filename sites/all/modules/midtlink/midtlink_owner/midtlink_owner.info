@@ -1,0 +1,6 @@
+name = MidtLink Owner
+description = Support for nodes having owners
+package = MidtLink
+core=7.x
+
+files[] = midtlink_owner_views_handler_argument_owner_uid.inc
