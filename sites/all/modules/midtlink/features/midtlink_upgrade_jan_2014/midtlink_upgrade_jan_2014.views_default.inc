@@ -517,14 +517,14 @@ function midtlink_upgrade_jan_2014_views_default_views() {
   $handler->display->display_options['sorts']['changed']['table'] = 'node';
   $handler->display->display_options['sorts']['changed']['field'] = 'changed';
   $handler->display->display_options['sorts']['changed']['order'] = 'DESC';
-  /* Contextual filter: Content: Author uid */
-  $handler->display->display_options['arguments']['uid']['id'] = 'uid';
-  $handler->display->display_options['arguments']['uid']['table'] = 'node';
-  $handler->display->display_options['arguments']['uid']['field'] = 'uid';
-  $handler->display->display_options['arguments']['uid']['default_argument_type'] = 'fixed';
-  $handler->display->display_options['arguments']['uid']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['uid']['summary_options']['items_per_page'] = '25';
+  /* Contextual filter: MidtLink - Owner: User is owner or author */
+  $handler->display->display_options['arguments']['midtlink_owner']['id'] = 'midtlink_owner';
+  $handler->display->display_options['arguments']['midtlink_owner']['table'] = 'node';
+  $handler->display->display_options['arguments']['midtlink_owner']['field'] = 'midtlink_owner';
+  $handler->display->display_options['arguments']['midtlink_owner']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['midtlink_owner']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['midtlink_owner']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['midtlink_owner']['summary_options']['items_per_page'] = '25';
   /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
