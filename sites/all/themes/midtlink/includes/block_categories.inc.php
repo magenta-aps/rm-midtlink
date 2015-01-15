@@ -12,12 +12,7 @@ global $activeMainTID;
   <ul class="reset">
     <?php
     $categories = midtlink_get_global_keywords();
-    $c = 0;
-    foreach($categories as $i) {
-      $c++;
-      echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,
-          'taxonomy/keyword/'.$i->tid).'</li>'."\n";
-    }
+    midtlink_display_category_links($categories);
     ?>
   </ul>
   <?php
@@ -35,12 +30,7 @@ global $activeMainTID;
         <ul class="reset local-categories">
           <?php
 
-          $c = 0;
-          foreach($local_categories as $i) {
-            $c++;
-            echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">'.l($i->name,
-                'taxonomy/keyword/'.$i->tid).'</li>'."\n";
-          }
+          midtlink_display_category_links($local_categories);
           ?>
         </ul>
       <?php endif;
