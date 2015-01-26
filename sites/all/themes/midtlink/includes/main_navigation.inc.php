@@ -35,9 +35,10 @@
 
   <ul class="reset">
     <li class="home<?php echo $homeActive; ?>"><a href="<?php echo url(''); ?>">Forside<span>&nbsp;</span></a></li>
-    <li class="forum<?php echo $forumActive; ?>"><a href="<?php echo url('forum'); ?>">Forum<span>&nbsp;</span></a></li>
+    <li class="forum<?php echo $forumActive; ?>"><a href="<?php echo url
+      ('forum'); ?>">Indl&aelig;g<span>&nbsp;</span></a></li>
     <li class="documentation<?php echo $docuActive; ?>"><a href="<?php echo url('dokumentation'); ?>">Vejledninger<span>&nbsp;</span></a></li>
-    <li class="obsark<?php echo $obsActive; ?>"><a href="<?php echo url('obssheet'); ?>">Oversigter<span>&nbsp;</span></a></li>
+    <li class="obsark<?php echo $obsActive; ?>"><a href="<?php echo url('obssheet'); ?>">Afdelingsoversigter<span>&nbsp;</span></a></li>
   </ul>
 
 <?php /* EOF */ ?>

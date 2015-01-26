@@ -33,8 +33,11 @@
 						<div class="content">
 							<form action="create_observation">
 								<p>
-									<input id="askquestion_input" style="width:400px;" type="text" name="text" placeholder="Skriv dit spørgsmål" value="" />
-									<input type="submit" value="Spørg" class="form-submit" />
+									<input id="askquestion_input"
+                                           style="width:400px;" type="text"
+                                           name="text" placeholder="Opret dit indlæg her" value="" />
+									<input type="submit" value="Opret"
+                                           class="form-submit" />
 								</p>
 							</form>
 							<div id="liveresult">
