@@ -2,6 +2,7 @@
 
 function midtlink_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'search_block_form') {
+    $form['search_block_form']['#attributes']['placeholder'] = "Søg her";
     // Search only in specific bundle on Forum and Vejledning tabs.
     if (arg(0) == 'forum') { 
       $searchBundle = 'post';
@@ -218,5 +219,28 @@ function midtlink_preprocess_user_picture(&$variables) {
       
       }
     }
+  }
+}
+
+function midtlink_get_category_link($category) {
+  global $activeMainTID;
+  $i = $category;
+  if (arg(0) == 'forum') {
+    return l($i->name, 'forum/'.$i->tid, array('query' => array('tid' => $activeMainTID)));
+  } else if (arg(0) == 'dokumentation') {
+    return l($i->name, 'dokumentation/'.$activeMainTID.'/'.$i->tid);
+  } else if (arg(0) == 'obssheet') {
+    return l($i->name,$_GET['q'], array('query' => array('filter_category' =>
+      $i->tid)));
+  } else {
+    return l($i->name, 'taxonomy/keyword/'.$i->tid);
+  }
+}
+
+function midtlink_display_category_links($categories) {
+  $c = 0;
+  foreach($categories as $i) {
+    $c++;
+    echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">' .midtlink_get_category_link($i).'</li>'."\n";
   }
 }

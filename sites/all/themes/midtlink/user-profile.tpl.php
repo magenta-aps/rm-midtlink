@@ -33,5 +33,19 @@ $a = user_load(arg(1));
       </ul>
     </div>
   </div>
+
+  <div>
+    <?php
+    if (arg(1) == $user->uid) {
+      $title = 'Min aktivitet';
+    } else {
+      $title = $a->field_fullname['und'][0]['value'] . 's aktivitet';
+    }
+    ?>
+    <h2><?php echo $title; ?></h2>
+    <?php
+      echo views_embed_view('recent_user_posts', 'default', arg(1));
+    ?>
+  </div>
   
 </div>
