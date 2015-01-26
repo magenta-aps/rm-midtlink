@@ -126,19 +126,19 @@ else {
 					?>
 				</ul>
 			</div>
-			<!--<div class="tags">
+			<div class="tags">
 				<h2>N&oslash;gleord:</h2>
 				<ul class="reset">
 				<?php
 				foreach($keywords as $k) {
-					echo '<li><a href="'.url('taxonomy/term/'.$k['tid']).'">'.$k['name'].'</a></li>';
+					echo '<li><a href="'.url('taxonomy/keyword/'.$k['tid']).'">'.$k['name'].'</a></li>';
 				}
 				if(sizeof($keywords)<=0) {
 					echo '<li class="empty"><em>Ingen nøgleord tilføjet</em></li>';
 				}
 				?>
 				</ul>
-			</div>-->
+			</div>
 		</div><!--/.taxonomies-->
 		<div class="post-body">
 			<?php
