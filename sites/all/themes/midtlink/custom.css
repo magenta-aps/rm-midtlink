@@ -305,6 +305,8 @@ that IE7/8 do not support :nth-child.
 
 .filter-wrapper { display:none; }
 
+#taxonomy-form-term .filter-wrapper { display: inherit; }
+
 .form-item-field-category-und:after, .form-item-field-category-und:before {
   content: '\0020';
   display: block;
