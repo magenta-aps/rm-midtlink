@@ -1,11 +1,15 @@
+<?php
+
+include 'current_tab.inc.php';
+
+global $activeMainTID;
+global $activeTermTID;
+
+if ($activeMainTID) {
+?>
   <div class="mini-tabs">
 		<ul>
     <?php
-      include 'current_tab.inc.php';
-
-      global $activeMainTID;
-      global $activeTermTID;
-
       $units = midtlink_get_unit_tree(FALSE);
       foreach ($units as $tid => $unit):
           $active = false;
@@ -40,3 +44,4 @@
       <?php endforeach; ?>
 		</ul>
   </div>
+<?php } ?>

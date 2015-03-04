@@ -643,21 +643,25 @@ function midtlink_utils_init() {
 	$user->mainUnitShortname = $mainUnitShortname;
 	$user->unitName = $unitName;
 	$user->unitTID = $unitTID;
-	
-	if(arg(0) == 'dokumentation' && arg(1) == '') {
-		$goto = '300';
-		if($mainUnitTID != '' && $mainUnitTID != 0) {
-			$goto = $mainUnitTID;
-		}
-		drupal_goto('dokumentation/'.$goto);
-	}	
-	
-	if(arg(0) == 'forum' && empty($_GET['tid'])) {
-		$goto = '300';
-		if($mainUnitTID != '' && $mainUnitTID != 0) {
-			$goto = $mainUnitTID;
-		}
-		drupal_goto($_GET['q'],array('query'=>array('tid'=>$mainUnitTID)));
-	}
+
+    if (variable_get('midtlink_dokumentation_level', 'all') == 'unit') {
+      if (arg(0) == 'dokumentation' && arg(1) == '') {
+        $goto = '300';
+        if ($mainUnitTID != '' && $mainUnitTID != 0) {
+          $goto = $mainUnitTID;
+        }
+        drupal_goto('dokumentation/' . $goto);
+      }
+    }
+
+    if (variable_get('midtlink_forum_level', 'all') == 'unit') {
+      if (arg(0) == 'forum' && empty($_GET['tid'])) {
+        $goto = '300';
+        if ($mainUnitTID != '' && $mainUnitTID != 0) {
+          $goto = $mainUnitTID;
+        }
+        drupal_goto($_GET['q'], array('query' => array('tid' => $mainUnitTID)));
+      }
+    }
 		
 }
