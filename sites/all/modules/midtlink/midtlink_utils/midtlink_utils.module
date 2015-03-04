@@ -644,7 +644,7 @@ function midtlink_utils_init() {
 	$user->unitName = $unitName;
 	$user->unitTID = $unitTID;
 
-    if (variable_get('midtlink_dokumentation_level', 'all') == 'unit') {
+    if (variable_get('midtlink_dokumentation_level', 'unit') == 'unit') {
       if (arg(0) == 'dokumentation' && arg(1) == '') {
         $goto = '300';
         if ($mainUnitTID != '' && $mainUnitTID != 0) {
@@ -654,7 +654,7 @@ function midtlink_utils_init() {
       }
     }
 
-    if (variable_get('midtlink_forum_level', 'all') == 'unit') {
+    if (variable_get('midtlink_forum_level', 'unit') == 'unit') {
       if (arg(0) == 'forum' && empty($_GET['tid'])) {
         $goto = '300';
         if ($mainUnitTID != '' && $mainUnitTID != 0) {
