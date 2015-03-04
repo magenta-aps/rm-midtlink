@@ -5,7 +5,7 @@ include 'current_tab.inc.php';
 global $activeMainTID;
 global $activeTermTID;
 
-if ($activeMainTID) {
+if ($activeMainTID && $activeMainTID != 'all') {
 ?>
   <div class="mini-tabs">
 		<ul>
