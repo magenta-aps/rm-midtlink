@@ -10,6 +10,9 @@ if(isset($node->field_category['und'])) {
       $urlSuffix = '?tid=' . $parentUnitTerm->tid;
       $class = 'local';
     }
+      if (variable_get('midtlink_forum_level', 'unit') == 'all') {
+        $urlSuffix = '';
+      }
 		$categories[] = array('tid'=>$kw['taxonomy_term']->tid,'name'=>$kw['taxonomy_term']->name, 'urlSuffix' => $urlSuffix, 'class' => $class);
 	}
 }
