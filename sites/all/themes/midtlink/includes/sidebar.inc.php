@@ -2,7 +2,7 @@
 		<?php /* Block: Categories */ include('block_categories.inc.php'); ?>
 	</div>
 
-    <?php print render($page['front_sidebar']); ?>
+    <?php if (drupal_is_front_page()) { print render($page['front_sidebar']); } ?>
 
 	<div id="links" class="block solid">
 		<h2>Nyttige links</h2>
