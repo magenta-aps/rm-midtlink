@@ -9,6 +9,10 @@ if(isset($node->field_category['und'])) {
       $unit_tid = $parentUnitTerm->tid;
       $class = 'local';
     }
+
+      if (variable_get('midtlink_dokumentation_level', 'unit') == 'all') {
+        $unit_tid = 'all';
+      }
 		$categories[] = array('tid'=>$kw['taxonomy_term']->tid,'name'=>$kw['taxonomy_term']->name, 'unit_tid' => $unit_tid, 'class' => $class);
 	}
 }

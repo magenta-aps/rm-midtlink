@@ -10,9 +10,9 @@ function midtlink_recent_posts_permission() {
 
 function midtlink_recent_posts_menu() {
   $items = array();
-  $items['admin/config/midtlink_recent_posts'] = array(
-    'title' => 'MidtLink Recent Posts',
-    'description' => 'Configure MidtLink Recent Posts settings.',
+  $items['admin/config/midtlink'] = array(
+    'title' => 'MidtLink',
+    'description' => 'Configure MidtLink.',
     'position' => 'left',
     'weight' => -20,
     'page callback' => 'system_admin_menu_block_page',
@@ -21,13 +21,44 @@ function midtlink_recent_posts_menu() {
     'file path' => drupal_get_path('module', 'system'),
   );
 
-  $items['admin/config/midtlink_recent_posts/level'] = array(
-    'title' => 'MidtLink Recent Posts Level',
+  $items['admin/config/midtlink/recent_posts_level'] = array(
+    'title' => 'Recent Posts Level',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('midtlink_recent_posts_admin_level_form'),
     'access arguments' => array('change recent posts level'),
   );
+
+
+  $items['admin/config/midtlink/forum_dokumentation_level'] = array(
+    'title' => 'Indlæg/Vejledning Level',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('midtlink_forum_dok_unit_admin_level_form'),
+    'access arguments' => array('change recent posts level'),
+  );
   return $items;
+}
+
+function midtlink_forum_dok_unit_admin_level_form() {
+  $form = array();
+
+  $options = array(
+    'unit' => t('User\'s main unit'),
+    'all' => t('All units')
+  );
+
+  $form['midtlink_forum_level'] = array(
+    '#type' => 'select',
+    '#title' => t('Show posts in Indlæg from'),
+    '#options' => $options,
+    '#default_value' => variable_get('midtlink_forum_level', 'unit'),
+  );
+  $form['midtlink_dokumentation_level'] = array(
+    '#type' => 'select',
+    '#title' => t('Show posts in Vejledning from'),
+    '#options' => $options,
+    '#default_value' => variable_get('midtlink_dokumentation_level', 'unit'),
+  );
+  return system_settings_form($form);
 }
 
 function midtlink_recent_posts_admin_level_form() {

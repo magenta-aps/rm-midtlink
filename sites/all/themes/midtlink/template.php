@@ -228,7 +228,11 @@ function midtlink_get_category_link($category) {
   if (arg(0) == 'forum') {
     return l($i->name, 'forum/'.$i->tid, array('query' => array('tid' => $activeMainTID)));
   } else if (arg(0) == 'dokumentation') {
-    return l($i->name, 'dokumentation/'.$activeMainTID.'/'.$i->tid);
+    $tid = $activeMainTID;
+    if (!$tid) {
+      $tid = 'all';
+    }
+    return l($i->name, 'dokumentation/'.$tid.'/'.$i->tid);
   } else if (arg(0) == 'obssheet') {
     return l($i->name,$_GET['q'], array('query' => array('filter_category' =>
       $i->tid)));
