@@ -18,7 +18,6 @@ if(isset($node->field_category['und'])) {
 }
 //$approvedThread = midtlink_utils_post_approved_answer($node->nid);
 
-
 if(!$page) {
 	global $miniTeaser;
 	?>
@@ -27,7 +26,7 @@ if(!$page) {
 			<div class="picture-container">
 				<?php print $user_picture; ?>
 				<div class="unitinfo">
-					<big><?php echo $node->authorunit['shortname']; ?></big>
+					<big><?php echo $authorinfo['shortname']; ?></big>
 				</div>
 			</div>
 
@@ -38,7 +37,7 @@ if(!$page) {
 
 					<div class="submitted">
             <div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
-            <div class="name small"><?php echo $name; ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo; ?>)</span><?php } ?></div>
+            <div class="name small"><?php echo $name; ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
                       <?php if ($node->created == $node->changed &&
                         $node->last_comment_timestamp <= $node->created) { ?>
                         <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>
@@ -92,7 +91,7 @@ if(isset($node->field_keywords['und'])) {
 		<?php print $user_picture; ?>
 		<div class="unitinfo">
 			<small>Tilknyttet</small>
-			<big><?php echo $node->authorunit['shortname']; ?></big>
+			<big><?php echo $authorinfo['shortname']; ?></big>
 		</div>
   </div>
 
@@ -103,7 +102,7 @@ if(isset($node->field_keywords['und'])) {
       <h1><?php print $title; ?></h1>
 
       <div class="submitted">
-        <div class="name"><?php echo $name; ?> <span>(<?php echo $authorinfo; ?>)</span></div>
+        <div class="name"><?php echo $name; ?> <span>(<?php echo $authorinfo['info']; ?>)</span></div>
         <?php
         //midtlink_get_main_unit
         $mainUnit = midtlink_get_main_unit($node->field_unit['und'][0]['tid']);

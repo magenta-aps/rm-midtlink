@@ -248,3 +248,16 @@ function midtlink_display_category_links($categories) {
     echo '<li class="'.($c%2==0 ? 'even' : 'odd').'">' .midtlink_get_category_link($i).'</li>'."\n";
   }
 }
+
+function midtlink_preprocess_node(&$variables) {
+  $node = $variables['node'];
+  if ($node->type == 'post' || $node->type == 'knowlegde') {
+    // Use the Owner field to load author info if it is not empty
+    if (isset($node->field_owner['und'])) {
+      $author_uid = $node->field_owner['und'][0]['target_id'];
+    } else {
+      $author_uid = $node->uid;
+    }
+    $variables['authorinfo'] = midtlink_utils_get_author_info($author_uid);
+  }
+}
