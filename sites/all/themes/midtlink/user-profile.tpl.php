@@ -18,6 +18,13 @@ $a = user_load(arg(1));
 					<li><b>Titel:</b><?php echo check_plain($a->field_position['und'][0]['value']); ?></li>
 					<?php
         }
+
+				if(isset($a->field_other_job_functions['und'][0]['value'])) {
+                  ?>
+                  <li><b>Øvrige jobfunktioner:</b><?php echo check_plain($a->field_other_job_functions['und'][0]['value']); ?></li>
+                  <?php
+                }
+
         if(isset($a->field_unit['und'][0]['taxonomy_term'])) {
 					?>
 					<li><b>Afdeling:</b><?php echo check_plain($a->field_unit['und'][0]['taxonomy_term']->name); ?></li>
