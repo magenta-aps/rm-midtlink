@@ -317,7 +317,8 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
 		$form['account']['pass']['#access'] = false;
 		$form['account']['current_pass']['#access'] = false;
 		$form['picture']['#access'] = false;
-		$form['field_position']['#access'] = false; //Updated through the BSK integration
+		$form['field_position']['#disabled'] = true; //Updated through the BSK integration
+        $form['locale']['#access'] = false;
 	}
 	elseif($form_id == 'knowlegde_node_form') {
       global $user;

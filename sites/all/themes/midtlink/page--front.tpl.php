@@ -59,8 +59,7 @@
             <div id="sidebar" class="grid-4 omega solid">
 
               <?php if($user->uid > 0) include('includes/sidebar.inc.php'); ?>
-                
-              <?php print render($page['front_sidebar']); ?>
+
               <div class="section">
                 
                 <div id="about" class="block">  

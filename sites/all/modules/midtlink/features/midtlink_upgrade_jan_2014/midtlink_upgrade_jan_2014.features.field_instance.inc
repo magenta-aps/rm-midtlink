@@ -944,6 +944,74 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'user-user-field_other_job_functions'
+  $field_instances['user-user-field_other_job_functions'] = array(
+    'bundle' => 'user',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'fx EPJ-koordinator, dokumentationsansvarlig, ITDK\'er',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 3,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'user',
+    'field_name' => 'field_other_job_functions',
+    'label' => 'Øvrige jobfunktioner',
+    'required' => 0,
+    'settings' => array(
+      'better_formats' => array(
+        'allowed_formats' => array(
+          'filtered_html' => 'filtered_html',
+          'html_wysiwyg' => 'html_wysiwyg',
+          'plain_text' => 'plain_text',
+        ),
+        'allowed_formats_toggle' => 0,
+        'default_order_toggle' => 0,
+        'default_order_wrapper' => array(
+          'formats' => array(
+            'filtered_html' => array(
+              'weight' => 0,
+            ),
+            'html_wysiwyg' => array(
+              'weight' => 0,
+            ),
+            'plain_text' => array(
+              'weight' => 10,
+            ),
+          ),
+        ),
+      ),
+      'text_processing' => 0,
+      'user_register_form' => 0,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 2,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('Afdeling');
@@ -965,6 +1033,8 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
   t('Vedhæft fil');
   t('Vedhæft pdf, doc, xls, ppt filer der omhandler hjælpeartiklen.');
   t('Vejledning gyldig for');
+  t('fx EPJ-koordinator, dokumentationsansvarlig, ITDK\'er');
+  t('Øvrige jobfunktioner');
 
   return $field_instances;
 }
