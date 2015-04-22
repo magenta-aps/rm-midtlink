@@ -21,7 +21,7 @@ $a = user_load(arg(1));
 
 				if(isset($a->field_other_job_functions['und'][0]['value'])) {
                   ?>
-                  <li><b>Øvrige jobfunktioner:</b><?php echo check_plain($a->field_other_job_functions['und'][0]['value']); ?></li>
+                  <li><b>Jobfunktioner:</b><?php echo check_plain($a->field_other_job_functions['und'][0]['value']); ?></li>
                   <?php
                 }
 
