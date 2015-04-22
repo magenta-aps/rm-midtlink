@@ -1102,7 +1102,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     ),
     'entity_type' => 'user',
     'field_name' => 'field_other_job_functions',
-    'label' => 'Øvrige jobfunktioner',
+    'label' => 'Jobfunktioner',
     'required' => 0,
     'settings' => array(
       'better_formats' => array(
@@ -1256,7 +1256,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
   t('Vedhæft pdf, doc, xls, ppt filer der omhandler hjælpeartiklen.');
   t('Vejledning gyldig for');
   t('fx EPJ-koordinator, dokumentationsansvarlig, ITDK\'er');
-  t('Øvrige jobfunktioner');
+  t('Jobfunktioner');
 
   return $field_instances;
 }
