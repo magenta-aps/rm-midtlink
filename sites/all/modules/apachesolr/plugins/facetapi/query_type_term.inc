@@ -47,6 +47,8 @@ class ApacheSolrFacetapiTerm extends FacetapiQueryType implements FacetapiQueryT
     }
 
     $active = $this->adapter->getActiveItems($this->facet);
+    // Remove the all tids that are parents of any tid in the list
+    $this->remove_parents($active);
 
     // Adds filter based on the operator.
     if (FACETAPI_OPERATOR_OR != $operator) {
@@ -72,6 +74,22 @@ class ApacheSolrFacetapiTerm extends FacetapiQueryType implements FacetapiQueryT
           }
         }
         $query->addFilter($this->facet['field'], '(' . implode(' OR ', $values) . ')', FALSE, $local);
+      }
+    }
+  }
+
+  /**
+   * Removes parents from a list of terms. Only works for a level 1 taxonomy
+   * This is not meant to handle a unlimited depth taxonomy
+   *
+   * @param array $terms
+   */
+  public function remove_parents(&$terms) {
+    $parents = array();
+    foreach ($terms as $term_id => $term) {
+      $parents = taxonomy_get_parents($term_id);
+      foreach ($parents as $parent) {
+        unset($terms[$parent->tid]);
       }
     }
   }
