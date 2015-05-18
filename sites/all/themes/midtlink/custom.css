@@ -352,3 +352,9 @@ a.flag.unflag-action {
 } 
 
 .flag-approve-answer a { margin-right:10px; }
+
+.profile .main-info li,
+.name span
+{
+	word-break: break-all;
+}
