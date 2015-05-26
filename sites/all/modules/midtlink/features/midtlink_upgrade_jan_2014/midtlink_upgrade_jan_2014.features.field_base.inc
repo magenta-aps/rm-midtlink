@@ -257,11 +257,11 @@ function midtlink_upgrade_jan_2014_field_default_field_bases() {
     'entity_types' => array(),
     'field_name' => 'field_link_unit',
     'foreign keys' => array(
-      'node' => array(
+      'taxonomy_term_data' => array(
         'columns' => array(
-          'target_id' => 'nid',
+          'target_id' => 'tid',
         ),
-        'table' => 'node',
+        'table' => 'taxonomy_term_data',
       ),
     ),
     'indexes' => array(
@@ -300,11 +300,11 @@ function midtlink_upgrade_jan_2014_field_default_field_bases() {
     'entity_types' => array(),
     'field_name' => 'field_owner',
     'foreign keys' => array(
-      'node' => array(
+      'users' => array(
         'columns' => array(
-          'target_id' => 'nid',
+          'target_id' => 'uid',
         ),
-        'table' => 'node',
+        'table' => 'users',
       ),
     ),
     'indexes' => array(
@@ -344,11 +344,11 @@ function midtlink_upgrade_jan_2014_field_default_field_bases() {
       'type' => 2,
     ),
     'foreign keys' => array(
-      'node' => array(
+      'users' => array(
         'columns' => array(
-          'target_id' => 'nid',
+          'target_id' => 'uid',
         ),
-        'table' => 'node',
+        'table' => 'users',
       ),
     ),
     'indexes' => array(

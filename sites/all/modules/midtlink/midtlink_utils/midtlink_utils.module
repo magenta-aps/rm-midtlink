@@ -29,6 +29,13 @@ function midtlink_utils_facetapi_filters() {
         'query types' => array('term'),
       ),
     ),
+    'midtlink_hide_children' => array(
+      'handler' => array(
+        'label' => t('Hide child facets'),
+        'class' => 'MidtLinkFacetapiFilterHideChildren',
+        'query types' => array('term'),
+      ),
+    ),
   );
 }
 
