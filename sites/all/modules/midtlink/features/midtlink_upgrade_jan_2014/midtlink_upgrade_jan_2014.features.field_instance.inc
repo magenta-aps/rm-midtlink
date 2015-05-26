@@ -1241,6 +1241,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
   t('Indhold');
   t('Indtast artiklen.');
   t('Indtast nøgleord som dit indlæg omhandler.');
+  t('Jobfunktioner');
   t('Kommentar');
   t('Kort beskrivelse');
   t('Kort navn');
