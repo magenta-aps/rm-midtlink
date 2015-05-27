@@ -26,8 +26,6 @@ if (isset($node->field_owner['und'])) {
 
 $authorUser = user_load($author);
 
-$authorinfo = midtlink_utils_get_author_info($author);
-
 if(!$page) {
   global $miniTeaser;
   $icon_url = $node_url;
@@ -58,7 +56,9 @@ if(!$page) {
 
           <div class="submitted">
             <div class="title"><h2><a href="<?php echo $node_url; ?>"><?php echo $title; ?></a></h2></div>
-            <div class="name small"><?php echo theme('username', array('account' => $authorUser)); ?><?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
+            <div class="name small">
+              <?php echo theme('username', array('account' => $authorUser)); ?>
+              <?php if(!$miniTeaser) { ?> <span>(<?php echo $authorinfo['info']; ?>)</span><?php } ?></div>
             <?php if ($node->created == $node->changed &&
               $node->last_comment_timestamp <= $node->created) { ?>
               <div class="meta small">Oprettet d. <?php echo format_date($node->created,'long'); ?></div>

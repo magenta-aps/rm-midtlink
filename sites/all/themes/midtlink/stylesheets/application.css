@@ -987,8 +987,17 @@ a.new-node {
 }
 
 .profile .main-info ul li b{
-  display:inline-block;
-  width:110px;
+    display:inline;
+    float:left;
+    position:relative;
+    width:110px;
+}
+
+.profile .main-info ul li span {
+    display:inline;
+    float:left;
+    position:relative;
+    width:358px;
 }
 
 /*----------------------------------------------------------------------
