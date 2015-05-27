@@ -9,3 +9,4 @@ dependencies[] = ctools
 files[] = plugins/selection/EntityReferenceSelectFullname.class.php
 files[] = plugins/selection/EntityReferenceSelectTopLevelTerms.class.php
 files[] = plugins/MidtLinkFacetapiFilterHideGlobal.class.php
+files[] = plugins/MidtLinkFacetapiFilterHideChildren.class.php

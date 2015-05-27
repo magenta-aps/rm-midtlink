@@ -29,6 +29,13 @@ function midtlink_utils_facetapi_filters() {
         'query types' => array('term'),
       ),
     ),
+    'midtlink_hide_children' => array(
+      'handler' => array(
+        'label' => t('Hide child facets'),
+        'class' => 'MidtLinkFacetapiFilterHideChildren',
+        'query types' => array('term'),
+      ),
+    ),
   );
 }
 
@@ -317,7 +324,8 @@ function midtlink_utils_form_alter(&$form, &$form_state, $form_id) {
 		$form['account']['pass']['#access'] = false;
 		$form['account']['current_pass']['#access'] = false;
 		$form['picture']['#access'] = false;
-		$form['field_position']['#access'] = false; //Updated through the BSK integration
+		$form['field_position']['#disabled'] = true; //Updated through the BSK integration
+        $form['locale']['#access'] = false;
 	}
 	elseif($form_id == 'knowlegde_node_form') {
       global $user;
@@ -537,14 +545,18 @@ function midtlink_get_main_unit($tid) {
 
 function midtlink_utils_get_author_info($uid) {
 	$o = array();
-  $sql = "SELECT fp.field_position_value as position, td.name as unit, td.tid
+  $sql = "SELECT fp.field_position_value as position, td.name as unit, td.tid, job.field_other_job_functions_value as job
 			FROM users u
 				LEFT JOIN field_data_field_position fp ON fp.entity_type = 'user' AND fp.bundle = 'user' AND fp.entity_id = u.uid
 				LEFT JOIN field_data_field_unit fu ON fu.entity_type = 'user' AND fu.bundle = 'user' AND fu.entity_id = u.uid
 				LEFT JOIN taxonomy_term_data td ON td.tid = fu.field_unit_tid
+				LEFT JOIN field_data_field_other_job_functions job ON job.entity_type = 'user' AND job.bundle = 'user' AND job.entity_id = u.uid
 			WHERE uid = :uid LIMIT 1";
 	$r = db_query($sql,array(':uid'=>$uid))->fetchObject();
-	if(trim($r->position) != '') { $o[] = $r->position; }
+  if(trim($r->position) != '') { $o[] = $r->position; }
+
+  if(trim($r->job) != '') { $o[] = $r->job; }
+
 	if(trim($r->unit) != '') { $o[] = $r->unit; }
 	$mainUnit = midtlink_get_main_unit($r->tid);
 	$shortName = '';
@@ -559,32 +571,6 @@ function midtlink_utils_get_author_info($uid) {
   return array('info'=>$o,'shortname'=>$shortName);
 }
 
-
-function midtlink_utils_node_view($node, $build_mode = 'full') {
-  $o = array();
-  if($node->type=='post' && $node->uid > 0) {
-		$sql = "SELECT fp.field_position_value as position, td.name as unit, td.tid
-			FROM users u
-				LEFT JOIN field_data_field_position fp ON fp.entity_type = 'user' AND fp.bundle = 'user' AND fp.entity_id = u.uid
-				LEFT JOIN field_data_field_unit fu ON fu.entity_type = 'user' AND fu.bundle = 'user' AND fu.entity_id = u.uid
-				LEFT JOIN taxonomy_term_data td ON td.tid = fu.field_unit_tid
-			WHERE uid = :uid LIMIT 1";
-		$r = db_query($sql,array(':uid'=>$node->uid))->fetchObject();
-    if(trim($r->position) != '') { $o[] = $r->position; }
-    if(trim($r->unit) != '') { $o[] = $r->unit; }
-		
-		$mainUnit = midtlink_get_main_unit($r->tid);
-//		if($r->tid != $mainUnit->tid) {
-//			$o[] = $mainUnit->shortname;
-//		}
-		$node->authorunit['name'] = $mainUnit->name;
-		$node->authorunit['shortname'] = $mainUnit->shortname;
-		$node->authorunit['tid'] = $mainUnit->tid;
-  }
-  $o = implode(', ',$o);
-  if(trim($o) == '') { $o = 'Ukendt'; }  
-  $node->authorinfo = $o;
-}
 function midtlink_utils_comment_view($comment, $view_mode, $langcode) {
 	$o = array();
   if($comment->uid > 0) {

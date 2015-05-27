@@ -15,17 +15,45 @@ $a = user_load(arg(1));
 				<?php
 				if(isset($a->field_position['und'][0]['value'])) {
 					?> 
-					<li><b>Titel:</b><?php echo check_plain($a->field_position['und'][0]['value']); ?></li>
+					<li>
+                      <b>Titel:</b>
+                      <span class="val">
+                        <?php echo check_plain($a->field_position['und'][0]['value']); ?>
+                      </span>
+                    </li>
 					<?php
         }
+
+				if(isset($a->field_other_job_functions['und'][0]['value'])) {
+                  ?>
+                  <li>
+                    <b>Jobfunktioner:</b>
+                    <span class="val">
+                      <?php echo check_plain($a->field_other_job_functions['und'][0]['value']);?>
+                    </span>
+                  </li>
+                  <?php
+                }
+
         if(isset($a->field_unit['und'][0]['taxonomy_term'])) {
 					?>
-					<li><b>Afdeling:</b><?php echo check_plain($a->field_unit['und'][0]['taxonomy_term']->name); ?></li>
+					<li>
+                      <b>Afdeling:</b>
+                      <span class="val">
+                        <?php echo check_plain($a->field_unit['und'][0]['taxonomy_term']->name);?>
+                      </span>
+                    </li>
 					<?php
 					$mainUnit = midtlink_get_main_unit($a->field_unit['und'][0]['taxonomy_term']->tid);
 					if($mainUnit->tid != $a->field_unit['und'][0]['taxonomy_term']->tid) {
 						?>
-						<li><b>Hospital:</b><?php echo check_plain($mainUnit->name); ?></li>
+						<li>
+                          <b>Hospital:</b>
+                          <span class="val">
+                            <?php echo check_plain($mainUnit->name);
+                            ?>
+                          </span>
+                        </li>
 						<?php
 					}
         }
