@@ -149,6 +149,8 @@ function midtlink_upgrade_jan_2014_facetapi_default_facet_settings() {
       'format' => 'html_wysiwyg',
     ),
     'submit_realm' => 'Save and go back to realm settings',
+    'facet_more_text' => 'Show more',
+    'facet_fewer_text' => 'Show fewer',
   );
   $export['apachesolr@solr:block:im_field_category'] = $facet;
 
@@ -163,23 +165,43 @@ function midtlink_upgrade_jan_2014_facetapi_default_facet_settings() {
   $facet->settings = array(
     'weight' => 0,
     'widget' => 'facetapi_checkbox_links',
-    'filters' => array(),
+    'filters' => array(
+      'active_items' => array(
+        'status' => 0,
+        'weight' => '-50',
+      ),
+      'current_depth' => array(
+        'status' => 0,
+        'weight' => '-49',
+      ),
+      'midtlink_hide_global' => array(
+        'status' => 0,
+        'weight' => '-48',
+      ),
+      'midtlink_hide_children' => array(
+        'status' => 1,
+        'weight' => '-47',
+      ),
+    ),
     'active_sorts' => array(
       'active' => 'active',
       'count' => 'count',
       'display' => 'display',
+      'global_local' => 0,
       'indexed' => 0,
     ),
     'sort_weight' => array(
       'active' => '-50',
       'count' => '-49',
       'display' => '-48',
+      'global_local' => '0',
       'indexed' => '0',
     ),
     'sort_order' => array(
       'active' => '3',
       'count' => '3',
       'display' => '4',
+      'global_local' => '4',
       'indexed' => '4',
     ),
     'empty_behavior' => 'none',
@@ -191,6 +213,8 @@ function midtlink_upgrade_jan_2014_facetapi_default_facet_settings() {
       'format' => 'html_wysiwyg',
     ),
     'submit_realm' => 'Save and go back to realm settings',
+    'facet_more_text' => 'Show more',
+    'facet_fewer_text' => 'Show fewer',
   );
   $export['apachesolr@solr:block:im_field_unit'] = $facet;
 
