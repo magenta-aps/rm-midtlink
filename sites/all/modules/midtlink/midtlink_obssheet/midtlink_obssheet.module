@@ -1237,13 +1237,19 @@ function midtlink_obssheet_node_update($node) {
  * Implements hook_node_presave().
  */
 function midtlink_obssheet_node_presave($node) {
-  $fields_changed = _fields_changed($node->original, $node);
-  $no_update_timestamp_fields = array('field_subject', 'field_keywords');
-  if (!empty($fields_changed) &&
-	empty(array_diff($fields_changed, $no_update_timestamp_fields))) {
-	// Don't change the $node->changed timestamp if one of the fields has
-	// been changed that should not affect the timestamp.
-	$node->changed = $node->original->changed;
+  if ($node->type === 'knowlegde' || $node->type === 'post') {
+	$fields_changed = _fields_changed($node->original, $node);
+	$no_update_timestamp_fields = array('field_category', 'field_keywords');
+	if ($node->type === 'knowlegde') {
+	  $no_update_timestamp_fields[] = 'field_unit';
+	}
+	if (!empty($fields_changed) &&
+	  empty(array_diff($fields_changed, $no_update_timestamp_fields))
+	) {
+	  // Don't change the $node->changed timestamp if one of the fields has
+	  // been changed that should not affect the timestamp.
+	  $node->changed = $node->original->changed;
+	}
   }
 }
 
