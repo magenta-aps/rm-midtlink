@@ -1237,15 +1237,44 @@ function midtlink_obssheet_node_update($node) {
  * Implements hook_node_presave().
  */
 function midtlink_obssheet_node_presave($node) {
+  if (!isset($node->original)) {
+	// Don't check for changes on newly created nodes!
+	return false;
+  }
   if ($node->type === 'knowlegde' || $node->type === 'post') {
 	$fields_changed = _fields_changed($node->original, $node);
 	$no_update_timestamp_fields = array('field_category', 'field_keywords');
 	if ($node->type === 'knowlegde') {
 	  $no_update_timestamp_fields[] = 'field_unit';
+	  // If the vejledning file field was changed...
+	  if (in_array('field_knowlegde_file', $fields_changed)) {
+		$get_fid = function ($f) {
+		  return $f['fid'];
+		};
+		// Get each file id from the old and new field value
+		$old_fids = array_map($get_fid,
+		  $node->original->field_knowlegde_file[LANGUAGE_NONE]);
+		if ($old_fids === null) {
+		  $old_fids = array();
+		}
+		$new_fids = array_map($get_fid,
+		  $node->field_knowlegde_file[LANGUAGE_NONE]);
+		if ($new_fids === null) {
+		  $new_fids = array();
+		}
+		// If all new fids are contained in the old fids, then the user must have
+		// removed a file
+		if (empty(array_diff($new_fids, $old_fids))) {
+		  // If the user removed a file, we don't want to consider this a
+		  // change, per Redmine Issue #13282, so add this field to the list of
+		  // fields to ignore changes from.
+		  $no_update_timestamp_fields[] = 'field_knowlegde_file';
+		}
+	  }
 	}
-	if (!empty($fields_changed) &&
-	  empty(array_diff($fields_changed, $no_update_timestamp_fields))
-	) {
+
+	if (!empty($fields_changed)
+	  	&& empty(array_diff($fields_changed, $no_update_timestamp_fields))) {
 	  // Don't change the $node->changed timestamp if one of the fields has
 	  // been changed that should not affect the timestamp.
 	  $node->changed = $node->original->changed;
