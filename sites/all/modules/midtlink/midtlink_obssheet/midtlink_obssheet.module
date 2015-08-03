@@ -1195,7 +1195,6 @@ function midtlink_obssheet_comment_insert($comment) {
   }
 }
 
-
 function midtlink_obssheet_node_update($node) {
 	global $user;
 	$currentlyResponsible = array();
@@ -1222,7 +1221,6 @@ function midtlink_obssheet_node_update($node) {
 			$currentlyAskDirect[$resp['target_id']] = $resp['target_id'];
 		}
 	}
-	
 	if(isset($node->field_askdirect['und'])) {
 		foreach($node->field_askdirect['und'] as $resp) {
 			if(empty($currentlyAskDirect[$resp['target_id']])) {
@@ -1233,7 +1231,163 @@ function midtlink_obssheet_node_update($node) {
 			}
 		}
 	}
-	
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function midtlink_obssheet_node_presave($node) {
+  if (!isset($node->original)) {
+	// Don't check for changes on newly created nodes!
+	return false;
+  }
+  if ($node->type === 'knowlegde' || $node->type === 'post') {
+	$fields_changed = _fields_changed($node->original, $node);
+	$no_update_timestamp_fields = array('field_category', 'field_keywords');
+	if ($node->type === 'knowlegde') {
+	  $no_update_timestamp_fields[] = 'field_unit';
+	  // If the vejledning file field was changed...
+	  if (in_array('field_knowlegde_file', $fields_changed)) {
+		$get_fid = function ($f) {
+		  return $f['fid'];
+		};
+		// Get each file id from the old and new field value
+		$old_fids = array_map($get_fid,
+		  $node->original->field_knowlegde_file[LANGUAGE_NONE]);
+		if ($old_fids === null) {
+		  $old_fids = array();
+		}
+		$new_fids = array_map($get_fid,
+		  $node->field_knowlegde_file[LANGUAGE_NONE]);
+		if ($new_fids === null) {
+		  $new_fids = array();
+		}
+		// If all new fids are contained in the old fids, then the user must have
+		// removed a file
+		if (empty(array_diff($new_fids, $old_fids))) {
+		  // If the user removed a file, we don't want to consider this a
+		  // change, per Redmine Issue #13282, so add this field to the list of
+		  // fields to ignore changes from.
+		  $no_update_timestamp_fields[] = 'field_knowlegde_file';
+		}
+	  }
+	}
+
+	if (!empty($fields_changed)
+	  	&& empty(array_diff($fields_changed, $no_update_timestamp_fields))) {
+	  // Don't change the $node->changed timestamp if one of the fields has
+	  // been changed that should not affect the timestamp.
+	  $node->changed = $node->original->changed;
+	}
+  }
+}
+
+/*
+ * Pass both versions of the node to this function. Returns an array of
+ * fields that were changed or an empty array if none were changed.
+ * Pass field collections as an array keyed by field collection ID.
+ *
+ * Based on http://drupal.stackexchange.com/questions/79953/generically-detecting-changed-fields-in-a-custom-form-prior-to-saving-a-node/80248#80248
+ *
+ * @param object $old_entity
+ *   The original (stored in the database) node object.
+ *   This function may also pass itself a FieldCollectionItemEntity object to compare field collections.
+ * @param object $new_entity
+ *   The prepared node object for comparison.
+ *   This function may also pass itself a FieldCollectionItemEntity object to compare field collections.
+ */
+function _fields_changed($old_entity, $new_entity) {
+  // Check for node or field collection.
+  $entity_is_field_collection = (get_class($old_entity) == 'FieldCollectionItemEntity');
+
+  $bundle = ($entity_is_field_collection ? $old_entity->field_name : $old_entity->type);
+
+  // Sanity check. Exit and throw an error if the content types don't match.
+  if ($bundle !== ($entity_is_field_collection ? $new_entity->field_name : $new_entity->type)) {
+	drupal_set_message('Content type mismatch. Unable to save changes.', 'error');
+	return FALSE;
+  }
+
+  // Get field info.
+  $field_read_params = array(
+	'entity_type' => ($entity_is_field_collection ? 'field_collection_item' : 'node'),
+	'bundle' => $bundle
+  );
+  $fields_info = field_read_fields($field_read_params);
+
+  $fields_changed = array();
+
+  foreach ($fields_info as $field_name => $field_info) {
+	$old_field = $old_entity->$field_name;
+	$new_field = $new_entity->$field_name;
+
+	// Check the number of values for each field, or if they are populated at all.
+	$old_field_count = (isset($old_field[LANGUAGE_NONE]) ? count($old_field[LANGUAGE_NONE]) : 0);
+	$new_field_count = (isset($new_field[LANGUAGE_NONE]) ? count($new_field[LANGUAGE_NONE]) : 0);
+
+	if ($old_field_count != $new_field_count) {
+	  // The two versions have a different number of values. Something has changed.
+	  $fields_changed[] = $field_name;
+	}
+	elseif ($old_field_count > 0 && $new_field_count > 0) {
+	  // Both versions have an equal number of values. Time to compare.
+
+	  // See if this field is a field collection.
+	  if ($field_info['type'] == 'field_collection') {
+
+		foreach ($new_field[LANGUAGE_NONE] as $delta => $values) {
+		  $old_field_collection = entity_load_unchanged('field_collection_item', $values['entity']->item_id);
+		  $new_field_collection = $values['entity'];
+
+		  $fields_changed = array_merge($fields_changed, _fields_changed($old_field_collection, $new_field_collection));
+		}
+		unset($delta, $values);
+
+	  }
+	  else {
+		foreach ($old_field[LANGUAGE_NONE] as $delta => $value) {
+		  foreach ($field_info['columns'] as $field_column_name => $field_column_info) {
+			$old_value = $old_field[LANGUAGE_NONE][$delta][$field_column_name];
+			$new_value = $new_field[LANGUAGE_NONE][$delta][$field_column_name];
+			$field_column_type = $field_column_info['type'];
+
+			// As with the overall field, exit if one version has a value and the other doesn't.
+			if (isset($old_value) != isset($new_value)) {
+			  $fields_changed[] = $old_field;
+			}
+			elseif (isset($old_value) && isset($new_value)) {
+			  // The column stores numeric data so compare values non-identically.
+			  if (in_array($field_column_type, array(
+				'int',
+				'float',
+				'numeric'
+			  ))) {
+				if ($new_value != $old_value) {
+				  $fields_changed[] = $field_name;
+				}
+			  }
+			  // The column stores non-numeric data so compare values identically,
+			  elseif ($new_value !== $old_value) {
+				$fields_changed[] = $field_name;
+			  }
+			}
+			else {
+			  // Included for clarity. Both values are empty so there was obviously no change.
+			}
+		  }
+		  unset($field_column_name, $field_column_info);
+		}
+		unset($delta, $value);
+	  }
+	}
+	else {
+	  // Included for clarity. Both values are empty so there was obviously no change.
+	}
+  }
+  unset($field_name, $field_info);
+  // End of field comparison loop.
+
+  return $fields_changed;
 }
 
 function midtlink_obssheet_node_insert($node) {
