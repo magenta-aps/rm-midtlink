@@ -280,7 +280,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     'settings' => array(
       'description_field' => 0,
       'file_directory' => 'knowlegde',
-      'file_extensions' => 'txt pdf doc docx xls xlsx ppt pptx rtf',
+      'file_extensions' => 'txt pdf doc docx xls xlsx ppt pptx rtf odt odp ods',
       'max_filesize' => '',
       'user_register_form' => FALSE,
     ),
@@ -1257,7 +1257,6 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
   t('Vedhæft pdf, doc, xls, ppt filer der omhandler hjælpeartiklen.');
   t('Vejledning gyldig for');
   t('fx EPJ-koordinator, dokumentationsansvarlig, ITDK\'er');
-  t('Jobfunktioner');
 
   return $field_instances;
 }
