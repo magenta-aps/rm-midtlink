@@ -1247,7 +1247,8 @@ function midtlink_obssheet_node_presave($node) {
   }
   if ($node->type === 'knowlegde' || $node->type === 'post') {
 	$fields_changed = _fields_changed($node->original, $node);
-	$no_update_timestamp_fields = array('field_category', 'field_keywords', 'field_owner');
+	$no_update_timestamp_fields = array('field_category', 'field_keywords',
+	  'field_owner', 'field_responsible');
 	if ($node->type === 'knowlegde') {
 	  $no_update_timestamp_fields[] = 'field_unit';
 	  // If the vejledning file field was changed...
