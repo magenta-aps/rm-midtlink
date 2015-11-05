@@ -23,10 +23,10 @@ global $activeMainTID;
     if ($term):
       $mainUnitName = $term->name;
       $local_categories = midtlink_get_keywords_by_unit($mainUnitName);
-      $mainShortName = $term->field_shortname[LANGUAGE_NONE][0]['safe_value'];
+      $mainUnitDisplayName = $term->field_shortname ? $term->field_shortname[LANGUAGE_NONE][0]['safe_value'] : $mainUnitName;
       if (!empty($local_categories)):
         ?>
-        <h2 style="clear: both;">Netværk og services på <?php echo $mainShortName ; ?></h2>
+        <h2 style="clear: both;">Netværk og services på <?php echo $mainUnitDisplayName  ; ?></h2>
         <ul class="reset local-categories">
           <?php
 
