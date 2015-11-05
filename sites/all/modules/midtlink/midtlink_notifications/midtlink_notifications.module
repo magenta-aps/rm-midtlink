@@ -7,7 +7,7 @@ function midtlink_notifications_drupal_mail($to, $subject, $message) {
     $_SERVER['HTTP_HOST'] = 'example.com';
   }
   $from = 'MidtLink <no-reply@'.$_SERVER['HTTP_HOST'].'>';
-  
+
   $allowHTML = variable_get('smtp_allowhtml', 0);
   // Drupal's SMTP system will try to convert HTML to text if HTML is not
   // allowed. Its formatter doesn't support a non-UTF-8 message body, so we
@@ -19,24 +19,24 @@ function midtlink_notifications_drupal_mail($to, $subject, $message) {
   } else {
       $content_type = 'text/plain';
   }
-  
+
   $message = array(
     'id' => $my_module . '_' . $my_mail_token,
     'to' => $to,
     // Set 'from' here also. Otherwise, Drupal's mail system will throw an error
     // for an invalid address.
-    'from' => $from, 
+    'from' => $from,
     'subject' => '=?UTF-8?B?'.base64_encode($subject).'?=',
     'body' => array($message),
     'headers' => array(
       'Content-type' => $content_type,
-      'From' => $from, 
-      'Sender' => $from, 
+      'From' => $from,
+      'Sender' => $from,
       'Return-Path' => $from,
       'MIME-Version' => '1.0',
     ),
   );
-  
+
   $system = drupal_mail_system($my_module, $my_mail_token);
   $message = $system->format($message);
 	$result = $system->mail($message);
@@ -55,9 +55,9 @@ function midtlink_notification_send($target_uid,$type,$source_uid=null,$source_n
 			':source_nid'=>$source_nid,
 			':time'=>time()
 		));
-		
+
 	$toMail = db_query("SELECT mail FROM {users} WHERE uid = :uid",array(':uid'=>$target_uid))->fetchColumn();
-		
+
 	$obj = (object)null;
 	$obj->target_uid = $target_uid;
 	$obj->notification_type = $type;
@@ -70,9 +70,9 @@ function midtlink_notification_send($target_uid,$type,$source_uid=null,$source_n
 
 function midtlink_notifications_menu() {
   $items['notifications'] = array(
-    'title' => 'Notifikationer', 
-    'page callback' => 'midtlink_notification_page', 
-    'access arguments' => array('access content'), 
+    'title' => 'Notifikationer',
+    'page callback' => 'midtlink_notification_page',
+    'access arguments' => array('access content'),
     'type' => MENU_CALLBACK,
   );
 	return $items;
@@ -82,7 +82,7 @@ function midtlink_notification_page() {
 	global $user;
 	$o = '<h1>Notifikationer</h1>';
 	$o.= '<div class="notifications-wrapper">';
-	
+
 	$notifications = midtlink_notification_get($user->uid,true,false,100);
 	if(sizeof($notifications) > 0) {
 		$i = 0;
@@ -90,7 +90,7 @@ function midtlink_notification_page() {
 			$c = $n->is_read == 0 ? " new" : "";
 			$oe = $i%2==0 ? ' even' : ' odd';
 			$i++;
-			
+
 			$o.= '<div class="notification-item'.$c.$oe.'"><div class="section"><div class="submitted">';
 			$o.= '<div class="meta small">'.format_date($n->created,'long').'</div></div>';
 			$o.= '<div class="body">'.midtlink_notification_get_message($n).'</div></div></div>';
@@ -109,9 +109,9 @@ function midtlink_notification_get_teaserbox_num() {
 function midtlink_notification_get_teaserbox() {
 	global $user;
 	$notifications = midtlink_notification_get($user->uid,false,true,5);
-	
+
 	$o = '<ul id="ulglobal" class="reset">';
-	
+
 	if(sizeof($notifications) > 0) {
 		foreach($notifications as $n) {
 			$o.= '<li><div class="created">'.format_interval(time()-$n->created,1).' siden</div>';
@@ -134,9 +134,9 @@ function midtlink_notifications_init() {
 		$sql = "SELECT COUNT(nid) FROM {midtlink_notifications}
 			WHERE is_read = 0 AND target_uid = :uid AND source_nid = :nid";
 		$c = db_query($sql,array(':uid'=>$user->uid,'nid'=>$nid))->fetchColumn(0);
-		
+
 		if($c > 0) {
-			$sql = "UPDATE {midtlink_notifications} SET is_read = 1 
+			$sql = "UPDATE {midtlink_notifications} SET is_read = 1
 					WHERE target_uid = :uid AND source_nid = :nid AND is_read = 0";
 			db_query($sql,array(':uid'=>$user->uid,'nid'=>$nid));
 		}
@@ -146,7 +146,7 @@ function midtlink_notifications_init() {
 
 function midtlink_notification_get($uid,$markAsRead=false,$onlyUnread=true,$limit=100) {
 	$notifications = array();
-	
+
 
 	$sql = "SELECT target_uid, notification_type, source_uid,
 			source_nid, is_read, created FROM midtlink_notifications
@@ -158,18 +158,34 @@ function midtlink_notification_get($uid,$markAsRead=false,$onlyUnread=true,$limi
 	foreach($res as $r) {
 		$notifications[] = $r;
 	}
-	
+
 	/*if($markAsRead) {
 		$sql = "UPDATE {midtlink_notifications} SET is_read = 1 WHERE target_uid = :uid";
 		db_query($sql,array(':uid'=>$uid));
 	}*/
-	
+
 	return $notifications;
 }
 
 
 function midtlink_get_node_title($nid) {
 	return db_query("SELECT title FROM {node} WHERE nid = :nid",array(':nid'=>$nid))->fetchColumn();
+}
+
+function midtlink_link_to_node($nid, $type = 'post') {
+  $title = midtlink_get_node_title($nid);
+  if ($title !== FALSE) {
+	// Link to node, using its title
+	return l($title, 'node/' . $nid);
+  } else {
+	// Node is missing, tell the user it doesn't exist
+	if ($type == 'post') {
+	  $typeText = "Indlægget";
+	} else if ($type == 'knowlegde') {
+	  $typeText = "Vejledningen";
+	}
+	return "&lt;$typeText eksisterer ikke længer&gt;";
+  }
 }
 
 function midtlink_notification_get_message($obj,$type='text') {
@@ -181,10 +197,10 @@ function midtlink_notification_get_message($obj,$type='text') {
 	$msg = '';
 	switch($obj->notification_type)  {
 		case 'new_answer':
-			$msg = l(format_username(user_load($obj->source_uid)),'user/'.$obj->source_uid).' har svaret på indlægget '.l(midtlink_get_node_title($obj->source_nid),'node/'.$obj->source_nid);
+			$msg = l(format_username(user_load($obj->source_uid)),'user/'.$obj->source_uid).' har svaret på indlægget '.midtlink_link_to_node($obj->source_nid);
 			if($type == 'mail') {
 				$url = url('node/'.$obj->source_nid,array('absolute'=>true));
-				
+
 				$body = "Hej ".format_username(user_load($obj->target_uid)).",\n\n";
 				$body.= "Der er tilføjet et nyt svar af ".format_username(user_load($obj->source_uid));
 				$body.= " til indlægget ".midtlink_get_node_title($obj->source_nid)."\n\n";
@@ -194,12 +210,12 @@ function midtlink_notification_get_message($obj,$type='text') {
 				$msg = array('subj'=>strip_tags($msg), 'body'=>$body);
 			}
 			break;
-			
+
     case 'new_comment':
-			$msg = l(format_username(user_load($obj->source_uid)),'user/'.$obj->source_uid).' har kommenteret på vejledningen '.l(midtlink_get_node_title($obj->source_nid),'node/'.$obj->source_nid);
+			$msg = l(format_username(user_load($obj->source_uid)),'user/'.$obj->source_uid).' har kommenteret på vejledningen '.midtlink_link_to_node($obj->source_nid, 'knowlegde');
 			if($type == 'mail') {
 				$url = url('node/'.$obj->source_nid,array('absolute'=>true));
-				
+
 				$body = "Hej ".format_username(user_load($obj->target_uid)).",\n\n";
 				$body.= "Der er tilføjet en ny kommentar af ".format_username(user_load($obj->source_uid));
 				$body.= " til vejledningen ".midtlink_get_node_title($obj->source_nid)."\n\n";
@@ -209,12 +225,12 @@ function midtlink_notification_get_message($obj,$type='text') {
 				$msg = array('subj'=>strip_tags($msg), 'body'=>$body);
 			}
 			break;
-			
+
 		case 'assign_observed_by':
-			$msg = 'Indlægget '.l(midtlink_get_node_title($obj->source_nid),'node/'.$obj->source_nid).' er oprettet med dig som forfatter.';
+			$msg = 'Indlægget '.midtlink_link_to_node($obj->source_nid).' er oprettet med dig som forfatter.';
 			if($type == 'mail') {
 				$url = url('node/'.$obj->source_nid,array('absolute'=>true));
-				
+
 				$body = "Hej ".format_username(user_load($obj->target_uid)).",\n\n";
 				$body.= "Obervationen ".midtlink_get_node_title($obj->source_nid)." er oprettet, ";
 				$body.= "og under oprettelsen er du blevet indtastet som personen der har indberettet indlægget.\n\n";
@@ -224,12 +240,12 @@ function midtlink_notification_get_message($obj,$type='text') {
 				$msg = array('subj'=>strip_tags($msg), 'body'=>$body);
 			}
 			break;
-			
+
 		case 'assign_responsible':
-			/*$msg = 'Du er gjort ansvarlig for indlægget '.l(midtlink_get_node_title($obj->source_nid),'node/'.$obj->source_nid).'';
+			/*$msg = 'Du er gjort ansvarlig for indlægget '.midtlink_link_to_node($obj->source_nid).'';
 			if($type == 'mail') {
 				$url = url('node/'.$obj->source_nid,array('absolute'=>true));
-				
+
 				$body = "Hej ".format_username(user_load($obj->target_uid)).",\n\n";
 				$body.= "Du er gjort ansvarlig for indlæg: ".midtlink_get_node_title($obj->source_nid)."\n\n";
 				$body.= "Du kan klikke ind og svare på indlægget på nedenstående link:\n";
@@ -240,10 +256,10 @@ function midtlink_notification_get_message($obj,$type='text') {
 			break;
 		*/
 		case 'askdirect':
-			$msg = 'Du er blevet spurgt direkte om '.l(midtlink_get_node_title($obj->source_nid),'node/'.$obj->source_nid).'';
+			$msg = 'Du er blevet spurgt direkte om '.midtlink_link_to_node($obj->source_nid).'';
 			if($type == 'mail') {
 				$url = url('node/'.$obj->source_nid,array('absolute'=>true));
-				
+
 				$body = "Hej ".format_username(user_load($obj->target_uid)).",\n\n";
 				$body.= "Du er blevet spurgt direkte om du kan svare på: ".midtlink_get_node_title($obj->source_nid)."\n\n";
 				$body.= "Hvis du kan svare på indlægget og give en løsning kan det gøres på linket herunder:\n";
@@ -252,12 +268,12 @@ function midtlink_notification_get_message($obj,$type='text') {
 				$msg = array('subj'=>strip_tags($msg), 'body'=>$body);
 			}
 			break;
-			
+
 		case 'answer_accepted':
-			$msg ='Et svar på indlæg '.l(midtlink_get_node_title($obj->source_nid),'node/'.$obj->source_nid).' er markeret som løsning';
+			$msg ='Et svar på indlæg '.midtlink_link_to_node($obj->source_nid).' er markeret som løsning';
 			if($type == 'mail') {
 				$url = url('node/'.$obj->source_nid,array('absolute'=>true));
-				
+
 				$body = "Hej ".format_username(user_load($obj->target_uid)).",\n\n";
 				$body.= "Der er et svar som er markering som løsning på indlægget: ".midtlink_get_node_title($obj->source_nid)."\n\n";
 				$body.= "Du kan klikke ind og se svaret på nedenstående link:\n";
