@@ -184,7 +184,8 @@ function midtlink_link_to_node($nid, $type = 'post') {
 	} else if ($type == 'knowlegde') {
 	  $typeText = "Vejledningen";
 	}
-	return "&lt;$typeText eksisterer ikke længer&gt;";
+	return "&lt;$typeText er blevet slettet, kontakt
+<a href='mailto:AUHKAS@rm.dk'>AUHKAS@rm.dk</a> for yderligere oplysninger</a>&gt;";
   }
 }
 
