@@ -31,19 +31,9 @@
 					<div id="add-post" class="block">
             <?php print render($page['front_text']); ?>
 						<div class="content">
-							<form action="create_observation">
-								<p>
-									<input id="askquestion_input"
-                                           style="width:400px;" type="text"
-                                           name="text" placeholder="Opret dit indlæg her" value="" />
-									<input type="submit" value="Opret"
-                                           class="form-submit" />
-								</p>
-							</form>
-							<div id="liveresult">
-								<h2>Lignende indlæg fra dine kolleger</h2>
-								<ul id="livelist"></ul>
-							</div>
+                          <div class="search-form-2">
+                            <?php print render(drupal_get_form('search_block_form', TRUE, 'Søg i MidtLink')); ?>
+                          </div>
 						</div>
 					</div>
 					
