@@ -7,7 +7,7 @@ global $activeMainTID;
 ?>
 
 <div class="content">
-  <h2>Emneoversigt</h2>
+  <h2>Læs mere om...</h2>
   <ul class="reset">
     <?php
     $categories = midtlink_get_global_keywords();
