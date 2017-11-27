@@ -280,7 +280,7 @@ function midtlink_upgrade_jan_2014_field_default_field_instances() {
     'settings' => array(
       'description_field' => 0,
       'file_directory' => 'knowlegde',
-      'file_extensions' => 'txt pdf doc docx xls xlsx ppt pptx rtf odt odp ods',
+      'file_extensions' => 'txt pdf doc docx xls xlsx ppt pptx rtf odt odp ods ogv mp4 avi mov mpeg mpg wmv',
       'max_filesize' => '',
       'user_register_form' => FALSE,
     ),
