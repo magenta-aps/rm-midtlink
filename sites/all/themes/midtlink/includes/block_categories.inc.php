@@ -7,7 +7,7 @@ global $activeMainTID;
 ?>
 
 <div class="content">
-  <h2>Læs mere om...</h2>
+  <h2>Emner</h2>
   <ul class="reset">
     <?php
     $categories = midtlink_get_global_keywords();
@@ -26,7 +26,7 @@ global $activeMainTID;
       $mainUnitDisplayName = $term->field_shortname ? $term->field_shortname[LANGUAGE_NONE][0]['safe_value'] : $mainUnitName;
       if (!empty($local_categories)):
         ?>
-        <h2 style="clear: both;">Netværk og services på <?php echo $mainUnitDisplayName  ; ?></h2>
+        <h2 style="clear: both;">Service og fora <?php echo $mainUnitDisplayName  ; ?></h2>
         <ul class="reset local-categories">
           <?php
 
